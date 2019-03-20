@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9d4952ef-4506-4fc1-99bf-2755443122e0" name="Default" comment="">
+<<<<<<< HEAD
       <change beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+=======
+      <change beforePath="$PROJECT_DIR$/file" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php" afterPath="$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php" />
+>>>>>>> 27e91c5ef15d8de970d094606fc87b7029335788
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,8 +21,13 @@
       <file leaf-file-name="FIdConst.class.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="583">
               <caret line="1069" column="29" lean-forward="true" selection-start-line="1069" selection-start-column="29" selection-end-line="1069" selection-end-column="29" />
+=======
+            <state relative-caret-position="546">
+              <caret line="1089" column="7" lean-forward="true" selection-start-line="1089" selection-start-column="7" selection-end-line="1089" selection-end-column="7" />
+>>>>>>> 27e91c5ef15d8de970d094606fc87b7029335788
               <folding />
             </state>
           </provider>
@@ -48,7 +58,10 @@
     <option name="width" value="1400" />
     <option name="height" value="795" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+=======
+>>>>>>> 27e91c5ef15d8de970d094606fc87b7029335788
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
@@ -137,12 +150,20 @@
       <updated>1553065540763</updated>
       <workItem from="1553065542855" duration="21000" />
       <workItem from="1553065608993" duration="33000" />
+<<<<<<< HEAD
       <workItem from="1553066073857" duration="2993000" />
+=======
+      <workItem from="1553066073857" duration="2384000" />
+>>>>>>> 27e91c5ef15d8de970d094606fc87b7029335788
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< HEAD
     <option name="totallyTimeSpent" value="3047000" />
+=======
+    <option name="totallyTimeSpent" value="2438000" />
+>>>>>>> 27e91c5ef15d8de970d094606fc87b7029335788
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -189,8 +210,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="583">
           <caret line="1069" column="29" lean-forward="true" selection-start-line="1069" selection-start-column="29" selection-end-line="1069" selection-end-column="29" />
+=======
+        <state relative-caret-position="546">
+          <caret line="1089" column="7" lean-forward="true" selection-start-line="1089" selection-start-column="7" selection-end-line="1089" selection-end-column="7" />
+>>>>>>> 27e91c5ef15d8de970d094606fc87b7029335788
           <folding />
         </state>
       </provider>

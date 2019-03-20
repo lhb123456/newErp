@@ -1068,4 +1068,25 @@ class FIdConst {
 	 * @var string
 	 */
 	const GL_PERIOD = "2103";
+
+    /**
+     * 往来单位信用额度评估
+     *
+     * @var string
+     */
+    const CREDIT_ASSESS = "3000";
+
+    /**
+     * 往来单位等级评定
+     *
+     * @var string
+     */
+    const RANK_ASSESS = "3001";
+
+    /**
+     * 往来单位档案
+     *
+     * @var string
+     */
+    const CO_COMPANY = "3002";
 }
