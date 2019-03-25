@@ -1,12 +1,12 @@
 <layout name="layout" />
 
-<script src="{$uri}Public/Scripts/PSI/Customer/MainForm.js?dt={$dtFlag}"
+<script src="{$uri}Public/Scripts/PSI/COCompany/MainForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 <script
-	src="{$uri}Public/Scripts/PSI/Customer/CategoryEditForm.js?dt={$dtFlag}"
+	src="{$uri}Public/Scripts/PSI/COCompany/CategoryEditForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 <script
-	src="{$uri}Public/Scripts/PSI/Customer/CustomerEditForm.js?dt={$dtFlag}"
+	src="{$uri}Public/Scripts/PSI/COCompany/COCompanyEditForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 <script
 	src="{$uri}Public/Scripts/PSI/Customer/CustomerImportForm.js?dt={$dtFlag}"
@@ -28,7 +28,7 @@
 			}
 		});
 
-		app.add(Ext.create("PSI.Customer.MainForm", {
+		app.add(Ext.create("PSI.COCompany.MainForm", {
 			pAddCategory : "{$pAddCategory}",
 			pEditCategory : "{$pEditCategory}",
 			pDeleteCategory : "{$pDeleteCategory}",
