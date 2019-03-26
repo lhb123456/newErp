@@ -77,6 +77,10 @@ class MainMenuController extends Controller {
 				// 基础数据 - 仓库
 				redirect(__ROOT__ . "/Home/Warehouse");
 				break;
+            case FIdConst::ORG_WAREHOUSE :
+                // 公司仓库
+                redirect(__ROOT__ . "/Home/OrgWare/index");
+                break;
 			case FIdConst::SUPPLIER :
 				// 基础数据 - 供应商档案
 				redirect(__ROOT__ . "/Home/Supplier");
