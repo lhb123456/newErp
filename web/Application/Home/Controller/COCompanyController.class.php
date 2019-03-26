@@ -3,12 +3,13 @@
 namespace Home\Controller;
 
 use Home\Common\FIdConst;
+use Home\Service\COCompanyService;
 use Home\Service\CustomerService;
 use Home\Service\ImportService;
 use Home\Service\UserService;
 
 /**
- * 客户资料Controller
+ * 往来单位资料Controller
  *
  * @author 李静波
  *        
@@ -44,41 +45,54 @@ class COCompanyController extends PSIBaseController {
 	}
 
 	/**
-	 * 获得客户分类列表
+	 * 获得往来单位分类列表
 	 */
 	public function categoryList() {
 		if (IS_POST) {
-			$cs = new CustomerService();
 			$params = array(
-					"code" => I("post.code"),
-					"name" => I("post.name"),
-					"address" => I("post.address"),
-					"contact" => I("post.contact"),
-					"mobile" => I("post.mobile"),
-					"tel" => I("post.tel"),
-					"qq" => I("post.qq")
+					"companyType" => I("post.companyType"),
+                    "categoryName" => I("post.categoryName"),
+					"name" => I("post.name")
+
 			);
-			
+            $cs = new COCompanyService();
 			$this->ajaxReturn($cs->categoryList($params));
 		}
 	}
 
-	/**
-	 * 新增或编辑客户分类
+	//往来单位分类信息
+    public function getCategoryInfo(){
+
+        if(IS_POST){
+
+            $params=[
+                'id'=>I("post.id")
+            ];
+
+            $cs=new COCompanyService();
+            $this->ajaxReturn($cs->getCategoryInfo($params));
+
+        }
+
+    }
+
+
+    /**
+	 * 新增或编辑往来单位分类
 	 */
 	public function editCategory() {
 		if (IS_POST) {
 			$us = new UserService();
 			if (I("post.id")) {
-				// 编辑客户分类
-				if (! $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_EDIT)) {
-					$this->ajaxReturn($this->noPermission("编辑客户分类"));
+				// 编辑往来单位分类
+				if (! $us->hasPermission(FIdConst::CO_COMPANY_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑往来单位分类"));
 					return;
 				}
 			} else {
-				// 新增客户分类
-				if (! $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_ADD)) {
-					$this->ajaxReturn($this->noPermission("新增客户分类"));
+				// 新增往来单位分类
+				if (! $us->hasPermission(FIdConst::CO_COMPANY_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增往来单位分类"));
 					return;
 				}
 			}
@@ -87,48 +101,50 @@ class COCompanyController extends PSIBaseController {
 					"id" => I("post.id"),
 					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name"),
-					"psId" => I("post.psId")
+					"limitCount" => I("post.limitCount")
 			);
-			$cs = new CustomerService();
+			$cs = new COCompanyService();
 			$this->ajaxReturn($cs->editCategory($params));
 		}
 	}
 
+
+
 	/**
-	 * 删除客户分类
+	 * 删除往来单位分类
 	 */
 	public function deleteCategory() {
 		if (IS_POST) {
 			$us = new UserService();
-			if (! $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_DELETE)) {
-				$this->ajaxReturn($this->noPermission("删除客户分类"));
+			if (! $us->hasPermission(FIdConst::COMPANY_CATEGORY_DEL)) {
+				$this->ajaxReturn($this->noPermission("删除往来单位分类"));
 				return;
 			}
 			
 			$params = array(
 					"id" => I("post.id")
 			);
-			$cs = new CustomerService();
+			$cs = new COCompanyService();
 			$this->ajaxReturn($cs->deleteCategory($params));
 		}
 	}
 
 	/**
-	 * 新增或编辑客户资料
+	 * 新增或编辑往来单位资料
 	 */
 	public function editCustomer() {
 		if (IS_POST) {
 			$us = new UserService();
 			if (I("post.id")) {
-				// 编辑客户
+				// 编辑往来单位
 				if (! $us->hasPermission(FIdConst::CUSTOMER_EDIT)) {
-					$this->ajaxReturn($this->noPermission("编辑客户"));
+					$this->ajaxReturn($this->noPermission("编辑往来单位"));
 					return;
 				}
 			} else {
-				// 新增客户
+				// 新增往来单位
 				if (! $us->hasPermission(FIdConst::CUSTOMER_ADD)) {
-					$this->ajaxReturn($this->noPermission("新增客户"));
+					$this->ajaxReturn($this->noPermission("新增往来单位"));
 					return;
 				}
 			}
@@ -164,7 +180,7 @@ class COCompanyController extends PSIBaseController {
 	}
 
 	/**
-	 * 获得客户列表
+	 * 获得往来单位列表
 	 */
 	public function customerList() {
 		if (IS_POST) {
@@ -187,13 +203,13 @@ class COCompanyController extends PSIBaseController {
 	}
 
 	/**
-	 * 删除客户
+	 * 删除往来单位
 	 */
 	public function deleteCustomer() {
 		if (IS_POST) {
 			$us = new UserService();
 			if (! $us->hasPermission(FIdConst::CUSTOMER_DELETE)) {
-				$this->ajaxReturn($this->noPermission("删除客户"));
+				$this->ajaxReturn($this->noPermission("删除往来单位"));
 				return;
 			}
 			
@@ -206,7 +222,7 @@ class COCompanyController extends PSIBaseController {
 	}
 
 	/**
-	 * 客户自定义字段，查询客户
+	 * 往来单位自定义字段，查询往来单位
 	 */
 	public function queryData() {
 		if (IS_POST) {
@@ -219,7 +235,7 @@ class COCompanyController extends PSIBaseController {
 	}
 
 	/**
-	 * 获得某个客户的信息
+	 * 获得某个往来单位的信息
 	 */
 	public function customerInfo() {
 		if (IS_POST) {
@@ -230,13 +246,13 @@ class COCompanyController extends PSIBaseController {
 	}
 
 	/**
-	 * 通过Excel导入客户资料
+	 * 通过Excel导入往来单位资料
 	 */
 	public function import() {
 		if (IS_POST) {
 			$us = new UserService();
 			if (! $us->hasPermission(FIdConst::CUSTOMER_IMPORT)) {
-				$this->ajaxReturn($this->noPermission("导入客户"));
+				$this->ajaxReturn($this->noPermission("导入往来单位"));
 				return;
 			}
 			

@@ -1089,4 +1089,16 @@ class FIdConst {
      * @var string
      */
     const CO_COMPANY = "3002";
+
+    const COMPANY_CATEGORY_ADD = "3002-01";
+
+    const COMPANY_CATEGORY_EDIT = "3002-02";
+
+    const COMPANY_CATEGORY_DEL = "3002-03";
+
+    const CO_COMPANY_ADD = "3002-04";
+
+    const CO_COMPANY_EDIT= "3002-05";
+
+    const CO_COMPANY_DEL = "3002-06";
 }

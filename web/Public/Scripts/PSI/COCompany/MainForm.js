@@ -36,7 +36,7 @@ Ext.define("PSI.COCompany.MainForm", {
 								header : false,
 								layout : {
 									type : "table",
-									columns : 4
+									columns : 5
 								},
 								items : me.getQueryCmp()
 							}, {
@@ -54,7 +54,7 @@ Ext.define("PSI.COCompany.MainForm", {
 											xtype : "panel",
 											region : "west",
 											layout : "fit",
-											width : 430,
+											width : 450,
 											split : true,
 											collapsible : true,
 											header : false,
@@ -147,7 +147,7 @@ Ext.define("PSI.COCompany.MainForm", {
 					}),
 					value :-1
 				},{
-					id : "editQueryCategory",
+					id : "editQueryCategoryName",
 					labelWidth : 80,
 					labelAlign : "right",
 					labelSeparator : "",
@@ -161,20 +161,6 @@ Ext.define("PSI.COCompany.MainForm", {
 						}
 					}
 				},{
-					id : "editQueryCode",
-					labelWidth : 80,
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "往来单位编码",
-					margin : "5, 0, 0, 0",
-					xtype : "textfield",
-					listeners : {
-						specialkey : {
-							fn : me.onQueryEditSpecialKey,
-							scope : me
-						}
-					}
-				}, {
 					id : "editQueryName",
 					labelWidth : 80,
 					labelAlign : "right",
@@ -302,7 +288,7 @@ Ext.define("PSI.COCompany.MainForm", {
 
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", {
+					fields : ["id", "code", "name","limitCount", {
 								name : "cnt",
 								type : "int"
 							}, "priceSystem"]
@@ -345,13 +331,22 @@ Ext.define("PSI.COCompany.MainForm", {
 							}, {
 								header : "价格体系",
 								dataIndex : "priceSystem",
+								hidden:true,
 								width : 80,
 								menuDisabled : true,
 								sortable : false
 							}, {
+								header : "数量限制",
+								dataIndex : "limitCount",
+								width : 100,
+								menuDisabled : true,
+                        		xtype : "numbercolumn",
+								sortable : false,
+								align : "right"
+							}, {
 								header : "往来单位数",
 								dataIndex : "cnt",
-								width : 80,
+								width : 100,
 								menuDisabled : true,
 								sortable : false,
 								summaryType : "sum",
@@ -660,7 +655,7 @@ Ext.define("PSI.COCompany.MainForm", {
 			el.mask("正在删除中...");
 
 			var r = {
-				url : me.URL("Home/Customer/deleteCategory"),
+				url : me.URL("Home/COCompany/deleteCategory"),
 				params : {
 					id : category.get("id")
 				},
@@ -696,7 +691,7 @@ Ext.define("PSI.COCompany.MainForm", {
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		me.ajax({
-					url : me.URL("Home/Customer/categoryList"),
+					url : me.URL("Home/COCompany/categoryList"),
 					params : me.getQueryParam(),
 					callback : function(options, success, response) {
 						var store = grid.getStore();
@@ -933,40 +928,18 @@ Ext.define("PSI.COCompany.MainForm", {
 			categoryId : categoryId
 		};
 
-		var code = Ext.getCmp("editQueryCode").getValue();
-		if (code) {
-			result.code = code;
-		}
+        var companyType = Ext.getCmp("editQueryType").getValue();
+        result.companyType=companyType;
 
-		/*var address = Ext.getCmp("editQueryAddress").getValue();
-		if (address) {
-			result.address = address;
-		}
+        var categoryName = Ext.getCmp("editQueryCategoryName").getValue();
+        if (categoryName) {
+            result.categoryName = categoryName;
+        }
 
-		var name = Ext.getCmp("editQueryName").getValue();
-		if (name) {
-			result.name = name;
-		}*/
-
-		/*var contact = Ext.getCmp("editQueryContact").getValue();
-		if (contact) {
-			result.contact = contact;
-		}
-
-		var mobile = Ext.getCmp("editQueryMobile").getValue();
-		if (mobile) {
-			result.mobile = mobile;
-		}
-
-		var tel = Ext.getCmp("editQueryTel").getValue();
-		if (tel) {
-			result.tel = tel;
-		}
-
-		var qq = Ext.getCmp("editQueryQQ").getValue();
-		if (qq) {
-			result.qq = qq;
-		}*/
+        var name = Ext.getCmp("editQueryName").getValue();
+        if (name) {
+            result.name = name;
+        }
 
 		return result;
 	},

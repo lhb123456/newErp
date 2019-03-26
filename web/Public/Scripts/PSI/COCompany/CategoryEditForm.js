@@ -98,9 +98,7 @@ Ext.define("PSI.COCompany.CategoryEditForm", {
 								}, {
 									id : "PSI_Customer_CategoryEditForm_editCode",
 									fieldLabel : "分类编码",
-									allowBlank : false,
-									blankText : "没有输入分类编码",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									readOnly:true,
 									name : "code",
 									value : entity == null ? null : entity
 											.get("code"),
@@ -126,9 +124,9 @@ Ext.define("PSI.COCompany.CategoryEditForm", {
 										}
 									}
 								}, {
-									id : "PSI_Customer_CategoryEditForm_countlimit",
+									id : "PSI_Customer_CategoryEditForm_limitCount",
 									fieldLabel : "数量限制",
-									name : "countLimit",
+									name : "limitCount",
 									/*value : entity .data== null ? null : entity
 										.get("count_limit")*/
 									listeners:{
@@ -184,6 +182,7 @@ Ext.define("PSI.COCompany.CategoryEditForm", {
 
 		me.editCode = Ext.getCmp("PSI_Customer_CategoryEditForm_editCode");
 		me.editName = Ext.getCmp("PSI_Customer_CategoryEditForm_editName");
+		me.limitCount = Ext.getCmp("PSI_Customer_CategoryEditForm_limitCount");
 
 		me.comboPrice = Ext.getCmp("PSI_Customer_CategoryEditForm_comboPrice");
 		me.editPsId = Ext.getCmp("PSI_Customer_CategoryEditForm_editPsId");
@@ -198,7 +197,7 @@ Ext.define("PSI.COCompany.CategoryEditForm", {
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		f.submit({
-					url : me.URL("/Home/Customer/editCategory"),
+					url : me.URL("/Home/COCompany/editCategory"),
 					method : "POST",
 					success : function(form, action) {
 						el.unmask();
@@ -275,29 +274,33 @@ Ext.define("PSI.COCompany.CategoryEditForm", {
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-		var editCode = me.editCode;
-		editCode.focus();
-		editCode.setValue(editCode.getValue());
+		var editName = me.editName;
+        editName.focus();
 
 		var id = me.adding ? null : me.getEntity().get("id");
 
-		var store = me.comboPrice.getStore();
+		//var store = me.comboPrice.getStore();
 
 		var el = me.getEl();
 		el.mask(PSI.Const.LOADING);
 		var r = {
-			url : me.URL("Home/Customer/priceSystemList"),
+			url : me.URL("Home/COCompany/getCategoryInfo"),
 			params : {
 				id : id
 			},
 			callback : function(options, success, response) {
-				store.removeAll();
+				//store.removeAll();
 
 				if (success) {
 					var data = me.decodeJSON(response.responseText);
-					store.add(data.priceList);
-					if (id && data.psId) {
-						me.comboPrice.setValue(data.psId);
+					//store.add(data.priceList);
+
+					if (id ==null) {
+                        me.editCode.setValue(data.code)
+					}else{
+						me.editCode.setValue(data.code);
+						me.editName.setValue(data.name);
+						me.limitCount.setValue(data.limitCount);
 					}
 				}
 
