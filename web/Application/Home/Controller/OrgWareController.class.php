@@ -52,4 +52,67 @@ class OrgWareController extends PSIBaseController
             $this->gotoLoginPage("/Home/OrgWare/index");
         }
     }
+    /**
+     * 仓库列表
+     */
+    public function OrgWare(){
+        $us = new UserService();
+        $role=$us->hasPermission(FIdConst::ORG_WAREHOUSE ) ? 1 : 0;
+        if (IS_POST) {
+            $params = array(
+                "code" => I("post.code"),
+                "name" => I("post.name"),
+                "address"=>I("post.address"),
+                "role"=>$role,
+
+            );
+            $ws = new WarehouseService();
+            $this->ajaxReturn($ws->OrgwarehouseList($params));
+        }
+    }
+    //自动生成仓库编码
+    public function code(){
+        $db=M();
+        $sql="select max(code) as code from t_warehouse_base";
+        $code=$db->query($sql);
+        if($code){
+            $result["code"]=$code[0]["code"]+1;
+        }else{
+            $result["code"]='01';
+        }
+        $this->ajaxReturn($result);
+    }
+    /**
+     * 新增或编辑仓库信息
+     */
+    public function editOrgWarehouse() {
+        if (IS_POST) {
+            $us = new UserService();
+            if (I("post.id")) {
+                // 编辑仓库
+                if (! $us->hasPermission(FIdConst::WAREHOUSE_EDIT)) {
+                    $this->ajaxReturn($this->noPermission("编辑仓库"));
+                    return;
+                }
+            } else {
+                // 新增仓库
+                if (! $us->hasPermission(FIdConst::WAREHOUSE_ADD)) {
+                    $this->ajaxReturn($this->noPermission("新增仓库"));
+                    return;
+                }
+            }
+
+            $params = array(
+                "id" => I("post.id"),
+                "hisCode" => I("post.hisCode"),
+                "code" => I("post.code"),
+                "name" => I("post.name"),
+                "address"=>I("post.address"),
+
+            );
+            $ws = new WarehouseService();
+            $this->ajaxReturn($ws->editOrgWarehouse($params));
+        }
+    }
+
 }

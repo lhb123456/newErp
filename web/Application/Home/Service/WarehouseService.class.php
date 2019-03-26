@@ -29,7 +29,18 @@ class WarehouseService extends PSIBaseExService {
 		
 		return $dao->warehouseList($params);
 	}
+    //仓库基础数据列表
+    public function OrgwarehouseList($params) {
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
 
+        $params["loginUserId"] = $this->getLoginUserId();
+
+        $dao = new WarehouseDAO($this->db());
+
+        return $dao->OrgwarehouseList($params);
+    }
 	/**
 	 * 新建或编辑仓库
 	 */
@@ -171,4 +182,65 @@ class WarehouseService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+    /**
+     * 新建或编辑仓库
+     */
+
+    public function editOrgWarehouse($params) {
+        if ($this->isNotOnline()) {
+            return $this->notOnlineError();
+        }
+
+        $id = $params["id"];
+        $name = $params["name"];
+        $code = $params["code"];
+        /*if(!$params['company_id']){
+            $params["company_id"] = $this->getCompanyId();
+        }*/
+
+        $ps = new PinyinService();
+        $py = $ps->toPY($name);
+        $params["py"] = $py;
+
+        $db = $this->db();
+
+        $db->startTrans();
+
+        $dao = new WarehouseDAO($db);
+
+        $log = null;
+
+        if ($id) {
+            // 修改仓库
+
+            $rc = $dao->updateOrgWarehouse($params);
+            if ($rc) {
+                $db->rollback();
+                return $rc;
+            }
+
+            $log = "编辑仓库：编码 = $code,  仓库 = $name";
+        } else {
+
+            $rc = $dao->addOrgWarehouse($params);
+            if ($rc) {
+                $db->rollback();
+                return $rc;
+            }
+
+            $id = $params["id"];
+
+            $log = "新增仓库：编码 = {$code},  名称 = {$name}";
+        }
+
+        // 记录业务日志
+        $bs = new BizlogService($db);
+        $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+        $db->commit();
+
+        return $this->ok($id);
+    }
+
+
 }
