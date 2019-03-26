@@ -257,6 +257,10 @@ class MainMenuController extends Controller {
 				// 成品委托生产入库
 				redirect(__ROOT__ . "/Home/DM/dmwbillIndex");
 				break;
+            case FIdConst::CO_COMPANY :
+                // 往来单位档案
+                redirect(__ROOT__ . "/Home/COCompany/index");
+                break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
