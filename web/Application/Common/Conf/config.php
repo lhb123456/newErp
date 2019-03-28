@@ -82,15 +82,26 @@ return $psiConfig;*/
 
 // 也可以把上面的代码都删除掉，然后按下面的写法来配置
 
-return array(
+/*return array(
 		'URL_CASE_INSENSITIVE' => false,
 		'SHOW_ERROR_MSG' => true,
 		'DB_TYPE' => 'mysql', // 数据库类型
-		'DB_HOST' => '127.0.0.1', // 服务器地址
+		'DB_HOST' => '10.16.1.12', // 服务器地址
 		'DB_NAME' => 'erp2', // 数据库名
-		'DB_USER' => 'root', // 用户名
-		'DB_PWD' => 'root', // 密码
+		'DB_USER' => 'admin', // 用户名
+		'DB_PWD' => 'hktz@Com12', // 密码
 		'DB_PORT' => 3306 // 端口
+);*/
+
+return array(
+    'URL_CASE_INSENSITIVE' => false,
+    'SHOW_ERROR_MSG' => true,
+    'DB_TYPE' => 'mysql', // 数据库类型
+    'DB_HOST' => '127.0.0.1', // 服务器地址
+    'DB_NAME' => 'erp2', // 数据库名
+    'DB_USER' => 'root', // 用户名
+    'DB_PWD' => 'root', // 密码
+    'DB_PORT' => 3306 // 端口
 );
  
 

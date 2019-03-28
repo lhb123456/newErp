@@ -132,73 +132,46 @@ class COCompanyController extends PSIBaseController {
 	/**
 	 * 新增或编辑往来单位资料
 	 */
-	public function editCustomer() {
+	public function editCOCompany() {
 		if (IS_POST) {
 			$us = new UserService();
 			if (I("post.id")) {
 				// 编辑往来单位
-				if (! $us->hasPermission(FIdConst::CUSTOMER_EDIT)) {
+				if (! $us->hasPermission(FIdConst::CO_COMPANY_EDIT)) {
 					$this->ajaxReturn($this->noPermission("编辑往来单位"));
 					return;
 				}
 			} else {
 				// 新增往来单位
-				if (! $us->hasPermission(FIdConst::CUSTOMER_ADD)) {
+				if (! $us->hasPermission(FIdConst::CO_COMPANY_ADD)) {
 					$this->ajaxReturn($this->noPermission("新增往来单位"));
 					return;
 				}
 			}
-			
-			$params = [
-					"id" => I("post.id"),
-					"code" => strtoupper(I("post.code")),
-					"name" => I("post.name"),
-					"address" => I("post.address"),
-					"addressReceipt" => I("post.addressReceipt"),
-					"contact01" => I("post.contact01"),
-					"mobile01" => I("post.mobile01"),
-					"tel01" => I("post.tel01"),
-					"qq01" => I("post.qq01"),
-					"contact02" => I("post.contact02"),
-					"mobile02" => I("post.mobile02"),
-					"tel02" => I("post.tel02"),
-					"qq02" => I("post.qq02"),
-					"bankName" => I("post.bankName"),
-					"bankAccount" => I("post.bankAccount"),
-					"tax" => I("post.tax"),
-					"fax" => I("post.fax"),
-					"note" => I("post.note"),
-					"categoryId" => I("post.categoryId"),
-					"initReceivables" => I("post.initReceivables"),
-					"initReceivablesDT" => I("post.initReceivablesDT"),
-					"warehouseId" => I("post.warehouseId"),
-					"recordStatus" => I("post.recordStatus")
-			];
-			$cs = new CustomerService();
-			$this->ajaxReturn($cs->editCustomer($params));
+            $params=json_decode(html_entity_decode($_POST["jsonStr"]), true);
+
+
+			$cs = new COCompanyService();
+			$this->ajaxReturn($cs->editCOCompany($params));
 		}
 	}
 
 	/**
 	 * 获得往来单位列表
 	 */
-	public function customerList() {
+	public function cocompanyList() {
 		if (IS_POST) {
 			$params = array(
 					"categoryId" => I("post.categoryId"),
-					"code" => I("post.code"),
+                    "companyType"=>I("post.companyType"),
 					"name" => I("post.name"),
-					"address" => I("post.address"),
-					"contact" => I("post.contact"),
-					"mobile" => I("post.mobile"),
-					"tel" => I("post.tel"),
-					"qq" => I("post.qq"),
+					"categoryName" => I("post.categoryName"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			);
-			$cs = new CustomerService();
-			$this->ajaxReturn($cs->customerList($params));
+			$cs = new COCompanyService();
+			$this->ajaxReturn($cs->cocompanyList($params));
 		}
 	}
 
@@ -221,6 +194,15 @@ class COCompanyController extends PSIBaseController {
 		}
 	}
 
+	//获得新code
+    public function getCompanyNewCode(){
+	    if(IS_POST){
+
+	        $cs=new COCompanyService();
+	        $this->ajaxReturn($cs->getCompanyNewCode());
+        }
+    }
+
 	/**
 	 * 往来单位自定义字段，查询往来单位
 	 */
@@ -237,11 +219,11 @@ class COCompanyController extends PSIBaseController {
 	/**
 	 * 获得某个往来单位的信息
 	 */
-	public function customerInfo() {
+	public function cocompanyInfo() {
 		if (IS_POST) {
 			$id = I("post.id");
-			$cs = new CustomerService();
-			$this->ajaxReturn($cs->customerInfo($id));
+			$cs = new COCompanyService();
+			$this->ajaxReturn($cs->cocompanyInfo($id));
 		}
 	}
 
