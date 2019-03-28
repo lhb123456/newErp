@@ -442,20 +442,22 @@ class OrgDAO extends PSIBaseExDAO {
 
 	private function orgTypeCodeToName($code) {
 		switch ($code) {
+			case 300 :
+				return "风控部";
 			case 400 :
-				return "事业部";
+				return "业务部";
 			case 500 :
-				return "门店";
+				return "财务部";
 			case 600 :
-				return "内部物流组织机构";
+				return "总经办";
 			case 2000 :
-				return "客户";
+				return "独立法人组织机构";
 			case 3000 :
-				return "供应商";
+				return "未启用";
 			case 4000 :
-				return "外协工厂";
+				return "未启用";
 			case 5000 :
-				return "外部物流商";
+				return "未启用";
 			default :
 				return "";
 		}

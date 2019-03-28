@@ -12,7 +12,7 @@ use Home\Common\FIdConst;
 class WarehouseDAO extends PSIBaseExDAO {
 
 	/**
-	 * 获得所有的仓库列表
+	 * 获得所有的公司仓库列表
 	 *
 	 * @param array $params        	
 	 * @return array
@@ -51,7 +51,53 @@ class WarehouseDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
-	/**
+    /**
+     * 获得所有的基础仓库列表
+     *
+     * @param array $params
+     * @return array
+     */
+    public function OrgwarehouseList($params) {
+        $db = M();
+        $loginUserId = $params["loginUserId"];
+        $role = $params["role"];
+        $name = trim($params["name"]);
+        $code = trim($params["code"]);
+        $address = trim($params["address"]);
+        if ($this->loginUserIdNotExists($loginUserId)) {
+            return $this->emptyResult();
+        }
+        //$ware=M("t_all_warehouse")->select();
+        $queryParams = [];
+        $sql="select code,name,address from t_warehouse_base where 1 = 1 ";
+
+        if($code){
+            $sql.=" AND code like '%s'";
+            $queryParams[] = "%{$code}%";
+        }
+        if($name){
+            $sql.=" AND name like '%s'";
+            $queryParams[] = "%{$name}%";
+        }
+        if($address){
+            $sql.=" AND address like '%s'";
+            $queryParams[] = "%{$address}%";
+        }
+        $sql .=" order by name";
+        $ware = $db->query($sql,$queryParams);
+        $result = [];
+        foreach ($ware as $v){
+            $result[] = [
+                'id' =>$v["id"],
+                'code' =>$v["code"],
+                'name' =>$v["name"],
+                'address' =>$v["address"],
+            ];
+        }
+        return $result;
+    }
+
+    /**
 	 * 新增一个仓库
 	 *
 	 * @param array $params        	

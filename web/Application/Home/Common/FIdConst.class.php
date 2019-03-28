@@ -152,8 +152,25 @@ class FIdConst {
 	 * 修改仓库数据域
 	 */
 	const WAREHOUSE_EDIT_DATAORG = "1003-05";
-	
-	/**
+
+    /**
+     * 仓库信息
+     * @var string
+     */
+    const ORG_WAREHOUSE= "1005";
+
+    //新增仓库
+    const ORG_WAREHOUSE_ADD = "1005-01";
+
+    //编辑仓库
+    const ORG_WAREHOUSE_EDIT = "1005-02";
+
+    //删除仓库
+    const ORG_WAREHOUSE_DELETE = "1005-03";
+
+
+
+    /**
 	 * 基础数据-供应商档案
 	 */
 	const SUPPLIER = "1004";

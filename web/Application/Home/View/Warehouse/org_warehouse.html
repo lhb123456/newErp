@@ -1,0 +1,46 @@
+<layout name="layout" />
+
+<script
+        src="{$uri}Public/Scripts/PSI/AFX/BaseOneGridMainForm.js?dt={$dtFlag}"
+        type="text/javascript"></script>
+
+<script
+        src="{$uri}Public/Scripts/PSI/OrgWarehouse/MainForm.js?dt={$dtFlag}"
+        type="text/javascript"></script>
+
+<script
+        src="{$uri}Public/Scripts/PSI/User/SelectOrgField.js?dt={$dtFlag}"
+        type="text/javascript"></script>
+
+<script
+        src="{$uri}Public/Scripts/PSI/OrgWarehouse/EditForm.js?dt={$dtFlag}"
+        type="text/javascript"></script>
+<script
+        src="{$uri}Public/Scripts/PSI/Warehouse/EditDataOrgForm.js?dt={$dtFlag}"
+        type="text/javascript"></script>
+<script
+        src="{$uri}Public/Scripts/PSI/User/SelectUserDataOrg.js?dt={$dtFlag}"
+        type="text/javascript"></script>
+<script>
+    Ext.onReady(function() {
+        PSI.Const.PROD_NAME = "{$productionName}";
+
+        var app = Ext.create("PSI.App", {
+            userName : "{$loginUserName}",
+            productionName : "{$productionName}",
+            appHeaderInfo : {
+                title : "{$title}",
+                iconCls : "PSI-fid1005"
+            }
+        });
+
+        app.add(Ext.create("PSI.OrgWarehouse.MainForm", {
+            pAdd : "{$pAdd}",
+            pEdit : "{$pEdit}",
+            pDelete : "{$pDelete}",
+            selectOrg:"{$selectOrg}",
+            companyId:"{$company_id}",
+            companyName:"{$company_name}"
+        }));
+    });
+</script>
