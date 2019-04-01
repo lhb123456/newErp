@@ -154,11 +154,25 @@ Ext.define("PSI.OrgWarehouse.EditForm", {
                         }
                     }
                 },{
+                    id : "PSI_Warehouse_EditForm_number",
+                    fieldLabel : "仓库库号",
+                    //allowBlank : false,
+                    blankText : "没有输入仓库名称",
+                    //beforeLabelTextTpl : PSI.Const.REQUIRED,
+                    name : "number",
+                    value : entity.data ? entity.get("number") :null ,
+                    listeners : {
+                        specialkey : {
+                            fn : me.onEditNameSpecialKey,
+                            scope : me
+                        }
+                    }
+                },{
                     id : "PSI_Warehouse_EditForm_address",
                     fieldLabel : "仓库地址",
-                    allowBlank : false,
-                    blankText : "没有输入仓库编码",
-                    beforeLabelTextTpl : PSI.Const.REQUIRED,
+                    //allowBlank : false,
+                    blankText : "没有输入仓库地址",
+                    //beforeLabelTextTpl : PSI.Const.REQUIRED,
                     name : "address",
                     value : entity.data? entity.get("address") :null ,
                     listeners : {
@@ -181,6 +195,7 @@ Ext.define("PSI.OrgWarehouse.EditForm", {
         me.editName = Ext.getCmp("PSI_Warehouse_EditForm_editName");
         me.selectOrg = Ext.getCmp("selectOrg");
         me.editAddress = Ext.getCmp("PSI_Warehouse_EditForm_address");
+        me.number = Ext.getCmp("PSI_Warehouse_EditForm_number");
     },
 
     /**

@@ -305,7 +305,7 @@ class BizConfigService extends PSIBaseExService {
 		
 		$sql = "select id, name
 				from t_org
-				where (parent_id is null) ";
+				where (org_type = 2000) ";
 		$queryParams = array();
 		
 		$ds = new DataOrgService();

@@ -12,7 +12,7 @@ use Home\DAO\BizConfigDAO;
  */
 class InventoryService extends PSIBaseService {
 
-	public function warehouseList() {
+	public function warehouseList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}

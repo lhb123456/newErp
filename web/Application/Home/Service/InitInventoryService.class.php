@@ -16,24 +16,52 @@ class InitInventoryService extends PSIBaseExService {
 	/**
 	 * 获得仓库列表
 	 */
-	public function warehouseList() {
-		if ($this->isNotOnline()) {
-			return $this->emptyResult();
-		}
-		
-		$sql = "select id, code, name, inited from t_warehouse ";
-		$queryParams = array();
-		
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::INVENTORY_INIT, "t_warehouse");
-		if ($rs) {
-			$sql .= " where " . $rs[0];
-			$queryParams = $rs[1];
-		}
-		
-		$sql .= "order by code";
-		
-		return M()->query($sql, $queryParams);
+	public function warehouseList($params) {
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+        $code=$params["code"];
+        $name=$params["name"];
+        $status=$params["status"];
+
+        $sql = "select id, code, name, company_id,inited from t_warehouse where 1= 1 ";
+        $queryParams = array();
+
+        $ds = new DataOrgService();
+        $rs = $ds->buildSQL(FIdConst::INVENTORY_INIT, "t_warehouse");
+        if ($rs) {
+            $sql .= " AND " . $rs[0];
+            $queryParams = $rs[1];
+        }
+        if($code){
+            $sql .= " AND code like '%s'";
+            $queryParams[] = "%{$code}%";
+        }
+        if($name){
+            $sql .= " AND name like '%s'";
+            $queryParams[] = "%{$name}%";
+        }
+        if($status != -1){
+            $sql .= " AND inited = %d ";
+            $queryParams[] = "{$status}";
+        }
+        $sql .= " order by company_id,code";
+
+        $warehouse= M()->query($sql, $queryParams);
+        $item=[];
+        foreach ($warehouse as $k=>$v){
+            $company=M("t_org")->where("id = '".$v["company_id"]."'")->find();
+
+            $item[]=[
+                "id"=>$v["id"],
+                "code"=>$v["code"],
+                "name"=>$v["name"],
+                "inited"=>$v["inited"],
+                "company_name"=>$company["name"],
+
+            ];
+        }
+        return $item;
 	}
 
 	/**

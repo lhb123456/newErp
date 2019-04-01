@@ -52,10 +52,10 @@ class WarehouseService extends PSIBaseExService {
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
-		
+
 		$ps = new PinyinService();
 		$py = $ps->toPY($name);
-		$params["py"] = $py;
+		//$params["py"] = $py;
 		
 		$db = $this->db();
 		
@@ -80,7 +80,6 @@ class WarehouseService extends PSIBaseExService {
 			
 			$params["dataOrg"] = $this->getLoginUserDataOrg();
 			$params["companyId"] = $this->getCompanyId();
-			
 			$rc = $dao->addWarehouse($params);
 			if ($rc) {
 				$db->rollback();
@@ -89,7 +88,10 @@ class WarehouseService extends PSIBaseExService {
 			
 			$id = $params["id"];
 			
-			$log = "新增仓库：编码 = {$code},  名称 = {$name}";
+			$log = "新增公司仓库：";
+			foreach ($params["data"] as $k=>$v){
+			    $log.=" 编码 = {$v["code"]},名称 = {$v["name"]} 。 ";
+            }
 		}
 		
 		// 记录业务日志
@@ -242,5 +244,89 @@ class WarehouseService extends PSIBaseExService {
         return $this->ok($id);
     }
 
+    /**
+     * 删除仓库
+     */
+    public function deleteOrgWarehouse($params) {
+        if ($this->isNotOnline()) {
+            return $this->notOnlineError();
+        }
 
+        $id = $params["id"];
+
+        $db = $this->db();
+        $db->startTrans();
+
+        $dao = new WarehouseDAO($db);
+        $data=M("t_warehouse_base")->where("id = '".$id."'")->find();
+        if(!$data){
+            return $this->bad("仓库不存在");
+        }
+        $params["code"] = $data["code"];
+        $params["name"] = $data["name"];
+        $rc = $dao->deleteOrgWarehouse($params);
+        if ($rc) {
+            $db->rollback();
+            return $rc;
+        }
+
+        $log = "删除仓库： 编码 = {$params['code']}， 名称 = {$params['name']}";
+        $bs = new BizlogService($db);
+        $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+        $db->commit();
+
+        return $this->ok();
+    }
+    public function selectOrg() {
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $params = array(
+            "loginUserId" => $this->getLoginUserId()
+        );
+        $dao = new WarehouseDAO($this->db());
+
+        return $dao->selectOrg($params);
+    }
+    public function wareList($params) {
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+        $dao = new WarehouseDAO($this->db());
+
+        return $dao->wareList($params);
+    }
+    public function deleteOrgWare($params) {
+        if ($this->isNotOnline()) {
+            return $this->notOnlineError();
+        }
+
+        $id = $params["wareId"];
+
+        $db = $this->db();
+        $db->startTrans();
+
+        $dao = new WarehouseDAO($db);
+        $data=M("t_warehouse")->where("id = '".$id."'")->find();
+        if(!$data){
+            return $this->bad("公司仓库不存在");
+        }
+        $params["code"] = $data["code"];
+        $params["name"] = $data["name"];
+        $rc = $dao->deleteOrgWare($params);
+        if ($rc) {
+            $db->rollback();
+            return $rc;
+        }
+
+        $log = "删除仓库： 编码 = {$params['code']}， 名称 = {$params['name']}";
+        $bs = new BizlogService($db);
+        $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+        $db->commit();
+
+        return $this->ok();
+    }
 }

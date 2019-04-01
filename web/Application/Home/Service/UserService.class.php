@@ -587,4 +587,18 @@ class UserService extends PSIBaseExService {
 		
 		return $dao->userInfo($params);
 	}
+
+    public function selectOrg() {
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $params = array(
+            "loginUserId" => $this->getLoginUserId()
+        );
+        $dao = new OrgDAO($this->db());
+
+        return $dao->selectOrg($params);
+    }
+
 }

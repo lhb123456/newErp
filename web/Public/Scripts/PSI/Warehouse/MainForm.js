@@ -2,251 +2,575 @@
  * 仓库 - 主界面
  */
 Ext.define("PSI.Warehouse.MainForm", {
-	extend : "PSI.AFX.BaseOneGridMainForm",
+    extend : "PSI.AFX.BaseMainExForm",
+    border : 0,
 
-	config : {
-		pAdd : null,
-		pEdit : null,
-		pDelete : null,
-		pEditDataOrg : null,
-		pInitInv : null
-	},
+    config : {
+        pAdd : null,
+        pEdit : null,
+        pDelete : null,
+        pEditDataOrg : null,
+        pInitInv : null
+    },
 
-	/**
-	 * 重载父类方法
-	 */
-	afxGetToolbarCmp : function() {
-		var me = this;
+    /**
+     * 初始化组件
+     */
+    initComponent : function() {
+        var me = this;
 
-		var result = [{
-					text : "新增仓库",
-					disabled : me.getPAdd() == "0",
-					handler : me.onAddWarehouse,
-					scope : me
-				}, {
-					text : "编辑仓库",
-					disabled : me.getPEdit() == "0",
-					handler : me.onEditWarehouse,
-					scope : me
-				}, {
-					text : "删除仓库",
-					disabled : me.getPDelete() == "0",
-					handler : me.onDeleteWarehouse,
-					scope : me
-				}, "-", {
-					text : "修改数据域",
-					disabled : me.getPEditDataOrg() == "0",
-					handler : me.onEditDataOrg,
-					scope : me
-				}];
+        Ext.apply(me, {
+            tbar : me.getToolbarCmp(),
+            layout : "border",
+            items : [{
+                id : "panelQueryCmp",
+                region : "north",
+                height : 45,
+                border : 0,
+                collapsible : true,
+                collapseMode : "mini",
+                header : false,
+                layout : {
+                    type : "table",
+                    columns : 4
+                },
+                items : me.getQueryCmp()
+            }, {
+                region : "center",
+                layout : "border",
+                border : 0,
+                items : [{
+                    region : "center",
+                    xtype : "panel",
+                    layout : "fit",
+                    border : 0,
+                    items : [me.getMainGrid()]
+                }, {
+                    id : "panelCategory",
+                    xtype : "panel",
+                    region : "west",
+                    layout : "fit",
+                    width : 400,
+                    split : true,
+                    collapsible : true,
+                    header : false,
+                    border : 0,
+                    items : [me.getOrgGrid()]
+                }]
+            }]
+        });
 
-		if (me.getPInitInv() == "1") {
-			result.push("-", {
-						text : "打开库存建账模块",
-						handler : function() {
-							window.open(me
-									.URL("Home/MainMenu/navigateTo/fid/2000"));
-						}
-					});
-		}
+        me.callParent(arguments);
 
-		result.push("-", {
-					text : "帮助",
-					handler : function() {
-						window.open(me.URL("/Home/Help/index?t=warehouse"));
-					}
-				}, "-", {
-					text : "关闭",
-					handler : function() {
-						me.closeWindow();
-					}
-				});
+        me.categoryGrid = me.getOrgGrid();
+        me.customerGrid = me.getMainGrid();
 
-		return result;
-	},
+        me.freshCategoryGrid();
+    },
 
-	/**
-	 * 重载父类方法
-	 */
-	afxGetRefreshGridURL : function() {
-		return "Home/Warehouse/warehouseList";
-	},
+    getToolbarCmp : function() {
+        var me = this;
 
-	/**
-	 * 重载父类方法
-	 */
-	afxGetMainGrid : function() {
-		var me = this;
-		if (me.__mainGrid) {
-			return me.__mainGrid;
-		}
-
-		var modelName = "PSI_Warehouse_MainForm_PSIWarehouse";
-		Ext.define(modelName, {
-					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "inited", "dataOrg"]
-				});
-
-		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					border : 0,
-					viewConfig : {
-						enableTextSelection : true
-					},
-					columnLines : true,
-					columns : {
-						defaults : {
-							menuDisabled : true,
-							sortable : false
-						},
-						items : [{
-									xtype : "rownumberer",
-									width : 40
-								}, {
-									header : "仓库编码",
-									dataIndex : "code",
-									width : 100
-								}, {
-									header : "仓库名称",
-									dataIndex : "name",
-									width : 300
-								}, {
-									header : "库存建账",
-									dataIndex : "inited",
-									width : 90,
-									renderer : function(value) {
-										return value == 1
-												? "建账完毕"
-												: "<span style='color:red'>待建账</span>";
-									}
-								}, {
-									header : "创建人的数据域",
-									dataIndex : "dataOrg",
-									width : 150
-								}]
-					},
-					store : Ext.create("Ext.data.Store", {
-								model : modelName,
-								autoLoad : false,
-								data : []
-							}),
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditWarehouse,
-							scope : me
-						}
-					}
-				});
-
-		return me.__mainGrid;
-	},
-
-	/**
-	 * 新增仓库
-	 */
+        return [{
+            text : "新增公司仓库",
+            disabled : me.getPAdd() == "0",
+            handler : me.onAddWarehouse,
+            scope : me
+        },{
+            text : "删除公司仓库",
+            disabled : me.getPDelete() == "0",
+            handler : me.onDeleteWarehouse,
+            scope : me
+        },"-", {
+            text : "打开库存建账模块",
+            handler : function() {
+                window.open(me
+                    .URL("Home/MainMenu/navigateTo/fid/2000"));
+            }
+        }];
+    },
+    /*新增公司仓库*/
 	onAddWarehouse : function() {
 		var me = this;
-
+        var item = me.getOrgGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            me.showInfo("请选择公司");
+            return;
+        }
+        var data = item[0];
 		var form = Ext.create("PSI.Warehouse.EditForm", {
-					parentForm : me
-				});
+			parentForm : me,
+            orgId:data.get("id")
+		});
 
 		form.show();
 	},
+    getQueryCmp : function() {
+        var me = this;
 
-	/**
-	 * 编辑仓库
-	 */
-	onEditWarehouse : function() {
-		var me = this;
+        return [{
+            id : "code",
+            labelWidth : 60,
+            labelAlign : "right",
+            labelSeparator : "",
+            fieldLabel : "仓库编码",
+            colspan:1,
+            margin : "5, 0, 0, 0",
+            xtype : "textfield"
+        },{
+            id : "name",
+            labelWidth : 60,
+            labelAlign : "right",
+            labelSeparator : "",
+            fieldLabel : "仓库名称",
+            colspan:1,
+            margin : "5, 0, 0, 0",
+            xtype : "textfield"
+        },{
+            xtype : "container",
+            items : [{
+                xtype : "button",
+                text : "查询",
+                width : 100,
+                height : 26,
+                margin : "5, 0, 0, 20",
+                handler : me.onQuery,
+                scope : me
+            }, {
+                xtype : "button",
+                text : "清空查询条件",
+                width : 100,
+                height : 26,
+                margin : "5, 0, 0, 15",
+                handler : me.onClearQuery,
+                scope : me
+            }, {
+                xtype : "button",
+                text : "隐藏查询条件栏",
+                width : 130,
+                height : 26,
+                iconCls : "PSI-button-hide",
+                margin : "5 0 0 10",
+                handler : function() {
+                    Ext.getCmp("panelQueryCmp").collapse();
+                },
+                scope : me
+            }]
+        }];
+    },
 
-		if (me.getPEdit() == "0") {
-			return;
-		}
+    getOrgGrid : function() {
+        var me = this;
 
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("请选择要编辑的仓库");
-			return;
-		}
+        if (me.__categoryGrid) {
+            return me.__categoryGrid;
+        }
 
-		var warehouse = item[0];
+        var modelName = "PSICustomerCategory";
 
-		var form = Ext.create("PSI.Warehouse.EditForm", {
-					parentForm : me,
-					entity : warehouse
-				});
+        Ext.define(modelName, {
+            extend : "Ext.data.Model",
+            fields : ["id", "fullName", {
+                name : "cnt",
+                type : "int"
+            }, "count_limit","count"]
+        });
 
-		form.show();
-	},
+        me.__categoryGrid = Ext.create("Ext.grid.Panel", {
+            cls : "PSI",
+            viewConfig : {
+                enableTextSelection : true
+            },
+            title : "公司",
+            tools : [{
+                type : "close",
+                handler : function() {
+                    Ext.getCmp("panelCategory").collapse();
+                }
+            }],
+            features : [{
+                ftype : "summary"
+            }],
+            columnLines : true,
+            columns : [{
+                xtype : "rownumberer",
+                width : 40
+            }, {
+                header : "公司名称",
+                dataIndex : "fullName",
+                width : 260,
+                menuDisabled : true,
+                sortable : false
+            },{
+                header : "仓库数量",
+                dataIndex : "count",
+                width : 80,
+                menuDisabled : true,
+                sortable : false,
+                //summaryType : "sum",
+                align : "right"
+            }],
+            store : Ext.create("Ext.data.Store", {
+                model : modelName,
+                autoLoad : false,
+                data : []
+            }),
+            listeners : {
+                select : {
+                    fn : me.onCategoryGridSelect,
+                    scope : me
+                },
+                itemdblclick : {
+                    fn : me.onEditCategory,
+                    scope : me
+                }
+            }
+        });
 
-	/**
-	 * 删除仓库
-	 */
-	onDeleteWarehouse : function() {
-		var me = this;
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("请选择要删除的仓库");
-			return;
-		}
+        return me.__categoryGrid;
+    },
 
-		var warehouse = item[0];
-		var info = "请确认是否删除仓库 <span style='color:red'>" + warehouse.get("name")
-				+ "</span> ?";
+    getMainGrid : function() {
+        var me = this;
+        if (me.__mainGrid) {
+            return me.__mainGrid;
+        }
 
-		var preIndex = me.getPreIndexInMainGrid(warehouse.get("id"));
+        var modelName = "PSICustomer";
 
-		var funcConfirm = function() {
-			var el = Ext.getBody();
-			el.mask(PSI.Const.LOADING);
-			var r = {
-				url : me.URL("Home/Warehouse/deleteWarehouse"),
-				params : {
-					id : warehouse.get("id")
-				},
-				method : "POST",
-				callback : function(options, success, response) {
-					el.unmask();
-					if (success) {
-						var data = me.decodeJSON(response.responseText);
-						if (data.success) {
-							me.tip("成功完成删除操作");
-							me.freshGrid(preIndex);
-						} else {
-							me.showInfo(data.msg);
-						}
-					} else {
-						me.showInfo("网络错误");
-					}
-				}
-			};
+        Ext.define(modelName, {
+            extend : "Ext.data.Model",
+            fields : ["id", "code", "name","address","number"]
+        });
 
-			me.ajax(r);
-		};
+        var store = Ext.create("Ext.data.Store", {
+            autoLoad : false,
+            model : modelName,
+            data : [],
+            pageSize : 20,
+            proxy : {
+                type : "ajax",
+                actionMethods : {
+                    read : "POST"
+                },
+                url : me.URL("Home/OrgWare/wareList"),
+                reader : {
+                    root : 'customerList',
+                    totalProperty : 'totalCount'
+                }
+            },
+            listeners : {
+                beforeload : {
+                    fn : function() {
+                        store.proxy.extraParams = me.getQueryParam();
+                    },
+                    scope : me
+                },
+                load : {
+                    fn : function(e, records, successful) {
+                        if (successful) {
+                            me.refreshCategoryCount();
+                            me.gotoCustomerGridRecord(me.__lastId);
+                        }
+                    },
+                    scope : me
+                }
+            }
+        });
 
-		me.confirm(info, funcConfirm);
-	},
+        me.__mainGrid = Ext.create("Ext.grid.Panel", {
+            cls : "PSI",
+            viewConfig : {
+                enableTextSelection : true
+            },
+            title : "客户列表",
+            columnLines : true,
+            columns : [Ext.create("Ext.grid.RowNumberer", {
+                text : "序号",
+                width : 40
+            }), {
+                header : "仓库编码",
+                dataIndex : "code",
+                menuDisabled : true,
+                sortable : false
+            }, {
+                header : "仓库名称",
+                dataIndex : "name",
+                menuDisabled : true,
+                sortable : false,
+                width : 200
+            }, {
+                header : "仓库库号",
+                dataIndex : "number",
+                menuDisabled : true,
+                sortable : false,
+                width : 80
+            },{
+                header : "仓库地址",
+                dataIndex : "address",
+                menuDisabled : true,
+                sortable : false,
+                width : 300
+            }],
+            store : store,
+            bbar : ["->", {
+                id : "pagingToolbar",
+                border : 0,
+                xtype : "pagingtoolbar",
+                store : store
+            }, "-", {
+                xtype : "displayfield",
+                value : "每页显示"
+            }, {
+                id : "comboCountPerPage",
+                xtype : "combobox",
+                editable : false,
+                width : 60,
+                store : Ext.create("Ext.data.ArrayStore", {
+                    fields : ["text"],
+                    data : [["20"], ["50"], ["100"],
+                        ["300"], ["1000"]]
+                }),
+                value : 20,
+                listeners : {
+                    change : {
+                        fn : function() {
+                            store.pageSize = Ext
+                                .getCmp("comboCountPerPage")
+                                .getValue();
+                            store.currentPage = 1;
+                            Ext.getCmp("pagingToolbar")
+                                .doRefresh();
+                        },
+                        scope : me
+                    }
+                }
+            }, {
+                xtype : "displayfield",
+                value : "条记录"
+            }],
+        });
 
-	/**
-	 * 编辑数据域
-	 */
-	onEditDataOrg : function() {
-		var me = this;
+        return me.__mainGrid;
+    },
 
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("请选择要编辑数据域的仓库");
-			return;
-		}
+    addSupplier : function() {
+        var me = this;
+        var item = me.getOrgGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            me.showInfo("请选择客户分类");
+            return;
+        }
 
-		var warehouse = item[0];
+        var category = item[0];
+        var form = Ext.create("PSI.Customer.CustomerEditForm", {
+            parentForm : me,
+            category : category,
+            selectOrg :me.getSelectOrg()
+        });
 
-		var form = Ext.create("PSI.Warehouse.EditDataOrgForm", {
-					parentForm : me,
-					entity : warehouse
-				});
+        form.show();
+    },
+    /**
+     * 刷新公司信息
+     */
+    freshCategoryGrid : function(id) {
+        var me = this;
+        var grid = me.getOrgGrid();
+        var el = grid.getEl() || Ext.getBody();
+        el.mask(PSI.Const.LOADING);
+        me.ajax({
+            url : me.URL("Home/OrgWare/orgList"),
+            params : me.getQueryParam(),
+            callback : function(options, success, response) {
+                var store = grid.getStore();
 
-		form.show();
-	}
+                store.removeAll();
+
+                if (success) {
+                    var data = me.decodeJSON(response.responseText);
+                    store.add(data);
+                    if (store.getCount() > 0) {
+                        if (id) {
+                            var r = store.findExact("id", id);
+                            if (r != -1) {
+                                grid.getSelectionModel().select(r);
+                            }
+                        } else {
+                            grid.getSelectionModel().select(0);
+                        }
+                    }
+                }
+
+                el.unmask();
+            }
+        });
+    },
+
+    /**
+     * 刷新客户资料Grid
+     */
+    freshCustomerGrid : function(id) {
+        var me = this;
+
+        var item = me.getOrgGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            var grid = me.getMainGrid();
+            grid.setTitle("仓库列表");
+            return;
+        }
+        var ware = item[0];
+
+        var grid = me.getMainGrid();
+        grid.setTitle("属于 [" + ware.get("fullName") + "] 公司的仓库");
+
+        me.__lastId = id;
+        Ext.getCmp("pagingToolbar").doRefresh()
+    },
+
+    onCategoryGridSelect : function() {
+        var me = this;
+        me.getMainGrid().getStore().currentPage = 1;
+        me.freshCustomerGrid();
+    },
+    /**
+     * 删除公司仓库
+     */
+    onDeleteWarehouse : function() {
+        var me = this;
+
+        var item1 = me.getOrgGrid().getSelectionModel().getSelection();
+
+        if (item1 == null || item1.length != 1) {
+            me.showInfo("请先选择公司");
+            return;
+        }
+        var org = item1[0];
+
+        var item = me.getMainGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            me.showInfo("请选择要删除的仓库");
+            return;
+        }
+
+        var ware = item[0];
+
+        var store = me.getMainGrid().getStore();
+        var index = store.findExact("id", ware.get("id"));
+        index--;
+        var preIndex = null;
+        var preItem = store.getAt(index);
+        if (preItem) {
+            preIndex = preItem.get("id");
+        }
+
+        var info = "请确认是否删除仓库: <span style='color:red'>" + ware.get("name")
+            + "</span>";
+            var funcConfirm = function() {
+                var el = Ext.getBody();
+                el.mask("正在删除中...");
+
+                var r = {
+                    url : me.URL("Home/OrgWare/deleteOrgWare"),
+                    params : {
+                        wareId : ware.get("id"),
+                        orgId:org.get("id"),
+                    },
+                    callback : function(options, success, response) {
+                        el.unmask();
+
+                        if (success) {
+                            var data = me.decodeJSON(response.responseText);
+                            if (data.success) {
+                                me.tip("成功完成删除操作");
+                                me.freshCategoryGrid(org.get("id"));
+                            } else {
+                                me.showInfo(data.msg);
+                            }
+                        }
+                    }
+
+                };
+
+                me.ajax(r);
+            };
+            me.confirm(info, funcConfirm);
+    },
+
+    gotoCustomerGridRecord : function(id) {
+        var me = this;
+        var grid = me.getMainGrid();
+        var store = grid.getStore();
+        if (id) {
+            var r = store.findExact("id", id);
+            if (r != -1) {
+                grid.getSelectionModel().select(r);
+            } else {
+                grid.getSelectionModel().select(0);
+            }
+        } else {
+            grid.getSelectionModel().select(0);
+        }
+    },
+
+    refreshCategoryCount : function() {
+        var me = this;
+        var item = me.getOrgGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            return;
+        }
+
+        var category = item[0];
+        category.set("cnt", me.getMainGrid().getStore().getTotalCount());
+        me.getOrgGrid().getStore().commitChanges();
+    },
+
+    onLastQueryEditSpecialKey : function(field, e) {
+        if (e.getKey() === e.ENTER) {
+            this.onQuery();
+        }
+    },
+
+    getQueryParam : function() {
+        var me = this;
+        var item = me.getOrgGrid().getSelectionModel().getSelection();
+        var orgId;
+        if (item == null || item.length != 1) {
+            categoryId = null;
+        } else {
+            orgId = item[0].get("id");
+        }
+
+        var result = {
+            orgId : orgId
+        };
+        var code = Ext.getCmp("code").getValue();
+        if (code) {
+            result.code = code;
+        }
+
+        var name = Ext.getCmp("name").getValue();
+        if (name) {
+            result.name = name;
+        }
+        return result;
+    },
+
+    /**
+     * 查询
+     */
+    onQuery : function() {
+        this.freshCategoryGrid();
+    },
+
+    /**
+     * 清除查询条件
+     */
+    onClearQuery : function() {
+        var me = this;
+        var code = Ext.getCmp("code").setValue();
+        var name = Ext.getCmp("name").setValue();
+
+        me.onQuery();
+    }
 });

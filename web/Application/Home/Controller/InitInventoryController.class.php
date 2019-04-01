@@ -16,10 +16,15 @@ class InitInventoryController extends PSIBaseController {
 	 * 查询仓库列表
 	 */
 	public function warehouseList() {
-		if (IS_POST) {
-			$is = new InitInventoryService();
-			$this->ajaxReturn($is->warehouseList());
-		}
+        if (IS_POST) {
+            $params = [
+                "code" => I("post.code"),
+                "name" => I("post.name"),
+                "status" => I("post.status"),
+            ];
+            $is = new InitInventoryService();
+            $this->ajaxReturn($is->warehouseList($params));
+        }
 	}
 
 	/**
