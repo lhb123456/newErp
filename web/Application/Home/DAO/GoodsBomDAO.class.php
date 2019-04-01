@@ -5,7 +5,7 @@ namespace Home\DAO;
 /**
  * 商品构成DAO
  *
- * @author 李静波
+ * @author 
  */
 class GoodsBomDAO extends PSIBaseExDAO {
 
@@ -27,35 +27,17 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
-		// 商品id
 		$id = $params["id"];
 		
 		$result = [];
 		
-		$sql = "select sum(cost_weight) as sum_cost_weight from t_goods_bom where goods_id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
-			return $result;
-		}
-		
-		$sumCostWeight = $data[0]["sum_cost_weight"];
-		
 		$sql = "select b.id, convert(b.sub_goods_count, $fmt) as sub_goods_count,g.id as goods_id,
-					g.code, g.name, g.spec, u.name as unit_name, b.cost_weight
+					g.code, g.name, g.spec, u.name as unit_name
 				from t_goods_bom b, t_goods g, t_goods_unit u
 				where b.goods_id = '%s' and b.sub_goods_id = g.id and g.unit_id = u.id
 				order by g.code";
 		$data = $db->query($sql, $id);
 		foreach ( $data as $v ) {
-			$costWeight = $v["cost_weight"];
-			$costWeightNote = null;
-			if ($costWeight == 0 || $sumCostWeight == 0) {
-				$costWeight = null;
-				$costWeightNote = null;
-			} else {
-				$percent = number_format($costWeight / $sumCostWeight * 100, 2);
-				$costWeightNote = "{$costWeight}/{$sumCostWeight} = {$percent}%";
-			}
 			$result[] = [
 					"id" => $v["id"],
 					"goodsId" => $v["goods_id"],
@@ -63,9 +45,8 @@ class GoodsBomDAO extends PSIBaseExDAO {
 					"goodsName" => $v["name"],
 					"goodsSpec" => $v["spec"],
 					"unitName" => $v["unit_name"],
-					"goodsCount" => $v["sub_goods_count"],
-					"costWeight" => $costWeight,
-					"costWeightNote" => $costWeightNote
+					"goodsCount" => $v["sub_goods_count"]
+			
 			];
 		}
 		
@@ -128,13 +109,6 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		
 		$subGoodsId = $params["subGoodsId"];
 		$subGoodsCount = $params["subGoodsCount"];
-		$costWeight = $params["costWeight"];
-		if ($costWeight < 0) {
-			$costWeight = 0;
-		}
-		if ($costWeight > 100) {
-			$costWeight = 100;
-		}
 		
 		$goodsDAO = new GoodsDAO($db);
 		$goods = $goodsDAO->getGoodsById($id);
@@ -165,10 +139,9 @@ class GoodsBomDAO extends PSIBaseExDAO {
 			return $this->bad("子商品已经存在，不能再新增");
 		}
 		
-		$sql = "insert into t_goods_bom(id, goods_id, sub_goods_id, sub_goods_count, parent_id,
-					cost_weight)
-				values ('%s', '%s', '%s', convert(%f, $fmt), null, %d)";
-		$rc = $db->execute($sql, $this->newId(), $id, $subGoodsId, $subGoodsCount, $costWeight);
+		$sql = "insert into t_goods_bom(id, goods_id, sub_goods_id, sub_goods_count, parent_id)
+				values ('%s', '%s', '%s', convert(%f, $fmt), null)";
+		$rc = $db->execute($sql, $this->newId(), $id, $subGoodsId, $subGoodsCount);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -180,7 +153,6 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$params["subGoodsName"] = $subGoods["name"];
 		$params["subGoodsSpec"] = $subGoods["spec"];
 		
-		// 操作成功
 		return null;
 	}
 
@@ -207,13 +179,6 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		
 		$subGoodsId = $params["subGoodsId"];
 		$subGoodsCount = $params["subGoodsCount"];
-		$costWeight = $params["costWeight"];
-		if ($costWeight < 0) {
-			$costWeight = 0;
-		}
-		if ($costWeight > 100) {
-			$costWeight = 100;
-		}
 		
 		$goodsDAO = new GoodsDAO($db);
 		$goods = $goodsDAO->getGoodsById($id);
@@ -231,10 +196,10 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "update t_goods_bom
-				set sub_goods_count = convert(%f, $fmt), cost_weight = %d
+				set sub_goods_count = convert(%f, $fmt)
 				where goods_id = '%s' and sub_goods_id = '%s' ";
 		
-		$rc = $db->execute($sql, $subGoodsCount, $costWeight, $id, $subGoodsId);
+		$rc = $db->execute($sql, $subGoodsCount, $id, $subGoodsId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -272,15 +237,13 @@ class GoodsBomDAO extends PSIBaseExDAO {
 			return $this->badParam("subGoodsId: $subGoodsId ");
 		}
 		
-		$sql = "select sub_goods_count, cost_weight
+		$sql = "select sub_goods_count
 				from t_goods_bom
 				where goods_id = '%s' and sub_goods_id = '%s' ";
 		$data = $db->query($sql, $goodsId, $subGoodsId);
 		$subGoodsCount = 0;
-		$costWeight = 1;
 		if ($data) {
 			$subGoodsCount = $data[0]["sub_goods_count"];
-			$costWeight = $data[0]["cost_weight"];
 		}
 		
 		$sql = "select u.name
@@ -298,8 +261,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 				"name" => $subGoods["name"],
 				"spec" => $subGoods["spec"],
 				"code" => $subGoods["code"],
-				"unitName" => $unitName,
-				"costWeight" => $costWeight
+				"unitName" => $unitName
 		];
 	}
 

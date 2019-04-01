@@ -7,7 +7,7 @@ use Home\Common\FIdConst;
 /**
  * 商品安全库存 DAO
  *
- * @author 李静波
+ * @author 
  */
 class GoodsSiDAO extends PSIBaseExDAO {
 

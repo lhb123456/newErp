@@ -7,7 +7,7 @@ use Home\Common\FIdConst;
 /**
  * 商品分类 DAO
  *
- * @author 李静波
+ * @author
  */
 class GoodsCategoryDAO extends PSIBaseExDAO {
 
@@ -18,7 +18,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$barCode = $params["barCode"];
 		
 		$result = array();
-		$sql = "select id, code, name, full_name, tax_rate
+		$sql = "select id, code, name, full_name
 				from t_goods_category c
 				where (parent_id = '%s')
 				";
@@ -41,7 +41,6 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				$fullName = $v["name"];
 			}
 			$result[$i]["fullName"] = $fullName;
-			$result[$i]["taxRate"] = $this->toTaxRate($v["tax_rate"]);
 			
 			$children = $this->allCategoriesInternal($db, $id, $rs, $params); // 自身递归调用
 			
@@ -64,7 +63,6 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$name = $params["name"];
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
-		$brandId = $params["brandId"];
 		
 		$sql = "select count(*) as cnt 
 					from t_goods c
@@ -92,10 +90,6 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$sql .= " and (c.bar_code = '%s') ";
 			$queryParam[] = $barCode;
 		}
-		if ($brandId) {
-			$sql .= " and (c.brand_id = '%s') ";
-			$queryParam[] = $brandId;
-		}
 		
 		$data = $db->query($sql, $queryParam);
 		$result = $data[0]["cnt"];
@@ -120,19 +114,6 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
-	private function toTaxRate($taxRate) {
-		if (! $taxRate) {
-			return null;
-		}
-		
-		$r = intval($taxRate);
-		if ($r >= 0 && $r <= 17) {
-			return "{$r}%";
-		} else {
-			return null;
-		}
-	}
-
 	/**
 	 * 返回所有的商品分类
 	 *
@@ -146,32 +127,85 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$name = $params["name"];
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
-		$brandId = $params["brandId"];
-		
-		$inQuery = false;
-		if ($code || $name || $spec || $barCode || $brandId) {
-			$inQuery = true;
-		}
 		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, code, name, full_name, tax_rate
+		$sql = "select id, code, name, full_name
 				from t_goods_category c
-				where (parent_id is null)
+				where (parent_id='')
 				";
 		$queryParam = array();
-		$ds = new DataOrgDAO($db);
+		/*$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::GOODS_CATEGORY, "c", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
-		}
-		
+		}*/
+
 		$sql .= " order by code";
 		
+		$data = $db->query($sql, $queryParam);
+
+		$result = array();
+		foreach ( $data as $i => $v ) {
+			$id = $v["id"];
+			$result[$i]["id"] = $v["id"];
+			$result[$i]["text"] = $v["name"];
+			$result[$i]["code"] = $v["code"];
+			$fullName = $v["full_name"];
+			if (! $fullName) {
+				$fullName = $v["name"];
+			}
+			$result[$i]["fullName"] = $fullName;
+			
+			$children = $this->allCategoriesInternal($db, $id, $rs, $params);
+			
+			$result[$i]["children"] = $children;
+			$result[$i]["leaf"] = count($children) == 0;
+			$result[$i]["expanded"] = true;
+			$result[$i]["iconCls"] = "PSI-GoodsCategory";
+			
+			$result[$i]["cnt"] = $this->getGoodsCountWithAllSub($db, $id, $params, $rs);
+		}
+		
+		return $result;
+	}
+	/**
+	 * 返回所有的商品分类
+	 *
+	 * @param array $params
+	 * @return array
+	 */
+	public function allCategoryList($params) {
+		$db = $this->db;
+
+		$code = $params["code"];
+		$name = $params["name"];
+		$spec = $params["spec"];
+		$barCode = $params["barCode"];
+
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+
+		$sql = "select id, code, name, full_name
+				from t_goods_category c
+				where (parent_id is null)
+				";
+		$queryParam = array();
+		/*$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::GOODS_CATEGORY, "c", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}*/
+
+		$sql .= " order by code";
+
 		$data = $db->query($sql, $queryParam);
 		$result = array();
 		foreach ( $data as $i => $v ) {
@@ -184,41 +218,17 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				$fullName = $v["name"];
 			}
 			$result[$i]["fullName"] = $fullName;
-			$result[$i]["taxRate"] = $this->toTaxRate($v["tax_rate"]);
-			
+
 			$children = $this->allCategoriesInternal($db, $id, $rs, $params);
-			
+
 			$result[$i]["children"] = $children;
 			$result[$i]["leaf"] = count($children) == 0;
 			$result[$i]["expanded"] = true;
 			$result[$i]["iconCls"] = "PSI-GoodsCategory";
-			
+
 			$result[$i]["cnt"] = $this->getGoodsCountWithAllSub($db, $id, $params, $rs);
 		}
-		
-		if ($inQuery) {
-			$result = $this->filterCategory($result);
-		}
-		
-		return $result;
-	}
 
-	/**
-	 * 把分类中商品数量是0的分类过滤掉
-	 *
-	 * @param array $data        	
-	 * @return array
-	 */
-	private function filterCategory($data) {
-		$result = [];
-		foreach ( $data as $v ) {
-			if ($v["cnt"] == 0) {
-				continue;
-			}
-			
-			$result[] = $v;
-		}
-		
 		return $result;
 	}
 
@@ -290,8 +300,6 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			return $this->bad("编码为 [{$code}] 的分类已经存在");
 		}
 		
-		$taxRate = $params["taxRate"];
-		
 		$id = $this->newId();
 		
 		if ($parentId) {
@@ -306,7 +314,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$sql = "insert into t_goods_category (id, code, name, data_org, parent_id,
 							full_name, company_id)
 						values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName, $companyId);
+			$rc = $db->execute($sql, $id, $code, $name, "", $parentId, $fullName, "");
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -314,27 +322,6 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$sql = "insert into t_goods_category (id, code, name, data_org, full_name, company_id)
 					values ('%s', '%s', '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $name, $companyId);
-			if ($rc === false) {
-				return $this->sqlError(__METHOD__, __LINE__);
-			}
-		}
-		
-		if ($taxRate == - 1) {
-			$sql = "update t_goods_category set tax_rate = null where id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				return $this->sqlError(__METHOD__, __LINE__);
-			}
-		} else {
-			$taxRate = intval($taxRate);
-			if ($taxRate > 17) {
-				$taxRate = 17;
-			}
-			if ($taxRate < 0) {
-				$taxRate = 0;
-			}
-			$sql = "update t_goods_category set tax_rate = %d where id = '%s' ";
-			$rc = $db->execute($sql, $taxRate, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -394,7 +381,6 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
 		$parentId = $params["parentId"];
-		$taxRate = $params["taxRate"];
 		
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("分类编码不能为空");
@@ -475,28 +461,6 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
-		// 税率
-		if ($taxRate == - 1) {
-			$sql = "update t_goods_category set tax_rate = null where id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				return $this->sqlError(__METHOD__, __LINE__);
-			}
-		} else {
-			$taxRate = intval($taxRate);
-			if ($taxRate > 17) {
-				$taxRate = 17;
-			}
-			if ($taxRate < 0) {
-				$taxRate = 0;
-			}
-			$sql = "update t_goods_category set tax_rate = %d where id = '%s' ";
-			$rc = $db->execute($sql, $taxRate, $id);
-			if ($rc === false) {
-				return $this->sqlError(__METHOD__, __LINE__);
-			}
-		}
-		
 		// 操作成功
 		return null;
 	}
@@ -562,14 +526,13 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		
 		$result = array();
 		
-		$sql = "select code, name, parent_id, tax_rate from t_goods_category
+		$sql = "select code, name, parent_id from t_goods_category
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
 			$v = $data[0];
 			$result["code"] = $v["code"];
 			$result["name"] = $v["name"];
-			$result["taxRate"] = $v["tax_rate"];
 			$parentId = $v["parent_id"];
 			$result["parentId"] = $parentId;
 			if ($parentId) {

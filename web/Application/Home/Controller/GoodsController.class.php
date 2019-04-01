@@ -10,7 +10,7 @@ use Home\Service\UserService;
 /**
  * 商品Controller
  *
- * @author 李静波
+ * @author
  *        
  */
 class GoodsController extends PSIBaseController {
@@ -26,42 +26,21 @@ class GoodsController extends PSIBaseController {
 			
 			$this->assign("title", "商品");
 			
-			// 按钮权限：新增商品分类
 			$this->assign("pAddCategory", $us->hasPermission(FIdConst::GOODS_CATEGORY_ADD) ? 1 : 0);
-			
-			// 按钮权限：编辑商品分类
 			$this->assign("pEditCategory", 
 					$us->hasPermission(FIdConst::GOODS_CATEGORY_EDIT) ? 1 : 0);
-			
-			// 按钮权限：删除商品分类
 			$this->assign("pDeleteCategory", 
 					$us->hasPermission(FIdConst::GOODS_CATEGORY_DELETE) ? 1 : 0);
-			
-			// 按钮权限：新增商品
 			$this->assign("pAddGoods", $us->hasPermission(FIdConst::GOODS_ADD) ? 1 : 0);
-			
-			// 按钮权限：编辑商品
 			$this->assign("pEditGoods", $us->hasPermission(FIdConst::GOODS_EDIT) ? 1 : 0);
-			
-			// 按钮权限：删除商品
 			$this->assign("pDeleteGoods", $us->hasPermission(FIdConst::GOODS_DELETE) ? 1 : 0);
-			
-			// 按钮权限：导入商品
 			$this->assign("pImportGoods", $us->hasPermission(FIdConst::GOODS_IMPORT) ? 1 : 0);
-			
-			// 按钮权限：设置商品安全库存
 			$this->assign("pGoodsSI", $us->hasPermission(FIdConst::GOODS_SI) ? 1 : 0);
 			
-			// 按钮权限：新增子商品
 			$this->assign("pAddBOM", $us->hasPermission(FIdConst::GOODS_BOM_ADD) ? 1 : 0);
-			
-			// 按钮权限：编辑子商品
 			$this->assign("pEditBOM", $us->hasPermission(FIdConst::GOODS_BOM_EDIT) ? 1 : 0);
-			
-			// 按钮权限：删除子商品
 			$this->assign("pDeleteBOM", $us->hasPermission(FIdConst::GOODS_BOM_DELETE) ? 1 : 0);
 			
-			// 按钮权限：设置商品价格体系
 			$this->assign("pPriceSystem", 
 					$us->hasPermission(FIdConst::PRICE_SYSTEM_SETTING_GOODS) ? 1 : 0);
 			
@@ -90,8 +69,6 @@ class GoodsController extends PSIBaseController {
 
 	/**
 	 * 获得所有的商品计量单位列表
-	 *
-	 * JS:PSI.Goods.UnitMainForm中调用本Action
 	 */
 	public function allUnits() {
 		if (IS_POST) {
@@ -102,8 +79,6 @@ class GoodsController extends PSIBaseController {
 
 	/**
 	 * 新增或编辑商品单位
-	 *
-	 * JS:PSI.Goods.UnitEditForm中调用本Action
 	 */
 	public function editUnit() {
 		if (IS_POST) {
@@ -118,8 +93,6 @@ class GoodsController extends PSIBaseController {
 
 	/**
 	 * 删除商品计量单位
-	 *
-	 * JS:PSI.Goods.UnitMainForm中调用本Action
 	 */
 	public function deleteUnit() {
 		if (IS_POST) {
@@ -141,8 +114,7 @@ class GoodsController extends PSIBaseController {
 					"code" => I("post.code"),
 					"name" => I("post.name"),
 					"spec" => I("post.spec"),
-					"barCode" => I("post.barCode"),
-					"brandId" => I("post.brandId")
+					"barCode" => I("post.barCode")
 			);
 			$this->ajaxReturn($gs->allCategories($params));
 		}
@@ -170,15 +142,24 @@ class GoodsController extends PSIBaseController {
 			
 			$params = array(
 					"id" => I("post.id"),
-					"code" => strtoupper(I("post.code")),
+					"code" => I("post.code"),
 					"name" => I("post.name"),
-					"parentId" => I("post.parentId"),
-					"taxRate" => I("post.taxRate")
+					"parentId" => I("post.parentId")
 			);
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editCategory($params));
 		}
 	}
+
+	public function allCategoryList(){
+        if (IS_POST) {
+            $gs = new GoodsService();
+
+            $this->ajaxReturn($gs->allCategoryList());
+        }
+    }
+
+
 
 	/**
 	 * 获得某个分类的信息
@@ -223,7 +204,6 @@ class GoodsController extends PSIBaseController {
 					"name" => I("post.name"),
 					"spec" => I("post.spec"),
 					"barCode" => I("post.barCode"),
-					"brandId" => I("post.brandId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
@@ -252,21 +232,22 @@ class GoodsController extends PSIBaseController {
 					return;
 				}
 			}
-			
+
 			$params = array(
 					"id" => I("post.id"),
 					"categoryId" => I("post.categoryId"),
-					"code" => strtoupper(I("post.code")),
+					"code" => I("post.code"),
 					"name" => I("post.name"),
 					"spec" => I("post.spec"),
 					"unitId" => I("post.unitId"),
 					"salePrice" => I("post.salePrice"),
 					"purchasePrice" => I("post.purchasePrice"),
+                    "oldSalePrice" => I("post.oldSalePrice"),
+                    "oldPurchasePrice" => I("post.oldPurchasePrice"),
 					"barCode" => I("post.barCode"),
 					"brandId" => I("post.brandId"),
-					"memo" => I("post.memo"),
-					"recordStatus" => I("post.recordStatus"),
-					"taxRate" => I("post.taxRate")
+					"taxRate" => I("post.taxRate"),
+					"memo" => I("post.memo")
 			);
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editGoods($params));
@@ -304,25 +285,15 @@ class GoodsController extends PSIBaseController {
 	}
 
 	/**
-	 * 商品自定义字段，查询数据 - 只显示有子商品的商品，用于加工业务中
-	 */
-	public function queryDataForBOM() {
-		if (IS_POST) {
-			$queryKey = I("post.queryKey");
-			$gs = new GoodsService();
-			$this->ajaxReturn($gs->queryDataForBOM($queryKey));
-		}
-	}
-
-	/**
 	 * 商品自定义字段，查询数据
 	 */
 	public function queryDataWithSalePrice() {
 		if (IS_POST) {
 			$queryKey = I("post.queryKey");
 			$customerId = I("post.customerId");
+			$companyId = I("post.companyId");
 			$gs = new GoodsService();
-			$this->ajaxReturn($gs->queryDataWithSalePrice($queryKey, $customerId));
+			$this->ajaxReturn($gs->queryDataWithSalePrice($queryKey, $customerId,$companyId));
 		}
 	}
 
@@ -510,6 +481,16 @@ class GoodsController extends PSIBaseController {
 		}
 	}
 
+    /**
+     * 获得大品牌
+     */
+    public function getBrands() {
+        if (IS_POST) {
+            $gs = new GoodsService();
+            $this->ajaxReturn($gs->getBrands());
+        }
+    }
+
 	/**
 	 * 新增或编辑商品品牌
 	 */
@@ -591,8 +572,7 @@ class GoodsController extends PSIBaseController {
 					"id" => I("post.id"),
 					"addBOM" => I("post.addBOM"),
 					"subGoodsId" => I("post.subGoodsId"),
-					"subGoodsCount" => I("post.subGoodsCount"),
-					"costWeight" => I("post.costWeight")
+					"subGoodsCount" => I("post.subGoodsCount")
 			);
 			
 			$gs = new GoodsService();
@@ -747,15 +727,15 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->editGoodsPriceSystem($params));
 		}
 	}
+	public function cateReadOnly(){
+        if (IS_POST) {
+              $code = I("post.code");
+              $code=M("t_goods_category")->where("code = '".$code."'")->find();
+            $this->ajaxReturn($code);
+        }
+    }
 
-	/**
-	 * 商品品牌自定义字段 - 查询数据
-	 */
-	public function queryGoodsBrandData() {
-		if (IS_POST) {
-			$queryKey = I("post.queryKey");
-			$service = new GoodsService();
-			$this->ajaxReturn($service->queryGoodsBrandData($queryKey));
-		}
-	}
+
+
+
 }

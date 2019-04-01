@@ -17,21 +17,14 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 								text : "新增价格",
 								handler : me.onAddPrice,
 								scope : me
-							}, "-", {
+							}, {
 								text : "编辑价格",
 								handler : me.onEditPrice,
 								scope : me
-							}, "-", {
+							}, {
 								text : "删除价格",
 								handler : me.onDeletePrice,
 								scope : me
-							}, "-", {
-								text : "帮助",
-								handler : function() {
-									var url = me
-											.URL("/Home/Help/index?t=priceSystem")
-									window.open(url);
-								}
 							}, "-", {
 								text : "关闭",
 								handler : function() {
@@ -58,7 +51,7 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 	onAddPrice : function() {
 		var me = this;
 
-		var form = Ext.create("PSI.Goods.PriceSystemEditForm", {
+		var form = Ext.create("PSI.Goods.EditPriceForm", {
 					parentForm : me
 				});
 
@@ -194,24 +187,22 @@ Ext.define("PSI.Goods.PriceSystemMainForm", {
 					cls : "PSI",
 					border : 0,
 					columnLines : true,
-					columns : {
-						defaults : {
-							menuDisabled : true,
-							sortable : false
-						},
-						items : [{
-									xtype : "rownumberer"
-								}, {
-									header : "价格名称",
-									dataIndex : "name",
-									width : 400
-								}, {
-									header : "销售基准价的倍数",
-									width : 130,
-									dataIndex : "factor",
-									align : "right"
-								}]
-					},
+					columns : [{
+								xtype : "rownumberer"
+							}, {
+								header : "价格名称",
+								dataIndex : "name",
+								menuDisabled : true,
+								sortable : false,
+								width : 400
+							}, {
+								header : "销售基准价的倍数",
+								width : 120,
+								dataIndex : "factor",
+								menuDisabled : true,
+								sortable : false,
+								align : "right"
+							}],
 					store : Ext.create("Ext.data.Store", {
 								model : modelName,
 								autoLoad : false,

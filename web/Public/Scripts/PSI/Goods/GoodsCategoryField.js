@@ -29,15 +29,6 @@ Ext.define("PSI.Goods.GoodsCategoryField", {
 								this.onTriggerClick(e);
 							}
 						});
-				me.on({
-							render : function(p) {
-								p.getEl().on("dblclick", function() {
-											me.onTriggerClick();
-										});
-							},
-							single : true
-						});
-
 			},
 
 			onTriggerClick : function(e) {
@@ -90,8 +81,7 @@ Ext.define("PSI.Goods.GoodsCategoryField", {
 
 				var wnd = Ext.create("Ext.window.Window", {
 							title : "选择商品分类",
-							header : false,
-							border : 0,
+							modal : true,
 							width : 400,
 							height : 300,
 							layout : "fit",
@@ -108,11 +98,7 @@ Ext.define("PSI.Goods.GoodsCategoryField", {
 									}]
 						});
 				this.wnd = wnd;
-				wnd.on("deactivate", function() {
-							wnd.close();
-						});
-
-				wnd.showBy(this);
+				wnd.show();
 			},
 
 			onOK : function() {
