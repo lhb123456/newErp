@@ -261,6 +261,10 @@ class MainMenuController extends Controller {
                 // 往来单位档案
                 redirect(__ROOT__ . "/Home/COCompany/index");
                 break;
+            case FIdConst::CREDIT_ASSESS :
+                // 信用额度评估
+                redirect(__ROOT__ . "/Home/COCompany/creditAssess");
+                break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
