@@ -175,24 +175,7 @@ class COCompanyController extends PSIBaseController {
 		}
 	}
 
-	/**
-	 * 删除往来单位
-	 */
-	public function deleteCustomer() {
-		if (IS_POST) {
-			$us = new UserService();
-			if (! $us->hasPermission(FIdConst::CUSTOMER_DELETE)) {
-				$this->ajaxReturn($this->noPermission("删除往来单位"));
-				return;
-			}
-			
-			$params = array(
-					"id" => I("post.id")
-			);
-			$cs = new CustomerService();
-			$this->ajaxReturn($cs->deleteCustomer($params));
-		}
-	}
+
 
 	//获得新code
     public function getCompanyNewCode(){
@@ -284,4 +267,32 @@ class COCompanyController extends PSIBaseController {
 			$this->ajaxReturn($cs->priceSystemList($params));
 		}
 	}
+
+    /**
+     * 往来单位档案 - 主页面
+     */
+    public function creditAssess() {
+        $us = new UserService();
+
+        if ($us->hasPermission(FIdConst::CREDIT_ASSESS)) {
+            $this->initVar();
+
+            $this->assign("title", "往来单位信用额度评估");
+
+            /*$this->assign("pAddCategory",
+                    $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_ADD) ? 1 : 0);
+            $this->assign("pEditCategory",
+                    $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_EDIT) ? 1 : 0);
+            $this->assign("pDeleteCategory",
+                    $us->hasPermission(FIdConst::CUSTOMER_CATEGORY_DELETE) ? 1 : 0);
+            $this->assign("pAddCustomer", $us->hasPermission(FIdConst::CUSTOMER_ADD) ? 1 : 0);
+            $this->assign("pEditCustomer", $us->hasPermission(FIdConst::CUSTOMER_EDIT) ? 1 : 0);
+            $this->assign("pDeleteCustomer", $us->hasPermission(FIdConst::CUSTOMER_DELETE) ? 1 : 0);
+            $this->assign("pImportCustomer", $us->hasPermission(FIdConst::CUSTOMER_IMPORT) ? 1 : 0);
+            */
+            $this->display();
+        } else {
+            $this->gotoLoginPage("/Home/COCompany/creditAssess");
+        }
+    }
 }
