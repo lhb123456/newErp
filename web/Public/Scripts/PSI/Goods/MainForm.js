@@ -877,7 +877,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			me.getSIGrid().setTitle("商品安全库存");
-			me.getGoodsBOMGrid().setTitle("商品构成");
+			me.getGoodsBOMGrid().setTitle("税控编码");
 			return;
 		}
 
@@ -1163,7 +1163,7 @@ Ext.define("PSI.Goods.MainForm", {
 	},
 
 	/**
-	 * 商品构成Grid
+	 * 税控编码Grid
 	 */
 	getGoodsBOMGrid : function() {
 		var me = this;
@@ -1174,8 +1174,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var modelName = "PSIGoodsBOM";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "goodsId", "goodsCode", "goodsName",
-							"goodsCount", "goodsSpec", "unitName"]
+					fields : ["id","taxCode", "dateCreated", "defaultCode"]
 				});
 
 		me.__bomGrid = Ext.create("Ext.grid.Panel", {
@@ -1183,57 +1182,62 @@ Ext.define("PSI.Goods.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "商品构成",
+					title : "税控编码",
 					tbar : [{
-								text : "新增子商品",
+								text : "新增税控编码",
 								scope : me,
 								iconCls : "PSI-button-add",
 								disabled : me.getPAddBOM() == "0",
 								handler : me.onAddBOM
 							}, "-", {
-								text : "编辑子商品",
+								text : "编辑税控编码",
 								scope : me,
 								iconCls : "PSI-button-edit",
 								disabled : me.getPEditBOM() == "0",
 								handler : me.onEditBOM
 							}, "-", {
-								text : "删除子商品",
+								text : "删除税控编码",
 								scope : me,
 								iconCls : "PSI-button-delete",
 								disabled : me.getPDeleteBOM() == "0",
 								handler : me.onDeleteBOM
-							}],
+							},  "-",{
+								text : "设为默认编码",
+								iconCls : "PSI-button-default",
+								//hidden : me.getPermission().default == "0",
+								handler : me.default,
+								scope : me
+							},],
 					columnLines : true,
 					columns : [{
-								header : "子商品编码",
-								dataIndex : "goodsCode",
+								xtype : "rownumberer",
+								width : 50
+							},{
+								header : "税控编码",
+								dataIndex : "taxCode",
 								menuDisabled : true,
 								sortable : false
 							}, {
-								header : "子商品名称",
-								dataIndex : "goodsName",
-								width : 300,
+								header : "创建时间",
+								dataIndex : "dateCreated",
+								//width : 300,
 								menuDisabled : true,
 								sortable : false
-							}, {
-								header : "子商品规格型号",
-								dataIndex : "goodsSpec",
-								width : 200,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "子商品数量",
-								dataIndex : "goodsCount",
-								width : 120,
+							},{
+								header : "是否默认税控编码",
+								dataIndex : "defaultCode",
+								width:100,
 								menuDisabled : true,
 								sortable : false,
-								align : "right"
-							}, {
-								header : "子商品计量单位",
-								dataIndex : "unitName",
-								width : 100,
-								menuDisabled : true,
-								sortable : false
+								renderer : function(value,md,record) {
+									if (value == 0) {
+										return "否";
+									} else if (value == 1) {
+										return "<span style='color:red'>是<span/>";
+									}  else {
+										return "";
+									}
+								}
 							}],
 					store : Ext.create("Ext.data.Store", {
 								model : modelName,
@@ -1265,7 +1269,37 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 		form.show();
 	},
+    default : function(){
+        var me =this;
+        var item = me.getGoodsBOMGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择要设置的编码");
+            return;
+        }
+        var items= item[0]
+        PSI.MsgBox.confirm("是否设置此编码为默认编码",function () {
+            Ext.Ajax.request({
+                url : PSI.Const.BASE_URL + "Home/Goods/isDefault",
+                method : "POST",
+                params : {
+                    id:items.get("id"),
+                },
+                callback : function(options, success, response) {
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        if (data.success) {
+                            PSI.MsgBox.showInfo("设置成功", function() {
+                                me.refreshGoodsBOM();
+                            });
+                        } else {
+                            PSI.MsgBox.showInfo("网络错误");
+                        }
+                    }
+                }
 
+            });
+        })
+    },
 	/**
 	 * 编辑子商品
 	 */
@@ -1281,7 +1315,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var item = me.getGoodsBOMGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("请选择要编辑的子商品");
+			me.showInfo("请选择要编辑的编码");
 			return;
 		}
 		var subGoods = item[0];
@@ -1316,16 +1350,15 @@ Ext.define("PSI.Goods.MainForm", {
 		}
 		var subGoods = item[0];
 
-		var info = "请确认是否删除子商品: <span style='color:red'>"
-				+ subGoods.get("goodsName") + " " + subGoods.get("goodsSpec")
-				+ "</span>?";
+		var info = "请确认是否删除税控编码: <span style='color:red'>"
+				+ subGoods.get("taxCode") + "</span>?";
 
 		var confirmFunc = function() {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");
 
 			var r = {
-				url : me.URL("Home/Goods/deleteGoodsBOM"),
+				url : me.URL("Home/Goods/deleteGoodsCode"),
 				params : {
 					id : subGoods.get("id")
 				},

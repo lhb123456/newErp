@@ -654,17 +654,16 @@ class GoodsService extends PSIBaseExService {
 		}
 		
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new GoodsBomDAO($this->db());
 		return $dao->goodsBOMList($params);
 	}
 
 	/**
-	 * 新增或编辑商品构成
 	 *
 	 * @param array $params        	
 	 */
-	public function editGoodsBOM($params) {
+	public function editGoodsCode($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
@@ -676,27 +675,26 @@ class GoodsService extends PSIBaseExService {
 		
 		$dao = new GoodsBomDAO($db);
 		
-		$addBOM = $params["addBOM"] == "1";
+		$historyCode = $params["historyCode"];
+        $code = $params["code"];
 		$rc = null;
-		if ($addBOM) {
-			$rc = $dao->addGoodsBOM($params);
+		if (!$historyCode) {
+			$rc = $dao->addGoodsCode($params);
 		} else {
-			$rc = $dao->updateGoodsBOM($params);
+			$rc = $dao->updateGoodsCode($params);
 		}
-		
+
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
 		
 		$goodsInfo = "编码：" . $params["goodsCode"] . " 名称：" . $params["goodsName"] . " 规格: " . $params["goodsSpec"];
-		$subGoodsInfo = "编码： " . $params["subGoodsCode"] . " 名称：" . $params["subGoodsName"] . " 规格：" . $params["subGoodsSpec"];
-		
 		$log = null;
-		if ($addBOM) {
-			$log = "给商品[$goodsInfo]新增子商品[$subGoodsInfo]";
+		if (!$historyCode) {
+			$log = "给商品[$goodsInfo]新增税控编码[$code]";
 		} else {
-			$log = "编辑商品[$goodsInfo]的子商品[$subGoodsInfo]信息 ";
+			$log = "编辑商品[$goodsInfo]的税控编码[$code] ";
 		}
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS_BOM);
@@ -723,13 +721,13 @@ class GoodsService extends PSIBaseExService {
 	/**
 	 * 查询子商品的详细信息
 	 */
-	public function getSubGoodsInfo($params) {
+	public function getGoodsCodeInfo($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
 		$dao = new GoodsBomDAO($this->db());
-		return $dao->getSubGoodsInfo($params);
+		return $dao->getGoodsCodeInfo($params);
 	}
 
 	/**
@@ -737,7 +735,7 @@ class GoodsService extends PSIBaseExService {
 	 *
 	 * @param array $params        	
 	 */
-	public function deleteGoodsBOM($params) {
+	public function deleteGoodsCode($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
@@ -747,20 +745,44 @@ class GoodsService extends PSIBaseExService {
 		
 		$dao = new GoodsBomDAO($db);
 		
-		$rc = $dao->deleteGoodsBOM($params);
+		$rc = $dao->deleteGoodsCode($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+        $code=$params["code"];
 		$bs = new BizlogService($db);
 		$goodsInfo = "编码：" . $params["goodsCode"] . " 名称：" . $params["goodsName"] . " 规格: " . $params["goodsSpec"];
-		$subGoodsInfo = "编码： " . $params["subGoodsCode"] . " 名称：" . $params["subGoodsName"] . " 规格：" . $params["subGoodsSpec"];
-		$log = "从商品[$goodsInfo]中删除子商品[$subGoodsInfo]";
+		$log = "从商品[$goodsInfo]中删除税编码[$code]";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS_BOM);
 		
 		$db->commit();
 		
+		return $this->ok();
+	}
+    public function isDefault($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+
+		$db = $this->db();
+		$db->startTrans();
+
+		$dao = new GoodsBomDAO($db);
+
+		$rc = $dao->isDefault($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+        $code=$params["code"];
+		$bs = new BizlogService($db);
+		$goodsInfo = "编码：" . $params["goodsCode"] . " 名称：" . $params["goodsName"] . " 规格: " . $params["goodsSpec"];
+		$log = "从商品[$goodsInfo]中设置默认税编码[$code]";
+		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS_BOM);
+
+		$db->commit();
+
 		return $this->ok();
 	}
 

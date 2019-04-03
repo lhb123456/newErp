@@ -550,33 +550,33 @@ class GoodsController extends PSIBaseController {
 	}
 
 	/**
-	 * 新增或编辑商品构成
+	 * 新增或编辑商品税控编码
 	 */
-	public function editGoodsBOM() {
+	public function editGoodsCode() {
 		if (IS_POST) {
 			$us = new UserService();
 			if (I("post.id")) {
 				// 编辑
 				if (! $us->hasPermission(FIdConst::GOODS_BOM_EDIT)) {
-					$this->ajaxReturn($this->noPermission("编辑子商品"));
+					$this->ajaxReturn($this->noPermission("编辑税控编码"));
 					return;
 				}
 			} else {
 				if (! $us->hasPermission(FIdConst::GOODS_BOM_ADD)) {
-					$this->ajaxReturn($this->noPermission("新建子商品"));
+					$this->ajaxReturn($this->noPermission("新建税控编码"));
 					return;
 				}
 			}
 			
 			$params = array(
-					"id" => I("post.id"),
-					"addBOM" => I("post.addBOM"),
-					"subGoodsId" => I("post.subGoodsId"),
-					"subGoodsCount" => I("post.subGoodsCount")
+					"goodsId" => I("post.id"),
+					"goodsCodeId" => I("post.goodsCodeId"),
+					"historyCode" => I("post.history_code"),
+					"code" => I("post.code"),
+					"defaultCode" => I("post.default")
 			);
-			
 			$gs = new GoodsService();
-			$this->ajaxReturn($gs->editGoodsBOM($params));
+			$this->ajaxReturn($gs->editGoodsCode($params));
 		}
 	}
 
@@ -598,22 +598,21 @@ class GoodsController extends PSIBaseController {
 	/**
 	 * 查询子商品的详细信息
 	 */
-	public function getSubGoodsInfo() {
+	public function getGoodsCodeInfo() {
 		if (IS_POST) {
 			$params = array(
-					"goodsId" => I("post.goodsId"),
-					"subGoodsId" => I("post.subGoodsId")
+					"GoodsCodeId" => I("post.GoodsCodeId")
 			);
-			
+
 			$gs = new GoodsService();
-			$this->ajaxReturn($gs->getSubGoodsInfo($params));
+			$this->ajaxReturn($gs->getGoodsCodeInfo($params));
 		}
 	}
 
 	/**
 	 * 删除商品构成中的子商品
 	 */
-	public function deleteGoodsBOM() {
+	public function deleteGoodsCode() {
 		if (IS_POST) {
 			$us = new UserService();
 			if (! $us->hasPermission(FIdConst::GOODS_BOM_DELETE)) {
@@ -624,9 +623,21 @@ class GoodsController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id")
 			);
-			
 			$gs = new GoodsService();
-			$this->ajaxReturn($gs->deleteGoodsBOM($params));
+			$this->ajaxReturn($gs->deleteGoodsCode($params));
+		}
+	}
+    /**
+	 * 删除商品构成中的子商品
+	 */
+	public function isDefault() {
+		if (IS_POST) {
+			$us = new UserService();
+			$params = array(
+					"id" => I("post.id")
+			);
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->isDefault($params));
 		}
 	}
 

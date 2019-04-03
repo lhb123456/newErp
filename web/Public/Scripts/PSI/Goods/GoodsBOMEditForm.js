@@ -54,7 +54,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		};
 		buttons.push(btn);
 
-		var t = entity == null ? "新增子商品" : "编辑子商品";
+		var t = entity == null ? "新增税控编码" : "编辑税控编码";
 		var f = entity == null
 				? "edit-form-create.png"
 				: "edit-form-update.png";
@@ -113,6 +113,12 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 									xtype : "hidden",
 									name : "id",
 									value : goods.get("id")
+								},{
+									id:"goodsCodeId",
+									xtype : "hidden",
+									name : "goodsCodeId",
+                            		fieldLabel : "编辑时税编码的id",
+									value : goods.get("id")
 								}, {
 									fieldLabel : "商品编码",
 									width : 470,
@@ -129,66 +135,50 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 									width : 470,
 									value : goods.get("spec")
 								}, {
-									fieldLabel : "商品单位",
-									readOnly : true,
-									value : goods.get("unitName")
-								}, {
-									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCode",
-									fieldLabel : "子商品编码",
-									width : 470,
-									allowBlank : false,
-									blankText : "没有输入子商品",
-									beforeLabelTextTpl : entity == null
-											? PSI.Const.REQUIRED
-											: "",
-									xtype : "psi_subgoodsfield",
-									parentCmp : me,
-									parentGoodsId : me.goods.get("id"),
-									listeners : {
-										specialkey : {
-											fn : me.onEditCodeSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									fieldLabel : "子商品名称",
-									width : 470,
-									readOnly : true,
-									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsName"
-								}, {
-									fieldLabel : "子商品规格型号",
-									readOnly : true,
-									width : 470,
-									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec"
-								}, {
-									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCount",
-									xtype : "numberfield",
-									fieldLabel : "子商品数量",
-									allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
-									decimalPrecision : PSI.Const.GC_DEC_NUMBER,
-									minValue : 0,
-									hideTrigger : true,
-									name : "subGoodsCount",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									listeners : {
-										specialkey : {
-											fn : me.onEditCountSpecialKey,
-											scope : me
-										}
-									}
-								}, {
-									fieldLabel : "子商品单位",
-									readOnly : true,
-									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsUnitName"
-								}, {
-									xtype : "hidden",
-									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsId",
-									name : "subGoodsId"
-								}, {
-									xtype : "hidden",
-									name : "addBOM",
-									value : entity == null ? "1" : "0"
-								}],
+                            fieldLabel : "商品单位",
+                            readOnly : true,
+                            width : 470,
+                            value : goods.get("unitName")
+                        }, {
+                            id : "history_code",
+                            labelAlign : "right",
+                            labelSeparator : "",
+							name:"history_code",
+							hidden:true,
+                            width : 470,
+                            fieldLabel : "旧的税控编码",
+                            margin : "5, 0, 0, 0",
+                            xtype : "textfield"
+                        },{
+                            id : "code",
+                            labelAlign : "right",
+                            labelSeparator : "",
+                            width : 470,
+                            allowBlank : false,
+                            name:"code",
+                            beforeLabelTextTpl : PSI.Const.REQUIRED,
+                            fieldLabel : "税控编码",
+                            margin : "5, 0, 0, 0",
+                            xtype : "textfield"
+                        },{
+                            id : "default",
+                            xtype : "combo",
+                            queryMode : "local",
+                            editable : false,
+                            valueField : "id",
+                            labelWidth : 100,
+                            name:"default",
+                            width : 470,
+                            labelAlign : "right",
+                            labelSeparator : "",
+                            margin : "5, 0, 0, 0",
+                            fieldLabel : "是否设为默认",
+                            store : Ext.create("Ext.data.ArrayStore", {
+                                fields : ["id", "text"],
+                                data : [[0, "否"], [1, "是"]]
+                            }),
+                            value :1
+                        }],
 						buttons : buttons
 					}]
 		});
@@ -196,21 +186,13 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		me.callParent(arguments);
 
 		me.editForm = Ext.getCmp("PSI_Goods_GoodsBOMEditForm_editForm");
+		me.history_code = Ext.getCmp("history_code");
 
-		me.editSubGoodsCode = Ext
-				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCode");
-		me.editSubGoodsName = Ext
-				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsName");
-		me.editSubGoodsCount = Ext
-				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsCount");
-		me.editSubGoodsId = Ext
-				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsId");
-		me.editSubGoodsSpec = Ext
-				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec");
-		me.editSubGoodsUnitName = Ext
-				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsUnitName");
+		me.code = Ext
+				.getCmp("code");
+		me.default = Ext
+				.getCmp("default");
 	},
-
 	/**
 	 * 保存
 	 */
@@ -220,11 +202,10 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		var sf = {
-			url : me.URL("/Home/Goods/editGoodsBOM"),
+			url : me.URL("/Home/Goods/editGoodsCode"),
 			method : "POST",
 			success : function(form, action) {
 				me.__lastId = action.result.id;
-
 				el.unmask();
 
 				PSI.MsgBox.tip("数据保存成功");
@@ -238,7 +219,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 			failure : function(form, action) {
 				el.unmask();
 				PSI.MsgBox.showInfo(action.result.msg, function() {
-							me.editSubGoodsCode.focus();
+							me.history_code.focus();
 						});
 			}
 		};
@@ -303,7 +284,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		if (!subGoods) {
 			// 新增子商品
 
-			var editCode = me.editSubGoodsCode;
+			var editCode = me.history_code;
 			editCode.focus();
 			editCode.setValue(editCode.getValue());
 
@@ -312,27 +293,18 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 
 		// 编辑子商品
 		var r = {
-			url : me.URL("Home/Goods/getSubGoodsInfo"),
+			url : me.URL("Home/Goods/getGoodsCodeInfo"),
 			params : {
-				goodsId : me.getGoods().get("id"),
-				subGoodsId : subGoods.get("goodsId")
+				GoodsCodeId : subGoods.get("id")
 			},
 			callback : function(options, success, response) {
 				if (success) {
 					var data = me.decodeJSON(response.responseText);
-					if (data.success) {
-						me.editSubGoodsCode.setValue(data.code);
-						me.editSubGoodsName.setValue(data.name);
-						me.editSubGoodsSpec.setValue(data.spec);
-						me.editSubGoodsUnitName.setValue(data.unitName);
-						me.editSubGoodsCount.setValue(data.count);
-
-						me.editSubGoodsId.setValue(subGoods.get("goodsId"));
-
-						me.editSubGoodsCode.setReadOnly(true);
-						me.editSubGoodsCount.focus();
-					} else {
-						me.showInfo(data.msg);
+						Ext.getCmp("history_code").setValue(data.tax_code)
+						Ext.getCmp("code").setValue(data.tax_code)
+						Ext.getCmp("goodsCodeId").setValue(data.id)
+					if(data.default_code == 0){
+                        Ext.getCmp("default").setValue(0)
 					}
 				} else {
 					me.showInfo("网络错误");
