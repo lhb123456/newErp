@@ -6,21 +6,18 @@ Ext.define("PSI.Goods.GoodsField", {
 	alias : "widget.psi_goodsfield",
 
 	config : {
-		parentCmp : null,
-		showAddButton : false
+		parentCmp : null
 	},
 
 	/**
 	 * 初始化组件
 	 */
 	initComponent : function() {
-		var me = this;
+		this.enableKeyEvents = true;
 
-		me.enableKeyEvents = true;
+		this.callParent(arguments);
 
-		me.callParent(arguments);
-
-		me.on("keydown", function(field, e) {
+		this.on("keydown", function(field, e) {
 					if (e.getKey() == e.BACKSPACE) {
 						field.setValue(null);
 						e.preventDefault();
@@ -28,17 +25,8 @@ Ext.define("PSI.Goods.GoodsField", {
 					}
 
 					if (e.getKey() != e.ENTER && !e.isSpecialKey(e.getKey())) {
-						me.onTriggerClick(e);
+						this.onTriggerClick(e);
 					}
-				});
-
-		me.on({
-					render : function(p) {
-						p.getEl().on("dblclick", function() {
-									me.onTriggerClick();
-								});
-					},
-					single : true
 				});
 	},
 
@@ -47,8 +35,7 @@ Ext.define("PSI.Goods.GoodsField", {
 		var modelName = "PSIGoodsField";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "spec", "unitName",
-							"taxRate"]
+					fields : ["id", "code", "name", "spec", "unitName"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -86,33 +73,11 @@ Ext.define("PSI.Goods.GoodsField", {
 		me.lookupGrid = lookupGrid;
 		me.lookupGrid.on("itemdblclick", me.onOK, me);
 
-		var buttons = [];
-		if (me.getShowAddButton()) {
-			buttons.push({
-						text : "新增商品",
-						handler : me.onAddGoods,
-						iconCls : "PSI-button-add",
-						scope : me
-					});
-		}
-
-		buttons.push({
-					text : "确定",
-					handler : me.onOK,
-					scope : me
-				}, {
-					text : "取消",
-					handler : function() {
-						wnd.close();
-					}
-				});
-
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 商品",
-			header : false,
-			border : 0,
+			modal : true,
 			width : 600,
-			height : 300,
+			height : 390,
 			layout : "border",
 			items : [{
 						region : "center",
@@ -154,16 +119,21 @@ Ext.define("PSI.Goods.GoodsField", {
 											}]
 								}]
 					}],
-			buttons : buttons
+			buttons : [{
+						text : "确定",
+						handler : me.onOK,
+						scope : me
+					}, {
+						text : "取消",
+						handler : function() {
+							wnd.close();
+						}
+					}]
 		});
 
 		wnd.on("close", function() {
 					me.focus();
 				});
-		wnd.on("deactivate", function() {
-					wnd.close();
-				});
-
 		me.wnd = wnd;
 
 		var editName = Ext.getCmp("__editGoods");
@@ -236,7 +206,7 @@ Ext.define("PSI.Goods.GoodsField", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.showBy(me);
+		wnd.show();
 	},
 
 	onOK : function() {
@@ -257,11 +227,5 @@ Ext.define("PSI.Goods.GoodsField", {
 		if (me.getParentCmp() && me.getParentCmp().__setGoodsInfo) {
 			me.getParentCmp().__setGoodsInfo(data)
 		}
-	},
-
-	onAddGoods : function() {
-		var form = Ext.create("PSI.Goods.GoodsEditForm");
-
-		form.show();
 	}
 });

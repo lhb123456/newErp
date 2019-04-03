@@ -1,24 +1,32 @@
-//
-// 商品自定义字段 - 只显示有子商品的商品，用于加工业务中
-//
-Ext.define("PSI.Goods.GoodsFieldForBOM", {
+/**
+ * 自定义字段 - 币种
+ */
+Ext.define("PSI.Currency.SelectCurrency", {
 	extend : "Ext.form.field.Trigger",
-	alias : "widget.psi_goodsfieldforbom",
+	alias : "widget.psi_selecctCurrency",
 
 	config : {
-		parentCmp : null
+		showAddButton : false,
+        callbackFunc: null,
+        callbackObj:null,
 	},
 
 	initComponent : function() {
 		var me = this;
+		me.__idValue = null;
 
 		me.enableKeyEvents = true;
 
 		me.callParent(arguments);
 
-		me.on("keydown", function(field, e) {
+		this.on("keydown", function(field, e) {
+					if (me.readOnly) {
+						return;
+					}
+
 					if (e.getKey() == e.BACKSPACE) {
 						field.setValue(null);
+						me.setIdValue(null);
 						e.preventDefault();
 						return false;
 					}
@@ -27,23 +35,14 @@ Ext.define("PSI.Goods.GoodsFieldForBOM", {
 						me.onTriggerClick(e);
 					}
 				});
-
-		me.on({
-					render : function(p) {
-						p.getEl().on("dblclick", function() {
-									me.onTriggerClick();
-								});
-					},
-					single : true
-				});
 	},
 
 	onTriggerClick : function(e) {
 		var me = this;
-		var modelName = "PSIGoodsFieldForBOM";
+		var modelName = "PSICustomerField";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "spec", "unitName"]
+					fields : ["trade_id", "trade_name", "change_id","change_name","rate"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -57,37 +56,32 @@ Ext.define("PSI.Goods.GoodsFieldForBOM", {
 					border : 0,
 					store : store,
 					columns : [{
-								header : "编码",
-								dataIndex : "code",
-								menuDisabled : true,
-								width : 70
-							}, {
-								header : "商品",
-								dataIndex : "name",
+								header : "交易币种",
+								dataIndex : "trade_name",
 								menuDisabled : true,
 								flex : 1
 							}, {
-								header : "规格型号",
-								dataIndex : "spec",
+								header : "兑换币种",
+								dataIndex : "change_name",
 								menuDisabled : true,
 								flex : 1
-							}, {
-								header : "单位",
-								dataIndex : "unitName",
+							},{
+								header : "汇率",
+								dataIndex : "rate",
 								menuDisabled : true,
-								width : 60
+								width : 200
 							}]
 				});
 		me.lookupGrid = lookupGrid;
 		me.lookupGrid.on("itemdblclick", me.onOK, me);
 
 		var wnd = Ext.create("Ext.window.Window", {
-			title : "选择 - 商品",
-			header : false,
-			border : 0,
-			width : 600,
-			height : 300,
+			title : "选择 - 币种",
+			modal : true,
+			width : 400,
+			height : 390,
 			layout : "border",
+			defaultFocus : "__editCustomer",
 			items : [{
 						region : "center",
 						xtype : "panel",
@@ -105,23 +99,10 @@ Ext.define("PSI.Goods.GoodsFieldForBOM", {
 									layout : "form",
 									bodyPadding : 5,
 									items : [{
-												id : "__editGoodsForBOM",
+												id : "__editCustomer",
 												xtype : "textfield",
-												fieldLabel : "商品",
-												labelWidth : 50,
-												labelAlign : "right",
-												labelSeparator : ""
-											}, {
-												xtype : "displayfield",
-												fieldLabel : " ",
-												value : "输入编码、商品名称拼音字头、规格型号拼音字头可以过滤查询",
-												labelWidth : 50,
-												labelAlign : "right",
-												labelSeparator : ""
-											}, {
-												xtype : "displayfield",
-												fieldLabel : " ",
-												value : "↑ ↓ 键改变当前选择项 ；回车键返回",
+												disabled:true,
+												fieldLabel : "",
 												labelWidth : 50,
 												labelAlign : "right",
 												labelSeparator : ""
@@ -129,6 +110,10 @@ Ext.define("PSI.Goods.GoodsFieldForBOM", {
 								}]
 					}],
 			buttons : [{
+						text : "没有币种",
+						handler : me.onNone,
+						scope : me
+					},  {
 						text : "确定",
 						handler : me.onOK,
 						scope : me
@@ -143,19 +128,18 @@ Ext.define("PSI.Goods.GoodsFieldForBOM", {
 		wnd.on("close", function() {
 					me.focus();
 				});
-		wnd.on("deactivate", function() {
-					wnd.close();
-				});
-
 		me.wnd = wnd;
-
-		var editName = Ext.getCmp("__editGoodsForBOM");
+		var currency_id=me.getCallbackObj().getPayDetail().get("currency_id");
+        var currency_name=me.getCallbackObj().getPayDetail().get("currency_name");
+		var editName = Ext.getCmp("__editCustomer");
 		editName.on("change", function() {
 			var store = me.lookupGrid.getStore();
 			Ext.Ajax.request({
-						url : PSI.Const.BASE_URL + "Home/Goods/queryDataForBOM",
+						url : PSI.Const.BASE_URL + "Home/Currency/selectCurrency",
 						params : {
-							queryKey : editName.getValue()
+							queryKey : editName.getValue(),
+							currency_id:currency_id,
+							currency_name:currency_name
 						},
 						method : "POST",
 						callback : function(opt, success, response) {
@@ -219,7 +203,7 @@ Ext.define("PSI.Goods.GoodsFieldForBOM", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.showBy(me);
+		wnd.show();
 	},
 
 	onOK : function() {
@@ -232,13 +216,50 @@ Ext.define("PSI.Goods.GoodsFieldForBOM", {
 
 		var data = item[0].getData();
 
-		me.wnd.close();
-		me.focus();
-		me.setValue(data.code);
+		me.setValue(data.trade_name);
 		me.focus();
 
-		if (me.getParentCmp() && me.getParentCmp().__setGoodsInfo) {
-			me.getParentCmp().__setGoodsInfo(data)
+		me.setIdValue(data.trade_id);
+
+		var func = me.getCallbackFunc();
+		if (func) {
+            func(data,me.getCallbackObj());
 		}
+        me.wnd.close();
+        me.focus();
+	},
+
+    onNone : function() {
+        var me = this;
+        var func = me.getCallbackFunc();
+        if (func) {
+            func.setCurrency({
+                id : "",
+            });
+
+        }
+        me.wnd.close();
+        me.focus();
+    },
+
+	setIdValue : function(id) {
+		this.__idValue = id;
+	},
+
+	getIdValue : function() {
+		return this.__idValue;
+	},
+
+	clearIdValue : function() {
+		this.setValue(null);
+		this.__idValue = null;
+	},
+
+	/**
+	 * 新增客户资料
+	 */
+	onAdd : function() {
+		var form = Ext.create("PSI.Customer.CustomerEditForm");
+		form.show();
 	}
 });

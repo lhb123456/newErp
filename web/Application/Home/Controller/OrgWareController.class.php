@@ -107,6 +107,7 @@ class OrgWareController extends PSIBaseController
                 "hisCode" => I("post.hisCode"),
                 "code" => I("post.code"),
                 "name" => I("post.name"),
+                "number"=>I("post.number"),
                 "address"=>I("post.address"),
 
             );
@@ -114,5 +115,56 @@ class OrgWareController extends PSIBaseController
             $this->ajaxReturn($ws->editOrgWarehouse($params));
         }
     }
+    /**
+     * 删除仓库
+     */
+    public function deleteOrgWarehouse() {
+        if (IS_POST) {
+            $us = new UserService();
+            if (! $us->hasPermission(FIdConst::WAREHOUSE_DELETE)) {
+                $this->ajaxReturn($this->noPermission("删除仓库"));
+                return;
+            }
+
+            $params = array(
+                "id" => I("post.id")
+            );
+            $ws = new WarehouseService();
+            $this->ajaxReturn($ws->deleteOrgWarehouse($params));
+        }
+    }
+
+    //查询公司列表
+    public function orgList(){
+        if (IS_POST) {
+            $us = new WarehouseService();
+            $this->ajaxReturn($us->selectOrg());
+        }
+    }
+    public function wareList(){
+        if (IS_POST) {
+            $params = array(
+                 "code" => I("post.code"),
+                "name" => I("post.name"),
+                "orgId" => I("post.orgId"),
+                "start" => I("post.start"),
+                "limit" => I("post.limit")
+            );
+            $us = new WarehouseService();
+            $this->ajaxReturn($us->wareList($params));
+        }
+    }
+
+    public function deleteOrgWare(){
+        if (IS_POST) {
+            $params = array(
+                 "wareId" => I("post.wareId"),
+                "orgId" => I("post.orgId"),
+            );
+            $us = new WarehouseService();
+            $this->ajaxReturn($us->deleteOrgWare($params));
+        }
+    }
+
 
 }

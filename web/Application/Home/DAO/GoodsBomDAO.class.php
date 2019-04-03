@@ -5,7 +5,7 @@ namespace Home\DAO;
 /**
  * 商品构成DAO
  *
- * @author 李静波
+ * @author 
  */
 class GoodsBomDAO extends PSIBaseExDAO {
 
@@ -27,45 +27,19 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
-		// 商品id
 		$id = $params["id"];
 		
 		$result = [];
 		
-		$sql = "select sum(cost_weight) as sum_cost_weight from t_goods_bom where goods_id = '%s' ";
-		$data = $db->query($sql, $id);
-		if (! $data) {
-			return $result;
-		}
-		
-		$sumCostWeight = $data[0]["sum_cost_weight"];
-		
-		$sql = "select b.id, convert(b.sub_goods_count, $fmt) as sub_goods_count,g.id as goods_id,
-					g.code, g.name, g.spec, u.name as unit_name, b.cost_weight
-				from t_goods_bom b, t_goods g, t_goods_unit u
-				where b.goods_id = '%s' and b.sub_goods_id = g.id and g.unit_id = u.id
-				order by g.code";
+		$sql = "select * 
+				from t_goods_tax_code where goods_id = '%s' order by date_created";
 		$data = $db->query($sql, $id);
 		foreach ( $data as $v ) {
-			$costWeight = $v["cost_weight"];
-			$costWeightNote = null;
-			if ($costWeight == 0 || $sumCostWeight == 0) {
-				$costWeight = null;
-				$costWeightNote = null;
-			} else {
-				$percent = number_format($costWeight / $sumCostWeight * 100, 2);
-				$costWeightNote = "{$costWeight}/{$sumCostWeight} = {$percent}%";
-			}
 			$result[] = [
 					"id" => $v["id"],
-					"goodsId" => $v["goods_id"],
-					"goodsCode" => $v["code"],
-					"goodsName" => $v["name"],
-					"goodsSpec" => $v["spec"],
-					"unitName" => $v["unit_name"],
-					"goodsCount" => $v["sub_goods_count"],
-					"costWeight" => $costWeight,
-					"costWeightNote" => $costWeightNote
+					"taxCode" => $v["tax_code"],
+					"dateCreated" => $v["date_created"],
+					"defaultCode" => $v["default_code"]?$v["default_code"]:0,
 			];
 		}
 		
@@ -106,12 +80,12 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	}
 
 	/**
-	 * 新增商品构成
+	 * 新增商品税控编码
 	 *
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function addGoodsBOM(& $params) {
+	public function addGoodsCode(& $params) {
 		$db = $this->db;
 		
 		$companyId = $params["companyId"];
@@ -124,63 +98,47 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		// id: 商品id
-		$id = $params["id"];
-		
-		$subGoodsId = $params["subGoodsId"];
-		$subGoodsCount = $params["subGoodsCount"];
-		$costWeight = $params["costWeight"];
-		if ($costWeight < 0) {
-			$costWeight = 0;
-		}
-		if ($costWeight > 100) {
-			$costWeight = 100;
-		}
-		
+		$goodsId = $params["goodsId"];
+		$historyCode = $params["historyCode"];
+		$code = $params["code"];
+		$defaultCode = $params["defaultCode"];
+
+
 		$goodsDAO = new GoodsDAO($db);
-		$goods = $goodsDAO->getGoodsById($id);
+		$goods = $goodsDAO->getGoodsById($goodsId);
 		if (! $goods) {
 			return $this->bad("商品不存在");
 		}
-		
-		$subGoods = $goodsDAO->getGoodsById($subGoodsId);
-		if (! $subGoods) {
-			return $this->bad("子商品不存在");
-		}
-		
-		if ($subGoodsCount <= 0) {
-			return $this->bad("子商品数量需要大于0");
-		}
-		
-		$rc = $this->checkSubGoods($id, $subGoodsId);
-		if ($rc) {
-			return $rc;
-		}
-		
-		$sql = "select count(*) as cnt 
-				from t_goods_bom
-				where goods_id = '%s' and sub_goods_id = '%s' ";
-		$data = $db->query($sql, $id, $subGoodsId);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			return $this->bad("子商品已经存在，不能再新增");
-		}
-		
-		$sql = "insert into t_goods_bom(id, goods_id, sub_goods_id, sub_goods_count, parent_id,
-					cost_weight)
-				values ('%s', '%s', '%s', convert(%f, $fmt), null, %d)";
-		$rc = $db->execute($sql, $this->newId(), $id, $subGoodsId, $subGoodsCount, $costWeight);
-		if ($rc === false) {
-			return $this->sqlError(__METHOD__, __LINE__);
-		}
-		
+		if($historyCode != $code){
+            $sql = "select count(*) as cnt 
+				from t_goods_tax_code
+				where goods_id = '%s' and tax_code = '%s' ";
+            $data = $db->query($sql, $goodsId, $code);
+            $cnt = $data[0]["cnt"];
+            if ($cnt > 0) {
+                return $this->bad("商品税编码已经存在");
+            }
+            //判断新增未默认时，修改其他的默认
+            if($defaultCode == 1){
+                $sql="update t_goods_tax_code set default_code = 0 where goods_id  = '%s'";
+                $update=$db->execute($sql,$goodsId);
+                if ($update === false) {
+                    return $this->sqlError(__METHOD__, __LINE__);
+                }
+            }
+            $sql = "insert into t_goods_tax_code (id, goods_id, tax_code, date_created, default_code)
+				values ('%s', '%s', '%s', now(), '%s')";
+            $ins = $db->execute($sql, $this->newId(), $goodsId, $code, $defaultCode);
+            if ($ins === false) {
+                return $this->sqlError(__METHOD__, __LINE__);
+            }
+        }
+
 		$params["goodsCode"] = $goods["code"];
 		$params["goodsName"] = $goods["name"];
 		$params["goodsSpec"] = $goods["spec"];
-		$params["subGoodsCode"] = $subGoods["code"];
-		$params["subGoodsName"] = $subGoods["name"];
-		$params["subGoodsSpec"] = $subGoods["spec"];
+
 		
-		// 操作成功
 		return null;
 	}
 
@@ -190,62 +148,51 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function updateGoodsBOM(& $params) {
+	public function updateGoodsCode(& $params) {
 		$db = $this->db;
-		
 		$companyId = $params["companyId"];
+		$goodsCodeId = $params["goodsCodeId"];
+		$goodsId = $params["goodsId"];
+		$historyCode = $params["historyCode"];
+		$code = $params["code"];
+		$defaultCode = $params["defaultCode"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
-		$bcDAO = new BizConfigDAO($db);
-		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
-		$fmt = "decimal(19, " . $dataScale . ")";
-		
-		// id: 商品id
-		$id = $params["id"];
-		
-		$subGoodsId = $params["subGoodsId"];
-		$subGoodsCount = $params["subGoodsCount"];
-		$costWeight = $params["costWeight"];
-		if ($costWeight < 0) {
-			$costWeight = 0;
-		}
-		if ($costWeight > 100) {
-			$costWeight = 100;
-		}
-		
 		$goodsDAO = new GoodsDAO($db);
-		$goods = $goodsDAO->getGoodsById($id);
+		$goods = $goodsDAO->getGoodsById($goodsId);
 		if (! $goods) {
 			return $this->bad("商品不存在");
 		}
-		
-		$subGoods = $goodsDAO->getGoodsById($subGoodsId);
-		if (! $subGoods) {
-			return $this->bad("子商品不存在");
-		}
-		
-		if ($subGoodsCount <= 0) {
-			return $this->bad("子商品数量需要大于0");
-		}
-		
-		$sql = "update t_goods_bom
-				set sub_goods_count = convert(%f, $fmt), cost_weight = %d
-				where goods_id = '%s' and sub_goods_id = '%s' ";
-		
-		$rc = $db->execute($sql, $subGoodsCount, $costWeight, $id, $subGoodsId);
-		if ($rc === false) {
-			return $this->sqlError(__METHOD__, __LINE__);
-		}
-		
+
+        if($historyCode != $code){
+            $sql = "select count(*) as cnt 
+				from t_goods_tax_code
+				where goods_id = '%s' and tax_code = '%s' ";
+            $data = $db->query($sql, $goodsId, $code);
+            $cnt = $data[0]["cnt"];
+            if ($cnt > 0) {
+                return $this->bad("商品税编码已经存在");
+            }
+            //判断新增未默认时，修改其他的默认
+            if($defaultCode == 1){
+                $sql="update t_goods_tax_code set default_code = 0 where goods_id  = '%s'";
+                $update=$db->execute($sql,$goodsId);
+                if ($update === false) {
+                    return $this->sqlError(__METHOD__, __LINE__);
+                }
+            }
+            $sql="update t_goods_tax_code set tax_code ='%s',date_created = now(),default_code = '%s'
+            where id ='%s'";
+            $ins = $db->execute($sql,$code, $defaultCode,$goodsCodeId);
+            if ($ins === false) {
+                return $this->sqlError(__METHOD__, __LINE__);
+            }
+        }
 		$params["goodsCode"] = $goods["code"];
 		$params["goodsName"] = $goods["name"];
 		$params["goodsSpec"] = $goods["spec"];
-		$params["subGoodsCode"] = $subGoods["code"];
-		$params["subGoodsName"] = $subGoods["name"];
-		$params["subGoodsSpec"] = $subGoods["spec"];
-		
+
 		// 操作成功
 		return null;
 	}
@@ -256,51 +203,21 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return array
 	 */
-	public function getSubGoodsInfo($params) {
-		$goodsId = $params["goodsId"];
-		$subGoodsId = $params["subGoodsId"];
+	public function getGoodsCodeInfo($params) {
+		$GoodsCodeId = $params["GoodsCodeId"];
 		
 		$db = $this->db;
 		
-		$goodsDAO = new GoodsDAO($db);
-		$goods = $goodsDAO->getGoodsById($goodsId);
-		if (! $goods) {
-			return $this->badParam("goodsId");
-		}
-		$subGoods = $goodsDAO->getGoodsById($subGoodsId);
-		if (! $subGoods) {
-			return $this->badParam("subGoodsId: $subGoodsId ");
-		}
-		
-		$sql = "select sub_goods_count, cost_weight
-				from t_goods_bom
-				where goods_id = '%s' and sub_goods_id = '%s' ";
-		$data = $db->query($sql, $goodsId, $subGoodsId);
-		$subGoodsCount = 0;
-		$costWeight = 1;
-		if ($data) {
-			$subGoodsCount = $data[0]["sub_goods_count"];
-			$costWeight = $data[0]["cost_weight"];
-		}
-		
-		$sql = "select u.name
-				from t_goods g, t_goods_unit u
-				where g.unit_id = u.id and g.id = '%s' ";
-		$data = $db->query($sql, $subGoodsId);
-		$unitName = "";
-		if ($data) {
-			$unitName = $data[0]["name"];
-		}
-		
-		return [
-				"success" => true,
-				"count" => $subGoodsCount,
-				"name" => $subGoods["name"],
-				"spec" => $subGoods["spec"],
-				"code" => $subGoods["code"],
-				"unitName" => $unitName,
-				"costWeight" => $costWeight
-		];
+		$sql = "select *
+				from t_goods_tax_code
+				where id = '%s'";
+		$data = $db->query($sql, $GoodsCodeId);
+		$result=[
+            "id"=>$data[0]["id"],
+            "tax_code"=>$data[0]["tax_code"],
+            "default_code"=>$data[0]["default_code"],
+        ];
+		return $result;
 	}
 
 	/**
@@ -309,31 +226,27 @@ class GoodsBomDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return null|array
 	 */
-	public function deleteGoodsBOM(& $params) {
+	public function deleteGoodsCode(& $params) {
 		$db = $this->db;
 		
 		$id = $params["id"];
 		
-		$sql = "select goods_id, sub_goods_id
-				from t_goods_bom
+		$sql = "select id,tax_code,goods_id  
+				from t_goods_tax_code
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
-			return $this->bad("要删除的子商品不存在");
+			return $this->bad("要删除的税编码不存在");
 		}
-		$goodsId = $data[0]["goods_id"];
-		$subGoodsId = $data[0]["sub_goods_id"];
+        $params["code"] = $data[0]["tax_code"];
+        $goodsId = $data[0]["goods_id"];
 		$goodsDAO = new GoodsDAO($db);
 		$goods = $goodsDAO->getGoodsById($goodsId);
 		if (! $goods) {
 			return $this->badParam("goodsId");
 		}
-		$subGoods = $goodsDAO->getGoodsById($subGoodsId);
-		if (! $subGoods) {
-			return $this->badParam("subGoodsId");
-		}
-		
-		$sql = "delete from t_goods_bom where id = '%s' ";
+
+		$sql = "delete from t_goods_tax_code where id = '%s' ";
 		
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
@@ -343,10 +256,43 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$params["goodsCode"] = $goods["code"];
 		$params["goodsName"] = $goods["name"];
 		$params["goodsSpec"] = $goods["spec"];
-		$params["subGoodsCode"] = $subGoods["code"];
-		$params["subGoodsName"] = $subGoods["name"];
-		$params["subGoodsSpec"] = $subGoods["spec"];
-		
+
+		// 操作成功
+		return null;
+	}
+	public function isDefault(& $params) {
+		$db = $this->db;
+
+		$id = $params["id"];
+
+		$sql = "select id,tax_code,goods_id  
+				from t_goods_tax_code
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要设置的税编码不存在");
+		}
+        $params["code"] = $data[0]["tax_code"];
+        $goodsId = $data[0]["goods_id"];
+		$goodsDAO = new GoodsDAO($db);
+		$goods = $goodsDAO->getGoodsById($goodsId);
+		if (! $goods) {
+			return $this->badParam("goodsId");
+		}
+        $sql="update t_goods_tax_code set default_code = 0 where goods_id = '%s'";
+        $update=$db->execute($sql,$goodsId);
+        if ($update === false) {
+            return $this->sqlError(__METHOD__, __LINE__);
+        }
+        $sql="update t_goods_tax_code set default_code = 1 where id = '%s'";
+        $update=$db->execute($sql,$id);
+        if ($update === false) {
+            return $this->sqlError(__METHOD__, __LINE__);
+        }
+		$params["goodsCode"] = $goods["code"];
+		$params["goodsName"] = $goods["name"];
+		$params["goodsSpec"] = $goods["spec"];
+
 		// 操作成功
 		return null;
 	}

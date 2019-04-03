@@ -7,7 +7,7 @@ use Home\Common\FIdConst;
 /**
  * 商品品牌 DAO
  *
- * @author 李静波
+ * @author
  */
 class GoodsBrandDAO extends PSIBaseExDAO {
 
@@ -48,7 +48,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 					"iconCls" => "PSI-GoodsBrand"
 			];
 		}
-		
+
 		return $result;
 	}
 
@@ -65,19 +65,19 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$result = [];
 		$sql = "select id, name, full_name
 				from t_goods_brand b
 				where (parent_id is null)
 				";
 		$queryParam = [];
-		$ds = new DataOrgDAO($db);
+		/*$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::GOODS_BRAND, "b", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
-		}
+		}*/
 		
 		$sql .= " order by name";
 		
@@ -106,6 +106,48 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+    public function getBrands($params) {
+        $db = $this->db;
+
+        $loginUserId = $params["loginUserId"];
+        if ($this->loginUserIdNotExists($loginUserId)) {
+            return $this->emptyResult();
+        }
+
+        $result = [];
+        $sql = "select id, name, full_name
+				from t_goods_brand b
+				where (parent_id is null)
+				";
+        $queryParam = [];
+
+        $sql .= " order by name";
+
+        $data = $db->query($sql, $queryParam);
+        $result = [];
+        foreach ( $data as $v ) {
+            $id = $v["id"];
+            $fullName = $v["full_name"];
+            if (! $fullName) {
+                $fullName = $v["name"];
+            }
+
+            //$children = $this->getBrandsInternal($db, $id, $rs);
+            $children=array();
+            $result[] = [
+                "id" => $id,
+                "text" => $v["name"],
+                "fullName" => $fullName,
+                "children" => $children,
+                "leaf" => count($children) == 0,
+                "expanded" => true,
+                "iconCls" => "PSI-GoodsBrand"
+            ];
+        }
+
+        return $result;
+    }
+
 	/**
 	 * 新增商品品牌
 	 *
@@ -116,7 +158,6 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$name = $params["name"];
-		$py = $params["py"];
 		$parentId = $params["parentId"];
 		
 		$dataOrg = $params["dataOrg"];
@@ -141,26 +182,18 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 			$fullName = $data[0]["full_name"] . "\\" . $name;
 		}
 		
-		// 判断品牌是否已经存在
-		$sql = "select count(*) as cnt from t_goods_brand where full_name = '%s' ";
-		$data = $db->query($sql, $fullName);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			return $this->bad("品牌[{$fullName}]已经存在");
-		}
-		
 		$id = $this->newId();
 		if ($parentId) {
-			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $id, $name, $fullName, $parentId, $dataOrg, $companyId, $py);
+			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id)
+					values ('%s', '%s', '%s', '%s', '%s', '%s')";
+			$rc = $db->execute($sql, $id, $name, $fullName, $parentId, "", "");
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		} else {
-			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py)
-					values ('%s', '%s', '%s', null, '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $id, $name, $fullName, $dataOrg, $companyId, $py);
+			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id)
+					values ('%s', '%s', '%s', null, '%s', '%s')";
+			$rc = $db->execute($sql, $id, $name, $fullName, $dataOrg, $companyId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -214,7 +247,6 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		$name = $params["name"];
-		$py = $params["py"];
 		$parentId = $params["parentId"];
 		
 		// 检查品牌是否存在
@@ -258,30 +290,20 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 			}
 		}
 		
-		// 判断品牌是否已经存在
-		$fullName = $parentId ? $parentFullName . "\\" . $name : $name;
-		$sql = "select count(*) as cnt from t_goods_brand 
-				where full_name = '%s' and id <> '%s' ";
-		$data = $db->query($sql, $fullName, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			return $this->bad("品牌[{$fullName}]已经存在");
-		}
-		
 		if ($parentId) {
 			$fullName = $parentFullName . "\\" . $name;
 			$sql = "update t_goods_brand
-					set name = '%s', parent_id = '%s', full_name = '%s', py = '%s'
+					set name = '%s', parent_id = '%s', full_name = '%s'
 					where id = '%s' ";
-			$rc = $db->execute($sql, $name, $parentId, $fullName, $py, $id);
+			$rc = $db->execute($sql, $name, $parentId, $fullName, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		} else {
 			$sql = "update t_goods_brand
-					set name = '%s', parent_id = null, full_name = '%s', py = '%s'
+					set name = '%s', parent_id = null, full_name = '%s'
 					where id = '%s' ";
-			$rc = $db->execute($sql, $name, $name, $py, $id);
+			$rc = $db->execute($sql, $name, $name, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -397,53 +419,6 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 			}
 		} else {
 			$result["parentBrandName"] = null;
-		}
-		
-		return $result;
-	}
-
-	/**
-	 * 商品品牌自定义字段，查询数据
-	 */
-	public function queryGoodsBrandData($params) {
-		$db = $this->db;
-		
-		$loginUserId = $params["loginUserId"];
-		if ($this->loginUserIdNotExists($loginUserId)) {
-			return $this->emptyResult();
-		}
-		
-		$queryKey = $params["queryKey"];
-		if ($queryKey == null) {
-			$queryKey = "";
-		}
-		
-		$key = "%{$queryKey}%";
-		
-		$result = [];
-		$sql = "select id, full_name
-				from t_goods_brand b
-				where (b.name like '%s' or b.py like '%s')
-				";
-		$queryParams = [];
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::GOODS_BRAND, "b", $loginUserId);
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by b.full_name";
-		
-		$data = $db->query($sql, $queryParams);
-		
-		foreach ( $data as $v ) {
-			$result[] = [
-					"id" => $v["id"],
-					"name" => $v["full_name"]
-			];
 		}
 		
 		return $result;

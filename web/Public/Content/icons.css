@@ -9,6 +9,9 @@
 .PSI-button-delete {
     background-image:url(../Images/icons/delete.png?v=2017061504) !important;
 }
+.PSI-button-default {
+    background-image:url(../Images/icons/default.png?v=2017061504) !important;
+}
 
 .PSI-button-add-detail {
     background-image:url(../Images/icons/add.png?v=2017061504) !important;
@@ -40,6 +43,10 @@
 
 .PSI-button-cancel {
     background-image:url(../Images/icons/cancel.png?v=2017061504) !important;
+}
+.
+PSI-button-cancel2 {
+    background-image:url(../Images/icons/cancel2.png?v=2017061504) !important;
 }
 
 .PSI-button-refresh {
@@ -110,10 +117,6 @@
     background-image:url(../Images/icons/open_module.png?v=2017061504) !important;
 }
 
-.PSI-fid-7997 {
-    background-image:url(../Images/fid/fid-7997.png) !important;
-}
-
 .PSI-fid-8993 {
     background-image:url(../Images/fid/fid-8993.png) !important;
 }
@@ -165,6 +168,12 @@
 .PSI-fid-9999 {
     background-image:url(../Images/fid/fid-9999.png) !important;
 }
+.PSI-fid1101 {
+    background-image:url(../Images/fid/fid1101.png) !important;
+}
+.PSI-fid3010 {
+    background-image:url(../Images/fid/fid3010.png) !important;
+}
 
 .PSI-fid1001 {
     background-image:url(../Images/fid/fid1001.png) !important;
@@ -178,8 +187,18 @@
     background-image:url(../Images/fid/fid1003.png) !important;
 }
 
+.PSI-fid1008 {
+    background-image:url(../Images/fid/customer.png) !important;
+}
 .PSI-fid1004 {
+    background-image:url(../Images/fid/fid1009.png) !important;
+}
+.PSI-fid1009 {
     background-image:url(../Images/fid/fid1004.png) !important;
+}
+
+.PSI-fid1005 {
+    background-image: url(../Images/fid/fid1005.png) !important;
 }
 
 .PSI-fid1007 {
@@ -249,6 +268,9 @@
 .PSI-fid2016 {
     background-image:url(../Images/fid/fid2016.png) !important;
 }
+.PSI-fid1100 {
+    background-image:url(../Images/fid/fid1100.png) !important;
+}
 
 .PSI-fid2017 {
     background-image:url(../Images/fid/fid2017.png) !important;
@@ -314,30 +336,6 @@
     background-image:url(../Images/fid/fid2033.png) !important;
 }
 
-.PSI-fid2034 {
-    background-image:url(../Images/fid/fid2034.png) !important;
-}
-
-.PSI-fid2035 {
-    background-image:url(../Images/fid/fid2035.png) !important;
-}
-
-.PSI-fid2036 {
-    background-image:url(../Images/fid/fid2036.png) !important;
-}
-
-.PSI-fid2101 {
-    background-image:url(../Images/fid/fid2101.png) !important;
-}
-
-.PSI-fid2102 {
-    background-image:url(../Images/fid/fid2102.png) !important;
-}
-
-.PSI-fid2103 {
-    background-image:url(../Images/fid/fid2103.png) !important;
-}
-
 .PSI-login {
     background-image:url(../Images/login.png) !important;
 }
@@ -374,14 +372,6 @@
     background-image:url(../Images/icons/goodscategory.png) !important;
 }
 
-.PSI-GoodsBOM {
-    background-image:url(../Images/icons/goodsbom.png) !important;
-}
-
-.PSI-GoodsBOMItem {
-    background-image:url(../Images/icons/goodsbomitem.png) !important;
-}
-
 .PSI-GoodsBrand {
     background-image:url(../Images/icons/goodsbrand.png) !important;
 }
@@ -398,6 +388,39 @@
     background-image:url(../Images/icons/print_preview.png?v=2018041801) !important;
 }
 
-.PSI-Subject {
-    background-image:url(../Images/icons/gl_subject.png) !important;
+.PSI-fid2040 {
+    background-image:url(../Images/fid/poinvoice.png) !important;
 }
+
+.PSI-fid2042 {
+    background-image:url(../Images/fid/soinvoice.png) !important;
+}
+.PSI-fid2041 {
+    background-image:url(../Images/fid/invoice.png) !important;
+}
+.PSI-fid2037 {
+    background-image:url(../Images/icons/rank.png) !important;
+}
+
+.PSI-fid2035 {
+    background-image:url(../Images/fid/pocontract.png) !important;
+}
+
+.PSI-fid2036 {
+    background-image:url(../Images/fid/socontract.png) !important;
+}
+.PSI-button-delete {
+    background-image:url(../Images/icons/delete.png?v=2017061504) !important;
+}
+
+
+.PSI-button-contract {
+    background-image:url(../Images/icons/contract.png) !important;
+}
+
+.PSI-button-select {
+    background-image:url(../Images/icons/select.png?v=2017061504) !important;
+}
+
+
+

@@ -63,7 +63,7 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 				height : 40
 			},
 			width : 400,
-			height : 310,
+			height : 270,
 			layout : "border",
 			items : [{
 						region : "north",
@@ -138,34 +138,6 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 									id : "PSI_Goods_CategoryEditForm_editParentCategoryId",
 									xtype : "hidden",
 									name : "parentId"
-								}, {
-									id : "PSI_Goods_CategoryEditForm_editTaxRate",
-									xtype : "combo",
-									queryMode : "local",
-									editable : false,
-									valueField : "id",
-									labelAlign : "right",
-									labelSeparator : "",
-									fieldLabel : "默认税率",
-									store : Ext.create("Ext.data.ArrayStore", {
-												fields : ["id", "text"],
-												data : [[-1, "[不设定]"],
-														[0, "0%"], [1, "1%"],
-														[2, "2%"], [3, "3%"],
-														[4, "4%"], [5, "5%"],
-														[6, "6%"], [7, "7%"],
-														[8, "8%"], [9, "9%"],
-														[10, "10%"],
-														[11, "11%"],
-														[12, "12%"],
-														[13, "13%"],
-														[14, "14%"],
-														[15, "15%"],
-														[16, "16%"],
-														[17, "17%"]]
-											}),
-									value : -1,
-									name : "taxRate"
 								}],
 						buttons : buttons
 					}],
@@ -191,7 +163,6 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 				.getCmp("PSI_Goods_CategoryEditForm_editParentCategory");
 		me.editParentCategoryId = Ext
 				.getCmp("PSI_Goods_CategoryEditForm_editParentCategoryId");
-		me.editTaxRate = Ext.getCmp("PSI_Goods_CategoryEditForm_editTaxRate");
 	},
 
 	onOK : function(thenAdd) {
@@ -309,12 +280,6 @@ Ext.define("PSI.Goods.CategoryEditForm", {
 								me.editName.setValue(data.name);
 								me.editParentCategory.setIdValue(data.parentId);
 								me.editParentCategory.setValue(data.parentName);
-								if (data.taxRate) {
-									me.editTaxRate
-											.setValue(parseInt(data.taxRate));
-								} else {
-									me.editTaxRate.setValue(-1);
-								}
 							}
 						}
 

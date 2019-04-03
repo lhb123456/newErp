@@ -5,7 +5,7 @@ namespace Home\DAO;
 /**
  * 商品计量单位 DAO
  *
- * @author 李静波
+ * @author 
  */
 class GoodsUnitDAO extends PSIBaseExDAO {
 

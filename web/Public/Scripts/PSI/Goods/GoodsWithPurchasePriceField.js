@@ -7,7 +7,8 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 
 	config : {
 		parentCmp : null,
-		showAddButton : false
+        category : null,
+		showAddButton : false,
 	},
 
 	/**
@@ -31,15 +32,6 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 						me.onTriggerClick(e);
 					}
 				});
-
-		me.on({
-					render : function(p) {
-						p.getEl().on("dblclick", function() {
-									me.onTriggerClick();
-								});
-					},
-					single : true
-				});
 	},
 
 	/**
@@ -50,8 +42,8 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 		var modelName = "PSI_Goods_GoodsWithPurchaseFieldField_PSIGoodsField";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "spec", "unitName",
-							"purchasePrice", "memo", "taxRate"]
+					fields : ["id","one_code","one_name","tax_rate","two_code","brand","two_name", "code", "name", "spec", "unitName",
+							"purchasePrice", "memo"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -65,36 +57,59 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 					border : 0,
 					store : store,
 					columns : [{
+								header : "分类编码",
+								dataIndex : "one_code",
+								menuDisabled : true,
+								width : 80
+							}, {
+								header : "分类",
+								dataIndex : "one_name",
+								menuDisabled : true,
+								flex : 1,
+                        		width : 100
+							},{
+								header : "子分类编码",
+								dataIndex : "two_code",
+								menuDisabled : true,
+								width : 80
+							}, {
+								header : "子分类",
+								dataIndex : "two_name",
+								menuDisabled : true,
+								flex : 1,
+                        		width : 100
+							},{
 								header : "编码",
 								dataIndex : "code",
 								menuDisabled : true,
-								width : 70
+								width : 80
 							}, {
 								header : "商品",
 								dataIndex : "name",
 								menuDisabled : true,
-								flex : 1
+								flex : 1,
+                        		width : 150
 							}, {
 								header : "规格型号",
 								dataIndex : "spec",
 								menuDisabled : true,
-								flex : 1
+								flex : 1,
+                        		width : 60
 							}, {
 								header : "单位",
 								dataIndex : "unitName",
 								menuDisabled : true,
 								width : 60
 							}, {
-								header : "建议采购价",
-								dataIndex : "purchasePrice",
+								header : "品牌",
+								dataIndex : "brand",
 								menuDisabled : true,
-								align : "right",
-								xtype : "numbercolumn"
+								width : 100
 							}, {
-								header : "备注",
-								dataIndex : "memo",
+								header : "税率",
+								dataIndex : "tax_rate",
 								menuDisabled : true,
-								width : 300
+								width : 100
 							}]
 				});
 		me.lookupGrid = lookupGrid;
@@ -121,60 +136,62 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 				});
 
 		var wnd = Ext.create("Ext.window.Window", {
-			title : "选择 - 商品",
-			width : 950,
-			height : 300,
-			layout : "border",
-			header : false,
-			border : 0,
-			items : [{
-						region : "center",
-						xtype : "panel",
-						layout : "fit",
-						border : 0,
-						items : [lookupGrid]
-					}, {
-						xtype : "panel",
-						region : "south",
-						height : 90,
-						layout : "fit",
-						border : 0,
-						items : [{
-									xtype : "form",
-									layout : "form",
-									bodyPadding : 5,
-									items : [{
-												id : "__editGoods",
-												xtype : "textfield",
-												fieldLabel : "商品",
-												labelWidth : 50,
-												labelAlign : "right",
-												labelSeparator : ""
-											}, {
-												xtype : "displayfield",
-												fieldLabel : " ",
-												value : "输入编码、商品名称拼音字头、规格型号拼音字头可以过滤查询",
-												labelWidth : 50,
-												labelAlign : "right",
-												labelSeparator : ""
-											}, {
-												xtype : "displayfield",
-												fieldLabel : " ",
-												value : "↑ ↓ 键改变当前选择项 ；回车键返回",
-												labelWidth : 50,
-												labelAlign : "right",
-												labelSeparator : ""
-											}]
-								}]
-					}],
-			buttons : buttons
-		});
+					title : "选择 - 商品",
+					modal : true,
+					width : 1100,
+					height : 420,
+					layout : "border",
+					items : [{
+								region : "center",
+								xtype : "panel",
+								layout : "fit",
+								border : 0,
+								items : [lookupGrid]
+							}, {
+								xtype : "panel",
+								region : "south",
+								height : 120,
+								layout : "fit",
+								border : 0,
+								items : [{
+											xtype : "form",
+											layout : {
+                                                type : "table",
+                                                columns : 2
+											},
+											bodyPadding : 5,
+											items : [{
+														id : "__editGoods",
+														xtype : "textfield",
+														fieldLabel : "商品",
+														labelWidth : 50,
+														width :1000,
+														colspan :2,
+														labelAlign : "right",
+														labelSeparator : ""
+													},{
+														xtype : "displayfield",
+														fieldLabel : " ",
+														value : "输入编码、商品名称拼音字头、规格型号拼音字头可以过滤查询",
+														labelWidth : 50,
+                                                		colspan :2,
+														labelAlign : "right",
+														labelSeparator : ""
+													}, {
+														xtype : "displayfield",
+														fieldLabel : " ",
+														value : "↑ ↓ 键改变当前选择项 ；回车键返回",
+														labelWidth : 50,
+														labelAlign : "right",
+														labelSeparator : ""
+													}]
+										}]
+							}],
+					buttons : buttons
+				});
 
 		wnd.on("close", function() {
 					me.focus();
-				});
-		wnd.on("deactivate", function() {
-					wnd.close();
 				});
 		me.wnd = wnd;
 
@@ -206,7 +223,6 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 					});
 
 		}, me);
-
 		editName.on("specialkey", function(field, e) {
 					if (e.getKey() == e.ENTER) {
 						me.onOK();
@@ -249,7 +265,7 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.showBy(me);
+		wnd.show();
 	},
 
 	onOK : function() {
@@ -276,5 +292,5 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 		var form = Ext.create("PSI.Goods.GoodsEditForm");
 
 		form.show();
-	}
+	},
 });

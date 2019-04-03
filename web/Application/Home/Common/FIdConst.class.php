@@ -1118,4 +1118,38 @@ class FIdConst {
     const CO_COMPANY_EDIT= "3002-05";
 
     const CO_COMPANY_DEL = "3002-06";
+
+    /**
+     * 货币币种
+     * @var string
+     */
+
+    const COIN_CURRENCY = "2037";
+
+    //新增币种
+    const COIN_CURRENCY_ADD = "2037-01";
+
+    //编辑币种
+    const COIN_CURRENCY_EDIT = "2037-02";
+
+    //删除币种
+    const COIN_CURRENCY_DELETE = "2037-03";
+
+    /**
+     * 货币汇率
+     * @var string
+     */
+
+    const COIN_RATE = "2038";
+
+    //新增汇率
+    const COIN_RATE_ADD = "2038-01";
+
+    //编辑汇率
+    const COIN_RATE_EDIT = "2038-02";
+
+    //删除汇率
+    const COIN_RATE_DELETE = "2038-03";
+    //结算方式
+    const CLEARING_FORM = "1101";
 }

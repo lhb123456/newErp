@@ -77,7 +77,7 @@ Ext.define("PSI.OrgWarehouse.MainForm", {
         var modelName = "PSI_Warehouse_MainForm_PSIWarehouse";
         Ext.define(modelName, {
             extend : "Ext.data.Model",
-            fields : ["id", "code", "name", "address"]
+            fields : ["id", "code", "name","number", "address"]
         });
 
         me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -99,6 +99,12 @@ Ext.define("PSI.OrgWarehouse.MainForm", {
             }, {
                 header : "仓库名称",
                 dataIndex : "name",
+                menuDisabled : true,
+                sortable : false,
+                width : 300
+            }, {
+                header : "仓库库号",
+                dataIndex : "number",
                 menuDisabled : true,
                 sortable : false,
                 width : 300
@@ -281,6 +287,7 @@ Ext.define("PSI.OrgWarehouse.MainForm", {
         }
 
         var warehouse = item[0];
+        console.log(warehouse)
         var info = "请确认是否删除仓库 <span style='color:red'>" + warehouse.get("name")
             + "</span> ?";
         var preIndex = me.getPreIndexInMainGrid(warehouse.get("id"));

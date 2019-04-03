@@ -23,7 +23,7 @@ class WarehouseController extends PSIBaseController {
 		if ($us->hasPermission(FIdConst::WAREHOUSE)) {
 			$this->initVar();
 			
-			$this->assign("title", "仓库");
+			$this->assign("title", "公司仓库");
 			
 			// 按钮权限： 新增仓库
 			$this->assign("pAdd", $us->hasPermission(FIdConst::WAREHOUSE_ADD) ? 1 : 0);
@@ -78,9 +78,9 @@ class WarehouseController extends PSIBaseController {
 			}
 			
 			$params = array(
-					"id" => I("post.id"),
-					"code" => strtoupper(I("post.code")),
-					"name" => I("post.name")
+					"orgId" => I("post.orgId"),
+					"text" => I("post.text"),
+					"items" =>  $bill = json_decode(html_entity_decode(I("post.items")), true),
 			);
 			$ws = new WarehouseService();
 			$this->ajaxReturn($ws->editWarehouse($params));
@@ -137,4 +137,5 @@ class WarehouseController extends PSIBaseController {
 			$this->ajaxReturn($ws->editDataOrg($params));
 		}
 	}
+
 }

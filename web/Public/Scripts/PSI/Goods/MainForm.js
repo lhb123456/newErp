@@ -1,7 +1,7 @@
 /**
  * 商品 - 主界面
  * 
- * @author 李静波
+ * @author
  */
 Ext.define("PSI.Goods.MainForm", {
 	extend : "PSI.AFX.BaseMainExForm",
@@ -90,13 +90,14 @@ Ext.define("PSI.Goods.MainForm", {
 		me.queryTotalGoodsCount();
 
 		me.__queryEditNameList = ["editQueryCode", "editQueryName",
-				"editQuerySpec", "editQueryBarCode", "editQueryBrand"];
+				"editQuerySpec", "editQueryBarCode"];
 	},
 
 	getToolbarCmp : function() {
 		var me = this;
 
 		return [{
+					id:"addCate",
 					text : "新增商品分类",
 					disabled : me.getPAddCategory() == "0",
 					handler : me.onAddCategory,
@@ -115,11 +116,13 @@ Ext.define("PSI.Goods.MainForm", {
 					text : "新增商品",
 					disabled : me.getPAddGoods() == "0",
 					handler : me.onAddGoods,
+
 					scope : me
 				}, {
 					text : "导入商品",
 					disabled : me.getPImportGoods() == "0",
 					handler : me.onImportGoods,
+            		hidden:true,
 					scope : me
 				}, "-", {
 					text : "修改商品",
@@ -131,12 +134,7 @@ Ext.define("PSI.Goods.MainForm", {
 					disabled : me.getPDeleteGoods() == "0",
 					handler : me.onDeleteGoods,
 					scope : me
-				}, "-", {
-					text : "帮助",
-					handler : function() {
-						window.open(me.URL("/Home/Help/index?t=goods"));
-					}
-				}, "-", {
+				},"-", {
 					text : "关闭",
 					handler : function() {
 						me.closeWindow();
@@ -228,21 +226,6 @@ Ext.define("PSI.Goods.MainForm", {
 					xtype : "textfield",
 					listeners : {
 						specialkey : {
-							fn : me.onQueryEditSpecialKey,
-							scope : me
-						}
-					}
-				}, {
-					id : "editQueryBrand",
-					labelWidth : 60,
-					labelAlign : "right",
-					labelSeparator : "",
-					fieldLabel : "品牌",
-					margin : "5, 0, 0, 0",
-					xtype : "PSI_goods_brand_field",
-					showModal : true,
-					listeners : {
-						specialkey : {
 							fn : me.onLastQueryEditSpecialKey,
 							scope : me
 						}
@@ -260,8 +243,8 @@ Ext.define("PSI.Goods.MainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "spec", "unitId",
 							"unitName", "categoryId", "salePrice",
-							"purchasePrice", "barCode", "memo", "dataOrg",
-							"brandFullName", "recordStatus", "taxRate"]
+							"purchasePrice", "barCode", "taxRate","memo", "dataOrg",
+							"brandFullName"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -293,150 +276,130 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-			cls : "PSI",
-			viewConfig : {
-				enableTextSelection : true
-			},
-			header : {
-				height : 30,
-				title : me.formatGridHeaderTitle("商品列表")
-			},
-			bbar : ["->", {
-						id : "pagingToolbar",
-						border : 0,
-						xtype : "pagingtoolbar",
-						store : store
-					}, "-", {
-						xtype : "displayfield",
-						value : "每页显示"
-					}, {
-						id : "comboCountPerPage",
-						xtype : "combobox",
-						editable : false,
-						width : 60,
-						store : Ext.create("Ext.data.ArrayStore", {
-									fields : ["text"],
-									data : [["20"], ["50"], ["100"], ["300"],
-											["1000"]]
-								}),
-						value : 20,
-						listeners : {
-							change : {
-								fn : function() {
-									store.pageSize = Ext
-											.getCmp("comboCountPerPage")
-											.getValue();
-									store.currentPage = 1;
-									Ext.getCmp("pagingToolbar").doRefresh();
-								},
-								scope : me
-							}
+					cls : "PSI",
+					viewConfig : {
+						enableTextSelection : true
+					},
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("商品列表")
+					},
+					bbar : ["->", {
+								id : "pagingToolbar",
+								border : 0,
+								xtype : "pagingtoolbar",
+								store : store
+							}, "-", {
+								xtype : "displayfield",
+								value : "每页显示"
+							}, {
+								id : "comboCountPerPage",
+								xtype : "combobox",
+								editable : false,
+								width : 60,
+								store : Ext.create("Ext.data.ArrayStore", {
+											fields : ["text"],
+											data : [["20"], ["50"], ["100"],
+													["300"], ["1000"]]
+										}),
+								value : 20,
+								listeners : {
+									change : {
+										fn : function() {
+											store.pageSize = Ext
+													.getCmp("comboCountPerPage")
+													.getValue();
+											store.currentPage = 1;
+											Ext.getCmp("pagingToolbar")
+													.doRefresh();
+										},
+										scope : me
+									}
+								}
+							}, {
+								xtype : "displayfield",
+								value : "条记录"
+							}],
+					columnLines : true,
+					columns : [Ext.create("Ext.grid.RowNumberer", {
+										text : "序号",
+										width : 40
+									}), {
+								header : "商品编码",
+								dataIndex : "code",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "品名",
+								dataIndex : "name",
+								menuDisabled : true,
+								sortable : false,
+								width : 300
+							}, {
+								header : "规格型号",
+								dataIndex : "spec",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
+							}, {
+								header : "计量单位",
+								dataIndex : "unitName",
+								menuDisabled : true,
+								sortable : false,
+								width : 60
+							}, {
+								header : "品牌",
+								dataIndex : "brandFullName",
+								menuDisabled : true,
+								sortable : false
+							},{
+								header : "税率",
+								dataIndex : "taxRate",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "销售基准价",
+								dataIndex : "salePrice",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn"
+							}, {
+								header : "建议采购价",
+								dataIndex : "purchasePrice",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn"
+							}, {
+								header : "条形码",
+								dataIndex : "barCode",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								width : 300
+							}, {
+								header : "数据域",
+								dataIndex : "dataOrg",
+								menuDisabled : true,
+								sortable : false
+							}],
+					store : store,
+					listeners : {
+						itemdblclick : {
+							fn : me.onEditGoods,
+							scope : me
+						},
+						select : {
+							fn : me.onGoodsSelect,
+							scope : me
 						}
-					}, {
-						xtype : "displayfield",
-						value : "条记录"
-					}],
-			columnLines : true,
-			columns : [Ext.create("Ext.grid.RowNumberer", {
-								text : "序号",
-								width : 40
-							}), {
-						header : "商品编码",
-						dataIndex : "code",
-						menuDisabled : true,
-						sortable : false,
-						renderer : function(value, metaData, record) {
-							if (parseInt(record.get("recordStatus")) == 1000) {
-								return value;
-							} else {
-								return "<span style='color:gray;text-decoration:line-through;'>"
-										+ value + "</span>";
-							}
-						}
-					}, {
-						header : "品名",
-						dataIndex : "name",
-						menuDisabled : true,
-						sortable : false,
-						width : 300
-					}, {
-						header : "规格型号",
-						dataIndex : "spec",
-						menuDisabled : true,
-						sortable : false,
-						width : 200
-					}, {
-						header : "计量单位",
-						dataIndex : "unitName",
-						menuDisabled : true,
-						sortable : false,
-						width : 80
-					}, {
-						header : "品牌",
-						dataIndex : "brandFullName",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "销售基准价",
-						dataIndex : "salePrice",
-						menuDisabled : true,
-						sortable : false,
-						align : "right",
-						xtype : "numbercolumn"
-					}, {
-						header : "建议采购价",
-						dataIndex : "purchasePrice",
-						menuDisabled : true,
-						sortable : false,
-						align : "right",
-						xtype : "numbercolumn"
-					}, {
-						header : "税率",
-						dataIndex : "taxRate",
-						menuDisabled : true,
-						sortable : false,
-						align : "right"
-					}, {
-						header : "条形码",
-						dataIndex : "barCode",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "备注",
-						dataIndex : "memo",
-						menuDisabled : true,
-						sortable : false,
-						width : 300
-					}, {
-						header : "数据域",
-						dataIndex : "dataOrg",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "状态",
-						dataIndex : "recordStatus",
-						menuDisabled : true,
-						sortable : false,
-						renderer : function(value) {
-							if (parseInt(value) == 1000) {
-								return "启用";
-							} else {
-								return "<span style='color:red'>停用</span>";
-							}
-						}
-					}],
-			store : store,
-			listeners : {
-				itemdblclick : {
-					fn : me.onEditGoods,
-					scope : me
-				},
-				select : {
-					fn : me.onGoodsSelect,
-					scope : me
-				}
-			}
-		});
+					}
+				});
 
 		return me.__mainGrid;
 	},
@@ -745,11 +708,6 @@ Ext.define("PSI.Goods.MainForm", {
 			result.barCode = barCode;
 		}
 
-		var brandId = Ext.getCmp("editQueryBrand").getIdValue();
-		if (brandId) {
-			result.brandId = brandId;
-		}
-
 		return result;
 	},
 
@@ -787,11 +745,6 @@ Ext.define("PSI.Goods.MainForm", {
 			result.barCode = barCode;
 		}
 
-		var brandId = Ext.getCmp("editQueryBrand").getIdValue();
-		if (brandId) {
-			result.brandId = brandId;
-		}
-
 		return result;
 	},
 
@@ -802,10 +755,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var me = this;
 
 		me.getMainGrid().getStore().removeAll();
-		me.getSIGrid().setTitle("商品安全库存");
 		me.getSIGrid().getStore().removeAll();
-		me.getGoodsBOMGrid().getStore().removeAll();
-		me.getGoodsPriceGrid().getStore().removeAll();
 
 		me.queryTotalGoodsCount();
 
@@ -826,8 +776,6 @@ Ext.define("PSI.Goods.MainForm", {
 			}
 		}
 
-		Ext.getCmp("editQueryBrand").clearIdValue();
-
 		me.onQuery();
 	},
 
@@ -844,10 +792,8 @@ Ext.define("PSI.Goods.MainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "warehouseCode", "warehouseName",
-							"safetyInventory", {
-								name : "inventoryCount",
-								type : "float"
-							}, "unitName", "inventoryUpper"]
+							"safetyInventory", "inventoryCount", "unitName",
+							"inventoryUpper"]
 				});
 
 		me.__siGrid = Ext.create("Ext.grid.Panel", {
@@ -855,10 +801,6 @@ Ext.define("PSI.Goods.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					features : [{
-								ftype : "summary",
-								dock : "bottom"
-							}],
 					title : "商品安全库存",
 					tbar : [{
 								text : "设置商品安全库存",
@@ -867,7 +809,7 @@ Ext.define("PSI.Goods.MainForm", {
 								handler : me.onSafetyInventory,
 								scope : me
 							}],
-					columnLines : false,
+					columnLines : true,
 					columns : [{
 								header : "仓库编码",
 								dataIndex : "warehouseCode",
@@ -897,10 +839,7 @@ Ext.define("PSI.Goods.MainForm", {
 								sortable : false,
 								align : "right",
 								xtype : "numbercolumn",
-								format : "0",
-								summaryRenderer : function() {
-									return "当前库存合计";
-								}
+								format : "0"
 							}, {
 								header : "当前库存",
 								dataIndex : "inventoryCount",
@@ -909,7 +848,6 @@ Ext.define("PSI.Goods.MainForm", {
 								sortable : false,
 								align : "right",
 								xtype : "numbercolumn",
-								summaryType : "sum",
 								format : "0"
 							}, {
 								header : "计量单位",
@@ -939,7 +877,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			me.getSIGrid().setTitle("商品安全库存");
-			me.getGoodsBOMGrid().setTitle("商品构成");
+			me.getGoodsBOMGrid().setTitle("税控编码");
 			return;
 		}
 
@@ -1074,7 +1012,7 @@ Ext.define("PSI.Goods.MainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "text", "fullName", "code", "cnt", "leaf",
-							"children", "taxRate"]
+							"children"]
 				});
 
 		var store = Ext.create("Ext.data.TreeStore", {
@@ -1141,15 +1079,10 @@ Ext.define("PSI.Goods.MainForm", {
 									text : "商品种类数",
 									dataIndex : "cnt",
 									align : "right",
-									width : 90,
+									width : 80,
 									renderer : function(value) {
 										return value == 0 ? "" : value;
 									}
-								}, {
-									text : "默认税率",
-									dataIndex : "taxRate",
-									align : "center",
-									width : 80
 								}]
 					},
 					listeners : {
@@ -1189,10 +1122,30 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var title = "属于商品分类 [" + record.get("fullName") + "] 的商品列表";
 		me.getMainGrid().setTitle(me.formatGridHeaderTitle(title));
-
+        me.cateReadOnly(record.get("code"));
 		me.onCategoryGridSelect();
 	},
 
+    cateReadOnly:function(code){
+        var me = this;
+        me.ajax({
+            url : me.URL("Home/Goods/cateReadOnly"),
+            params : {
+                code : code
+            },
+            callback : function(options, success, response) {
+
+                if (success) {
+                    var data = me.decodeJSON(response.responseText);
+					if(data.parent_id){
+                        Ext.getCmp("addCate").setDisabled(true)
+					}else{
+                        Ext.getCmp("addCate").setDisabled(false)
+					}
+                }
+            }
+        });
+	},
 	queryTotalGoodsCount : function() {
 		var me = this;
 		me.ajax({
@@ -1210,7 +1163,7 @@ Ext.define("PSI.Goods.MainForm", {
 	},
 
 	/**
-	 * 商品构成Grid
+	 * 税控编码Grid
 	 */
 	getGoodsBOMGrid : function() {
 		var me = this;
@@ -1221,9 +1174,7 @@ Ext.define("PSI.Goods.MainForm", {
 		var modelName = "PSIGoodsBOM";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "goodsId", "goodsCode", "goodsName",
-							"goodsCount", "goodsSpec", "unitName",
-							"costWeight", "costWeightNote"]
+					fields : ["id","taxCode", "dateCreated", "defaultCode"]
 				});
 
 		me.__bomGrid = Ext.create("Ext.grid.Panel", {
@@ -1231,63 +1182,63 @@ Ext.define("PSI.Goods.MainForm", {
 					viewConfig : {
 						enableTextSelection : true
 					},
-					title : "商品构成",
+					title : "税控编码",
 					tbar : [{
-								text : "新增子商品",
+								text : "新增税控编码",
 								scope : me,
 								iconCls : "PSI-button-add",
 								disabled : me.getPAddBOM() == "0",
 								handler : me.onAddBOM
 							}, "-", {
-								text : "编辑子商品",
+								text : "编辑税控编码",
 								scope : me,
 								iconCls : "PSI-button-edit",
 								disabled : me.getPEditBOM() == "0",
 								handler : me.onEditBOM
 							}, "-", {
-								text : "删除子商品",
+								text : "删除税控编码",
 								scope : me,
 								iconCls : "PSI-button-delete",
 								disabled : me.getPDeleteBOM() == "0",
 								handler : me.onDeleteBOM
-							}],
+							},  "-",{
+								text : "设为默认编码",
+								iconCls : "PSI-button-default",
+								//hidden : me.getPermission().default == "0",
+								handler : me.default,
+								scope : me
+							},],
 					columnLines : true,
-					columns : {
-						defaults : {
-							menuDisabled : true,
-							sortable : false
-						},
-						items : [{
-									header : "子商品编码",
-									dataIndex : "goodsCode"
-								}, {
-									header : "子商品名称",
-									dataIndex : "goodsName",
-									width : 300
-								}, {
-									header : "子商品规格型号",
-									dataIndex : "goodsSpec",
-									width : 200
-								}, {
-									header : "子商品数量",
-									dataIndex : "goodsCount",
-									width : 90,
-									align : "right"
-								}, {
-									header : "子商品单位",
-									dataIndex : "unitName",
-									width : 90
-								}, {
-									header : "成本分摊权重",
-									dataIndex : "costWeight",
-									width : 100,
-									align : "right"
-								}, {
-									header : "成本分摊占比",
-									dataIndex : "costWeightNote",
-									width : 200
-								}]
-					},
+					columns : [{
+								xtype : "rownumberer",
+								width : 50
+							},{
+								header : "税控编码",
+								dataIndex : "taxCode",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "创建时间",
+								dataIndex : "dateCreated",
+								//width : 300,
+								menuDisabled : true,
+								sortable : false
+							},{
+								header : "是否默认税控编码",
+								dataIndex : "defaultCode",
+								width:100,
+								menuDisabled : true,
+								sortable : false,
+								renderer : function(value,md,record) {
+									if (value == 0) {
+										return "否";
+									} else if (value == 1) {
+										return "<span style='color:red'>是<span/>";
+									}  else {
+										return "";
+									}
+								}
+							}],
 					store : Ext.create("Ext.data.Store", {
 								model : modelName,
 								autoLoad : false,
@@ -1318,7 +1269,37 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 		form.show();
 	},
+    default : function(){
+        var me =this;
+        var item = me.getGoodsBOMGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择要设置的编码");
+            return;
+        }
+        var items= item[0]
+        PSI.MsgBox.confirm("是否设置此编码为默认编码",function () {
+            Ext.Ajax.request({
+                url : PSI.Const.BASE_URL + "Home/Goods/isDefault",
+                method : "POST",
+                params : {
+                    id:items.get("id"),
+                },
+                callback : function(options, success, response) {
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        if (data.success) {
+                            PSI.MsgBox.showInfo("设置成功", function() {
+                                me.refreshGoodsBOM();
+                            });
+                        } else {
+                            PSI.MsgBox.showInfo("网络错误");
+                        }
+                    }
+                }
 
+            });
+        })
+    },
 	/**
 	 * 编辑子商品
 	 */
@@ -1334,7 +1315,7 @@ Ext.define("PSI.Goods.MainForm", {
 
 		var item = me.getGoodsBOMGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("请选择要编辑的子商品");
+			me.showInfo("请选择要编辑的编码");
 			return;
 		}
 		var subGoods = item[0];
@@ -1369,16 +1350,15 @@ Ext.define("PSI.Goods.MainForm", {
 		}
 		var subGoods = item[0];
 
-		var info = "请确认是否删除子商品: <span style='color:red'>"
-				+ subGoods.get("goodsName") + " " + subGoods.get("goodsSpec")
-				+ "</span>?";
+		var info = "请确认是否删除税控编码: <span style='color:red'>"
+				+ subGoods.get("taxCode") + "</span>?";
 
 		var confirmFunc = function() {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");
 
 			var r = {
-				url : me.URL("Home/Goods/deleteGoodsBOM"),
+				url : me.URL("Home/Goods/deleteGoodsCode"),
 				params : {
 					id : subGoods.get("id")
 				},

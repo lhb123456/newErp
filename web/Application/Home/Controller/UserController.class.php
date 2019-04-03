@@ -174,6 +174,15 @@ class UserController extends PSIBaseController {
 			$this->ajaxReturn($us->users($params));
 		}
 	}
+    /**
+     * 根据数据域返回可用的组织机构
+     */
+    public function selectOrg() {
+        if (IS_POST) {
+            $us = new UserService();
+            $this->ajaxReturn($us->selectOrg());
+        }
+    }
 
 	/**
 	 * 新建或编辑组织结构

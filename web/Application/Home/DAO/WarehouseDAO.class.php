@@ -3,6 +3,7 @@
 namespace Home\DAO;
 
 use Home\Common\FIdConst;
+use Home\Service\PinyinService;
 
 /**
  * 仓库 DAO
@@ -69,7 +70,7 @@ class WarehouseDAO extends PSIBaseExDAO {
         }
         //$ware=M("t_all_warehouse")->select();
         $queryParams = [];
-        $sql="select code,name,address from t_warehouse_base where 1 = 1 ";
+        $sql="select id,code,name,address,number from t_warehouse_base where 1 = 1 ";
 
         if($code){
             $sql.=" AND code like '%s'";
@@ -92,6 +93,7 @@ class WarehouseDAO extends PSIBaseExDAO {
                 'code' =>$v["code"],
                 'name' =>$v["name"],
                 'address' =>$v["address"],
+                'number' =>$v["number"],
             ];
         }
         return $result;
@@ -105,10 +107,9 @@ class WarehouseDAO extends PSIBaseExDAO {
 	 */
 	public function addWarehouse(& $params) {
 		$db = $this->db;
-		
-		$code = trim($params["code"]);
-		$name = trim($params["name"]);
-		$py = $params["py"];
+		$orgId = trim($params["orgId"]);
+		$items = $params["items"];
+		$text = $params["text"];
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		
@@ -119,33 +120,39 @@ class WarehouseDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->bad("参数companyId不正确");
 		}
-		
-		if ($this->isEmptyStringAfterTrim($code)) {
-			return $this->bad("仓库编码不能为空");
-		}
-		
-		if ($this->isEmptyStringAfterTrim($name)) {
-			return $this->bad("仓库名称不能为空");
-		}
-		
-		// 检查同编号的仓库是否存在
-		$sql = "select count(*) as cnt from t_warehouse where code = '%s' ";
-		$data = $db->query($sql, $code);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			return $this->bad("编码为 [$code] 的仓库已经存在");
-		}
-		
-		$id = $this->newId();
-		$params["id"] = $id;
-		
-		$sql = "insert into t_warehouse(id, code, name, inited, py, data_org, company_id)
-					values ('%s', '%s', '%s', 0, '%s', '%s', '%s')";
-		$rc = $db->execute($sql, $id, $code, $name, $py, $dataOrg, $companyId);
-		if ($rc === false) {
-			return $this->sqlError(__METHOD__, __LINE__);
-		}
-		
+		if($text == 'yes'){
+		    $number=1;
+        }else{
+            $number=0;
+        }
+		foreach ($items as $k=>$v){
+            $ps =new PinyinService();
+            $py = $ps->toPY($v["name"]);
+		    $ware_id=$v["id"];
+            $id = $this->newId();
+		    $sql="select count(id) as cnt from t_warehouse where company_id = '%s' AND warehouse_id = '%s'";
+		    $data=$db->query($sql,$orgId,$ware_id);
+		    //当查询没有值时添加
+		    if($data[0]["cnt"] == 0){
+		        //查询基础库的数据
+                $sql="select code from t_warehouse_base where id = '%s'";
+                $base=$db->query($sql,$ware_id);
+                //查询此公司的数据域
+                $sql="select data_org from t_org where id = '%s'";
+                $dataOrg=$db->query($sql,$orgId);
+                $wareData[]=[
+                    "code"=>$base[0]["code"],
+                    "name"=>$v["name"],
+                ];
+                $sql = "insert into t_warehouse(id, code, name, inited, py, data_org, company_id,warehouse_id)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s','%s')";
+                $rc = $db->execute($sql, $id, $base[0]["code"], $v["name"],$number, $py, $dataOrg[0]["data_org"], $orgId,$ware_id);
+                if ($rc === false) {
+                    return $this->sqlError(__METHOD__, __LINE__);
+                }
+            }
+        }
+        $params["data"]=$wareData;
 		// 操作成功
 		return null;
 	}
@@ -396,4 +403,188 @@ class WarehouseDAO extends PSIBaseExDAO {
 		
 		return $db->query($sql, $queryParams);
 	}
+
+    /**
+     * 新增一个公司仓库
+     *
+     * @param array $params
+     * @return NULL|array
+     */
+    public function addOrgWarehouse(& $params) {
+        $db = $this->db;
+        $name=$params["name"];
+        $code=$params["code"];
+        $address=$params["address"];
+        $number=$params["number"];
+
+        if(!$name){
+            return $this->bad("仓库名称不能为空");
+        }
+        if (!$code) {
+            return $this->bad("仓库编码不能为空");
+        }
+        if (!$address) {
+            return $this->bad("仓库地址不能为空");
+        }
+        //判断编码是否重复
+        $date=M("t_warehouse_base")->where("code = '".$code."'")->find();
+        if($date){
+            return $this->bad("编码已存在");
+        }
+        $id = $this->newId();
+        $data["id"] = $id;
+        $data["name"]=$name;
+        $data["code"]=$code;
+        $data["address"]=$address;
+        $data["number"]=$number;
+        $ware_id=M("t_warehouse_base")->add($data);
+        $params["id"]=$ware_id;
+        // 操作成功
+        return null;
+    }
+    public function updateOrgWarehouse(& $params) {
+        $id = $params["id"];
+        $name=$params['name'];
+        $hisCode=$params['hisCode'];
+        $code=$params['code'];
+        $address=$params['address'];
+        $number=$params["number"];
+        if(!$name){
+            return $this->bad("仓库名称不能为空");
+        }
+        if (!$code) {
+            return $this->bad("仓库编码不能为空");
+        }
+        if (!$address) {
+            return $this->bad("仓库地址不能为空");
+        }
+        //判断编码是否重复
+        if(!($hisCode == $code)){
+            $date=M("t_warehouse_base")->where("code = '".$code."'")->find();
+            if($date){
+                return $this->bad("编码已存在");
+            }
+        }
+        $data["name"] = $name;
+        $data["code"] = $code;
+        $data["address"] = $address;
+        $data["number"] = $number;
+        //创建新的数据
+        M("t_warehouse_base")->where("id = '".$id."'")->save($data);
+        //修改公司-仓库表中的数据
+        $date["warehouse_id"]=$id;
+        $date["name"] = $name;
+        $date["code"] = $code;
+        M("t_warehouse")->where("warehouse_id = '".$id."'")->save($date);
+
+        // 操作成功
+        return null;
+    }
+    //删除操作
+    public function deleteOrgWarehouse($params){
+        $db = $this->db;
+
+        $id = $params["id"];
+        $data=M("t_warehouse_base")->where("id = '".$id."'")->find();
+        if(!$data){
+            return $this->bad("仓库不存在");
+        }
+        // 判断仓库是否能删除
+        $warehouse = M("t_warehouse as w")
+            ->where("warehouse_id = '".$id."'")->find();
+        if ($warehouse) {
+            return $this->bad("仓库[{$data["name"]}]已经被关联，不能删除");
+        }
+
+        $sql = "delete from t_warehouse_base where id = '%s' ";
+        $rc = $db->execute($sql, $id);
+        if ($rc === false) {
+            return $this->sqlError(__METHOD__, __LINE__);
+        }
+
+        // 操作成功
+        return null;
+    }
+    public function selectOrg($params) {
+        $db = $this->db;
+
+        $loginUserId = $params["loginUserId"];
+        if ($this->loginUserIdNotExists($loginUserId)) {
+            return $this->emptyResult();
+        }
+        $sql = "select id,name, full_name,data_org
+				from t_org where org_type = 2000  ";
+
+        $queryParams = array();
+        $ds = new DataOrgDAO($db);
+        $rs = $ds->buildSQL("-8999-01", "t_org", $loginUserId);
+        if ($rs) {
+            $sql .= " AND " . $rs[0];
+            $queryParams = $rs[1];
+        }
+
+        $sql .= " order by full_name";
+
+        $data = $db->query($sql, $queryParams);
+        $result = array();
+        foreach ( $data as $i => $v ) {
+            //查询公司下的仓库
+            $sql="select count(id) as cnt from t_warehouse where company_id = '%s'";
+            $count=$db->query($sql,$v["id"]);
+            $result[$i]["id"] = $v["id"];
+            $result[$i]["fullName"] = $v["name"];
+            $result[$i]["data_org"] = $v["data_org"];
+            $result[$i]["count"] = $count[0]["cnt"];
+        }
+        return array_values($result);
+    }
+    public function wareList($params) {
+        $db = $this->db;
+        $orgId = trim($params["orgId"]);
+        $code = trim($params["code"]);
+        $name = trim($params["name"]);
+        $start = trim($params["start"]);
+        $limit = trim($params["limit"]);
+        $sql="select w.id,w.code,w.name,b.address,b.number from t_warehouse  w,t_warehouse_base b where w.warehouse_id = b.id ";
+        $queryParams = [];
+        if($code){
+            $sql.=" AND w.code like '%s'";
+            $queryParams[] = "%{$code}%";
+        }
+        if($name){
+            $sql.=" AND (w.name like '%s' or w.py like '%s')";
+            $queryParams[] = "%{$name}%";
+            $queryParams[] = "%{$name}%";
+        }
+        $sql .=" AND company_id = '%s' order by code limit %d , %d";
+        $queryParams[] = $orgId;
+        $queryParams[] = $start;
+        $queryParams[] = $limit;
+        $data=$db->query($sql,$queryParams);
+        $result=[];
+        foreach ($data as $k=>$v){
+            $result[]=[
+              "id"=>$v["id"],
+              "code"=>$v["code"],
+              "name"=>$v["name"],
+              "address"=>$v["address"],
+              "number"=>$v["number"],
+            ];
+        }
+        // 操作成功
+        return $result;
+    }
+    public function deleteOrgWare($params) {
+        $db = $this->db;
+        $orgId = trim($params["orgId"]);
+        $wareId = trim($params["wareId"]);
+        //根据条件删除公司仓库表中相对应的数据
+        $sql="delete from t_warehouse where id = '%s' AND company_id = '%s'";
+        $del=$db->execute($sql,$wareId,$orgId);
+        if ($del === false) {
+            return $this->sqlError(__METHOD__, __LINE__);
+        }
+        // 操作成功
+        return null;
+    }
 }
