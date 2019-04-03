@@ -7,7 +7,7 @@ use Home\Common\FIdConst;
 /**
  * 商品DAO
  *
- * @author 李静波
+ * @author
  */
 class GoodsDAO extends PSIBaseExDAO {
 
@@ -25,7 +25,6 @@ class GoodsDAO extends PSIBaseExDAO {
 		$name = $params["name"];
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
-		$brandId = $params["brandId"];
 		
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -37,18 +36,17 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$result = [];
 		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name,
-					g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id, g.record_status,
-					g.tax_rate
+					g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id,g.tax_rate
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id) and (g.category_id = '%s') ";
 		$queryParam = [];
 		$queryParam[] = $categoryId;
-		$ds = new DataOrgDAO($db);
+		/*$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::GOODS, "g", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
-		}
+		}*/
 		
 		if ($code) {
 			$sql .= " and (g.code like '%s') ";
@@ -67,10 +65,6 @@ class GoodsDAO extends PSIBaseExDAO {
 			$sql .= " and (g.bar_code = '%s') ";
 			$queryParam[] = $barCode;
 		}
-		if ($brandId) {
-			$sql .= " and (g.brand_id = '%s') ";
-			$queryParam[] = $brandId;
-		}
 		
 		$sql .= " order by g.code limit %d, %d";
 		$queryParam[] = $start;
@@ -85,6 +79,7 @@ class GoodsDAO extends PSIBaseExDAO {
 					"id" => $v["id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
+					"taxRate" => $v["tax_rate"],
 					"salePrice" => $v["sale_price"],
 					"spec" => $v["spec"],
 					"unitId" => $v["unit_id"],
@@ -93,9 +88,7 @@ class GoodsDAO extends PSIBaseExDAO {
 					"barCode" => $v["bar_code"],
 					"memo" => $v["memo"],
 					"dataOrg" => $v["data_org"],
-					"brandFullName" => $brandFullName,
-					"recordStatus" => $v["record_status"],
-					"taxRate" => $this->toTaxRate($v["tax_rate"])
+					"brandFullName" => $brandFullName
 			];
 		}
 		
@@ -125,10 +118,6 @@ class GoodsDAO extends PSIBaseExDAO {
 			$sql .= " and (g.bar_code = '%s') ";
 			$queryParam[] = $barCode;
 		}
-		if ($brandId) {
-			$sql .= " and (g.brand_id = '%s') ";
-			$queryParam[] = $brandId;
-		}
 		
 		$data = $db->query($sql, $queryParam);
 		$totalCount = $data[0]["cnt"];
@@ -137,19 +126,6 @@ class GoodsDAO extends PSIBaseExDAO {
 				"goodsList" => $result,
 				"totalCount" => $totalCount
 		];
-	}
-
-	private function toTaxRate($taxRate) {
-		if (! $taxRate) {
-			return null;
-		}
-		
-		$r = intval($taxRate);
-		if ($r >= 0 && $r <= 17) {
-			return "{$r}%";
-		} else {
-			return null;
-		}
 	}
 
 	private function getBrandFullNameById($db, $brandId) {
@@ -181,9 +157,9 @@ class GoodsDAO extends PSIBaseExDAO {
 		$barCode = $params["barCode"];
 		$memo = $params["memo"];
 		$brandId = $params["brandId"];
-		$recordStatus = $params["recordStatus"];
-		$taxRate = $params["taxRate"];
-		
+		$bizUser=$params["loginUserId"];
+		$taxRate=$params["taxRate"];
+
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		if ($this->dataOrgNotExists($dataOrg)) {
@@ -237,39 +213,24 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$id = $this->newId();
 		$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,
-					py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id,
-					record_status)
+					py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id,tax_rate)
 				values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
-					if('%s' = '', null, '%s'),
-					%d)";
+					if('%s' = '', null, '%s'),'%s')";
 		$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-				$purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY, $brandId, $brandId, 
-				$recordStatus);
+				$purchasePrice, $barCode, $memo, "", "", $specPY, $brandId, $brandId,$taxRate);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
-		// 税率
-		if ($taxRate == - 1) {
-			$sql = "update t_goods set tax_rate = null where id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				return $this->sqlError(__METHOD__, __LINE__);
-			}
-		} else {
-			$taxRate = intval($taxRate);
-			if ($taxRate > 17) {
-				$taxRate = 17;
-			}
-			if ($taxRate < 0) {
-				$taxRate = 0;
-			}
-			$sql = "update t_goods set tax_rate = %d where id = '%s' ";
-			$rc = $db->execute($sql, $taxRate, $id);
-			if ($rc === false) {
-				return $this->sqlError(__METHOD__, __LINE__);
-			}
-		}
+
+		//现货价格
+        if($salePrice||$purchasePrice){
+            $sql="insert into t_currentPrice(goods_id,po_price,so_price,price_date,input_user_id,create_date,memo)
+              values('%s',%f,%f,now(),'%s',now(),'%s') ";
+            $res=$db->execute($sql,$id,$purchasePrice,$salePrice,$bizUser,"");
+            if($res==false){
+                return $this->sqlError(__METHOD__,__LINE__);
+            }
+        }
 		
 		$params["id"] = $id;
 		
@@ -293,13 +254,15 @@ class GoodsDAO extends PSIBaseExDAO {
 		$categoryId = $params["categoryId"];
 		$unitId = $params["unitId"];
 		$salePrice = $params["salePrice"];
+		$oldSalePrice = $params["oldSalePrice"];
 		$purchasePrice = $params["purchasePrice"];
+		$oldPurchasePrice = $params["oldPurchasePrice"];
 		$barCode = $params["barCode"];
 		$memo = $params["memo"];
 		$brandId = $params["brandId"];
-		$recordStatus = $params["recordStatus"];
-		$taxRate = $params["taxRate"];
-		
+		$bizUser=$params["loginUserId"];
+		$taxRate=$params["taxRate"];
+
 		$py = $params["py"];
 		$specPY = $params["specPY"];
 		
@@ -351,38 +314,25 @@ class GoodsDAO extends PSIBaseExDAO {
 		$sql = "update t_goods
 				set code = '%s', name = '%s', spec = '%s', category_id = '%s',
 				    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
-					bar_code = '%s', memo = '%s', spec_py = '%s',
-					brand_id = if('%s' = '', null, '%s'),
-					record_status = %d
+					bar_code = '%s', memo = '%s', spec_py = '%s',tax_rate = '%s',
+					brand_id = if('%s' = '', null, '%s')
 				where id = '%s' ";
 		
 		$rc = $db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-				$purchasePrice, $barCode, $memo, $specPY, $brandId, $brandId, $recordStatus, $id);
+				$purchasePrice, $barCode, $memo, $specPY,$taxRate ,$brandId, $brandId, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
-		// 税率
-		if ($taxRate == - 1) {
-			$sql = "update t_goods set tax_rate = null where id = '%s' ";
-			$rc = $db->execute($sql, $id);
-			if ($rc === false) {
-				return $this->sqlError(__METHOD__, __LINE__);
-			}
-		} else {
-			$taxRate = intval($taxRate);
-			if ($taxRate > 17) {
-				$taxRate = 17;
-			}
-			if ($taxRate < 0) {
-				$taxRate = 0;
-			}
-			$sql = "update t_goods set tax_rate = %d where id = '%s' ";
-			$rc = $db->execute($sql, $taxRate, $id);
-			if ($rc === false) {
-				return $this->sqlError(__METHOD__, __LINE__);
-			}
-		}
+
+		//新增现货价格
+        if($salePrice!=$oldSalePrice||$purchasePrice!=$oldPurchasePrice){
+            $sql="insert into t_currentPrice(goods_id,po_price,so_price,price_date,input_user_id,create_date,memo)
+              values('%s',%f,%f,now(),'%s',now(),'%s') ";
+            $res=$db->execute($sql,$id,$purchasePrice,$salePrice,$bizUser,"");
+            if($res==false){
+                return $this->sqlError(__METHOD__,__LINE__);
+            }
+        }
 		
 		// 操作成功
 		return null;
@@ -487,90 +437,6 @@ class GoodsDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$companyId = $params["companyId"];
-		if ($this->companyIdNotExists($companyId)) {
-			return $this->emptyResult();
-		}
-		$bcDAO = new BizConfigDAO($db);
-		$taxRate = $bcDAO->getTaxRate($companyId);
-		
-		if ($queryKey == null) {
-			$queryKey = "";
-		}
-		
-		$key = "%{$queryKey}%";
-		
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,
-					g.category_id
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') ";
-		$queryParams = [];
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		$queryParams[] = $key;
-		
-		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::GOODS_BILL, "g", $loginUserId);
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by g.code
-				limit 20";
-		$data = $db->query($sql, $queryParams);
-		$result = [];
-		foreach ( $data as $v ) {
-			$goodsId = $v["id"];
-			
-			// 查询商品的税率
-			// 目前的设计和实现，存在数据量大的情况下会查询缓慢的可能，是需要改进的地方
-			$sql = "select tax_rate from t_goods where id = '%s' and tax_rate is not null";
-			$d = $db->query($sql, $goodsId);
-			if ($d) {
-				$taxRate = $d[0]["tax_rate"];
-			} else {
-				// 商品本身没有设置税率，就去查询该商品分类是否设置了默认税率
-				$categoryId = $v["category_id"];
-				$sql = "select tax_rate from t_goods_category where id = '%s' and tax_rate is not null";
-				$d = $db->query($sql, $categoryId);
-				if ($d) {
-					$taxRate = $d[0]["tax_rate"];
-				}
-			}
-			
-			$result[] = [
-					"id" => $v["id"],
-					"code" => $v["code"],
-					"name" => $v["name"],
-					"spec" => $v["spec"],
-					"unitName" => $v["unit_name"],
-					"taxRate" => $taxRate
-			];
-		}
-		
-		return $result;
-	}
-
-	/**
-	 * 商品字段，查询数据 - - 只显示有子商品的商品，用于加工业务中
-	 *
-	 * @param array $params        	
-	 * @return array
-	 */
-	public function queryDataForBOM($params) {
-		$db = $this->db;
-		
-		$queryKey = $params["queryKey"];
-		$loginUserId = $params["loginUserId"];
-		if ($this->loginUserIdNotExists($loginUserId)) {
-			return $this->emptyResult();
-		}
-		
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
@@ -579,10 +445,9 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
+				where (g.unit_id = u.id)
 				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') 
-				and g.id in (select goods_id as id from t_goods_bom) ";
+					or g.spec like '%s' or g.spec_py like '%s') ";
 		$queryParams = [];
 		$queryParams[] = $key;
 		$queryParams[] = $key;
@@ -644,20 +509,20 @@ class GoodsDAO extends PSIBaseExDAO {
 		}
 		
 		$customerId = $params["customerId"];
-		$psId = $this->getPsIdForCustomer($customerId);
-		
+		$companyId = $params["companyId"];
+
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
 		
 		$key = "%{$queryKey}%";
 		
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.sale_price, g.memo
+		$sql = "select  g.id, g.code, g.brand_id,g.tax_rate,g.name,g.category_id, g.spec, u.name as unit_name, g.sale_price, g.memo
 				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
+				where (g.unit_id = u.id)
 				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
 					or g.spec like '%s' or g.spec_py like '%s') ";
-		
+
 		$queryParams = [];
 		$queryParams[] = $key;
 		$queryParams[] = $key;
@@ -665,48 +530,72 @@ class GoodsDAO extends PSIBaseExDAO {
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		
-		$ds = new DataOrgDAO($db);
+		/*$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::GOODS_BILL, "g", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
-		}
+		}*/
 		
-		$sql .= " order by g.code
-				limit 20";
+		$sql .= " order by g.py ";
 		$data = $db->query($sql, $queryParams);
 		$result = [];
 		foreach ( $data as $v ) {
 			$priceSystem = "";
 			
 			$price = $v["sale_price"];
-			
-			if ($psId) {
-				// 取价格体系里面的价格
-				$goodsId = $v["id"];
-				$sql = "select g.price, p.name
-						from t_goods_price g, t_price_system p
-						where g.goods_id = '%s' and g.ps_id = '%s'
-							and g.ps_id = p.id";
-				$d = $db->query($sql, $goodsId, $psId);
-				if ($d) {
-					$priceSystem = $d[0]["name"];
-					$price = $d[0]["price"];
-				}
-			}
-			
+            $category=M("t_goods_category")->where("id ='".$v["category_id"]."'")->find();
+            $brand=M("t_goods_brand")->where("id='".$v["brand_id"]."'")->find();
+            if($category["parent_id"]){
+                $top_category=M("t_goods_category")->where("id ='".$category["parent_id"]."'")->find();
+            }else{
+                $top_category["name"]="无";
+                $top_category["code"]="无";
+            }
+            // 取价格体系里面的价格
+            $goodsId = $v["id"];
+            $sql = "select g.price, p.name
+                    from t_goods_price g, t_price_system p
+                    where g.goods_id = '%s' 
+                        and g.ps_id = p.id";
+            $d = $db->query($sql, $goodsId);
+            if ($d) {
+                $priceSystem = $d[0]["name"];
+                //$price = $d[0]["price"];
+            }
+
+			//查询库存数量
+            $sql="select sum(balance_count) as balance_count,sum(afloat_count) as afloat_count from t_inventory_lot where goods_id='%s' and company_id='%s'";
+            $t_lot=$db->query($sql,$goodsId,$companyId);
+            if($t_lot){
+                $balance_count=floatval($t_lot[0]["balance_count"]);
+                $afloat_count=floatval($t_lot[0]["afloat_count"]);
+            }else{
+                $balance_count=0;
+                $afloat_count=0;
+            }
+
+
 			$result[] = [
 					"id" => $v["id"],
-					"code" => $v["code"],
-					"name" => $v["name"],
-					"spec" => $v["spec"],
-					"unitName" => $v["unit_name"],
+                    "one_code" => $top_category["code"],
+                    "one_name" => $top_category["name"],
+                    "two_code" => $category["code"],
+                    "two_name" => $category["name"],
+                    "brand" => $brand["name"],
+                    "code" => $v["code"],
+                    "name" => $v["name"],
+                    "spec" => $v["spec"],
+                    "tax_rate" => $v["tax_rate"],
+                    "unitName" => $v["unit_name"],
 					"salePrice" => $price,
 					"priceSystem" => $priceSystem,
-					"memo" => $v["memo"]
+					"memo" => $v["memo"],
+                    "balance_count"=>$balance_count,
+                    "afloat_count"=>$afloat_count
 			];
 		}
-		
+
 		return $result;
 	}
 
@@ -724,12 +613,6 @@ class GoodsDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		$companyId = $params["companyId"];
-		if ($this->companyIdNotExists($companyId)) {
-			return $this->emptyResult();
-		}
-		$bcDAO = new BizConfigDAO($db);
-		$taxRate = $bcDAO->getTaxRate($companyId);
 		
 		if ($queryKey == null) {
 			$queryKey = "";
@@ -737,10 +620,9 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$key = "%{$queryKey}%";
 		
-		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price, g.memo,
-					g.tax_rate
+		$sql = "select g.id, g.code, g.brand_id,g.name,g.category_id,g.tax_rate, g.spec, u.name as unit_name, g.purchase_price, g.memo
 				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
+				where (g.unit_id = u.id)
 				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
 					or g.spec like '%s' or g.spec_py like '%s') ";
 		
@@ -750,46 +632,33 @@ class GoodsDAO extends PSIBaseExDAO {
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
-		
-		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::GOODS_BILL, "g", $loginUserId);
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
-		
-		$sql .= " order by g.code
-				limit 20";
+
+		$sql .= " order by g.code";
 		$data = $db->query($sql, $queryParams);
 		$result = [];
 		foreach ( $data as $v ) {
-			$goodsId = $v["id"];
-			
-			// 查询商品的税率
-			// 目前的设计和实现，存在数据量大的情况下会查询缓慢的可能，是需要改进的地方
-			$sql = "select tax_rate from t_goods where id = '%s' and tax_rate is not null";
-			$d = $db->query($sql, $goodsId);
-			if ($d) {
-				$taxRate = $d[0]["tax_rate"];
-			} else {
-				// 商品本身没有设置税率，就去查询该商品分类是否设置了默认税率
-				$categoryId = $v["category_id"];
-				$sql = "select tax_rate from t_goods_category where id = '%s' and tax_rate is not null";
-				$d = $db->query($sql, $categoryId);
-				if ($d) {
-					$taxRate = $d[0]["tax_rate"];
-				}
-			}
-			
-			$result[] = [
+		    $category=M("t_goods_category")->where("id ='".$v["category_id"]."'")->find();
+		    $brand=M("t_goods_brand")->where("id='".$v["brand_id"]."'")->find();
+			if($category["parent_id"]){
+                $top_category=M("t_goods_category")->where("id ='".$category["parent_id"]."'")->find();
+            }else{
+                $top_category["name"]="无";
+                $top_category["code"]="无";
+            }
+		    $result[] = [
+                    "one_code" => $top_category["code"],
+                    "one_name" => $top_category["name"],
+                    "two_code" => $category["code"],
+                    "two_name" => $category["name"],
 					"id" => $v["id"],
+					"brand" => $brand["name"],
 					"code" => $v["code"],
+					"tax_rate" => $v["tax_rate"],
 					"name" => $v["name"],
 					"spec" => $v["spec"],
 					"unitName" => $v["unit_name"],
 					"purchasePrice" => $v["purchase_price"] == 0 ? null : $v["purchase_price"],
-					"memo" => $v["memo"],
-					"taxRate" => $taxRate
+					"memo" => $v["memo"]
 			];
 		}
 		
@@ -809,7 +678,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$categoryId = $params["categoryId"];
 		
 		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price,
-					bar_code, memo, brand_id, record_status, tax_rate
+					bar_code, memo, brand_id
 				from t_goods
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -835,8 +704,6 @@ class GoodsDAO extends PSIBaseExDAO {
 			
 			$result["barCode"] = $data[0]["bar_code"];
 			$result["memo"] = $data[0]["memo"];
-			$result["recordStatus"] = $data[0]["record_status"];
-			$result["taxRate"] = $data[0]["tax_rate"];
 			
 			$sql = "select full_name from t_goods_category where id = '%s' ";
 			$data = $db->query($sql, $categoryId);

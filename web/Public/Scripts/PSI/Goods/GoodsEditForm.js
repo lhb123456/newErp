@@ -89,7 +89,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 				height : 40
 			},
 			width : 460,
-			height : 410,
+			height : 370,
 			layout : "border",
 			items : [{
 						region : "north",
@@ -225,8 +225,18 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									fieldLabel : "品牌",
 									name : "brandName",
 									xtype : "PSI_goods_brand_field",
-									colspan : 2,
-									width : 430,
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Goods_GoodsEditForm_taxRate",
+									fieldLabel : "税率",
+									name : "taxRate",
+									value : entity == null ? null : entity
+										.get("taxRate"),
 									listeners : {
 										specialkey : {
 											fn : me.onEditSpecialKey,
@@ -236,6 +246,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								}, {
 									fieldLabel : "销售基准价",
 									xtype : "numberfield",
+                            		hidden:true,
 									hideTrigger : true,
 									name : "salePrice",
 									id : "PSI_Goods_GoodsEditForm_editSalePrice",
@@ -248,9 +259,19 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
+									fieldLabel : "销售基准价(初始值)",
+									xtype : "numberfield",
+									hidden:true,
+									hideTrigger : true,
+									name : "oldSalePrice",
+									id : "oldSalePrice",
+									value : entity == null ? null : entity
+										.get("salePrice")
+								},{
 									fieldLabel : "建议采购价",
 									xtype : "numberfield",
 									width : 205,
+                            		hidden:true,
 									hideTrigger : true,
 									name : "purchasePrice",
 									id : "PSI_Goods_GoodsEditForm_editPurchasePrice",
@@ -263,6 +284,16 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
+									fieldLabel : "建议采购价(初始值)",
+									xtype : "numberfield",
+									hidden:true,
+									width : 205,
+									hideTrigger : true,
+									name : "oldPurchasePrice",
+									id : "oldPurchasePrice",
+									value : entity == null ? null : entity
+										.get("purchasePrice")
+								},{
 									fieldLabel : "备注",
 									name : "memo",
 									id : "PSI_Goods_GoodsEditForm_editMemo",
@@ -276,46 +307,6 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									},
 									colspan : 2,
 									width : 430
-								}, {
-									id : "PSI_Goods_GoodsEditForm_editRecordStatus",
-									xtype : "combo",
-									queryMode : "local",
-									editable : false,
-									valueField : "id",
-									fieldLabel : "状态",
-									name : "recordStatus",
-									store : Ext.create("Ext.data.ArrayStore", {
-												fields : ["id", "text"],
-												data : [[1000, "启用"], [0, "停用"]]
-											}),
-									value : 1000
-								}, {
-									id : "PSI_Goods_GoodsEditForm_editTaxRate",
-									xtype : "combo",
-									queryMode : "local",
-									editable : false,
-									valueField : "id",
-									fieldLabel : "税率",
-									store : Ext.create("Ext.data.ArrayStore", {
-												fields : ["id", "text"],
-												data : [[-1, "[不设定]"],
-														[0, "0%"], [1, "1%"],
-														[2, "2%"], [3, "3%"],
-														[4, "4%"], [5, "5%"],
-														[6, "6%"], [7, "7%"],
-														[8, "8%"], [9, "9%"],
-														[10, "10%"],
-														[11, "11%"],
-														[12, "12%"],
-														[13, "13%"],
-														[14, "14%"],
-														[15, "15%"],
-														[16, "16%"],
-														[17, "17%"]]
-											}),
-									value : -1,
-									name : "taxRate",
-									width : 200
 								}],
 						buttons : buttons
 					}],
@@ -343,14 +334,12 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 		me.editUnit = Ext.getCmp("PSI_Goods_GoodsEditForm_editUnit");
 		me.editBarCode = Ext.getCmp("PSI_Goods_GoodsEditForm_editBarCode");
 		me.editBrand = Ext.getCmp("PSI_Goods_GoodsEditForm_editBrand");
+		me.taxRate = Ext.getCmp("PSI_Goods_GoodsEditForm_taxRate");
 		me.editBrandId = Ext.getCmp("PSI_Goods_GoodsEditForm_editBrandId");
 		me.editSalePrice = Ext.getCmp("PSI_Goods_GoodsEditForm_editSalePrice");
 		me.editPurchasePrice = Ext
 				.getCmp("PSI_Goods_GoodsEditForm_editPurchasePrice");
 		me.editMemo = Ext.getCmp("PSI_Goods_GoodsEditForm_editMemo");
-		me.editRecordStatus = Ext
-				.getCmp("PSI_Goods_GoodsEditForm_editRecordStatus");
-		me.editTaxRate = Ext.getCmp("PSI_Goods_GoodsEditForm_editTaxRate");
 
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
 				me.editSpec, me.editUnit, me.editBarCode, me.editBrand,
@@ -390,6 +379,10 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								unitStore.add(data.units);
 							}
 
+							if(data.salePrice>0||data.purchasePrice>0){
+								me.editPurchasePrice.setReadOnly(true);
+								me.editSalePrice.setReadOnly(true);
+							}
 							if (!me.adding) {
 								// 编辑商品信息
 								me.editCategory.setIdValue(data.categoryId);
@@ -399,8 +392,9 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								me.editSpec.setValue(data.spec);
 								me.editUnit.setValue(data.unitId);
 								me.editSalePrice.setValue(data.salePrice);
-								me.editPurchasePrice
-										.setValue(data.purchasePrice);
+								me.editPurchasePrice.setValue(data.purchasePrice);
+								Ext.getCmp("oldSalePrice").setValue(data.salePrice);
+								Ext.getCmp("oldPurchasePrice").setValue(data.purchasePrice);
 								me.editBarCode.setValue(data.barCode);
 								me.editMemo.setValue(data.memo);
 								var brandId = data.brandId;
@@ -408,14 +402,6 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									var editBrand = me.editBrand;
 									editBrand.setIdValue(brandId);
 									editBrand.setValue(data.brandFullName);
-								}
-								me.editRecordStatus
-										.setValue(parseInt(data.recordStatus));
-								if (data.taxRate) {
-									me.editTaxRate
-											.setValue(parseInt(data.taxRate));
-								} else {
-									me.editTaxRate.setValue(-1);
 								}
 							} else {
 								// 新增商品

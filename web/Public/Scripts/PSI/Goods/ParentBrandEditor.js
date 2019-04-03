@@ -44,7 +44,7 @@ Ext.define("PSI.Goods.ParentBrandEditor", {
 									read : "POST"
 								},
 								url : PSI.Const.BASE_URL
-										+ "Home/Goods/allBrands"
+										+ "Home/Goods/getBrands"		//allBrands换为getBrands
 							}
 						});
 

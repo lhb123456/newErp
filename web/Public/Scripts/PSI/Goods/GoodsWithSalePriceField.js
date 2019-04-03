@@ -7,20 +7,19 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 
 	config : {
 		parentCmp : null,
-		editCustomerName : null
+		editCustomerName : null,
+		company:null
 	},
 
 	/**
 	 * 初始化组件
 	 */
 	initComponent : function() {
-		var me = this;
+		this.enableKeyEvents = true;
 
-		me.enableKeyEvents = true;
+		this.callParent(arguments);
 
-		me.callParent(arguments);
-
-		me.on("keydown", function(field, e) {
+		this.on("keydown", function(field, e) {
 					if (e.getKey() == e.BACKSPACE) {
 						field.setValue(null);
 						e.preventDefault();
@@ -30,15 +29,6 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 					if (e.getKey() != e.ENTER && !e.isSpecialKey(e.getKey())) {
 						this.onTriggerClick(e);
 					}
-				});
-
-		me.on({
-					render : function(p) {
-						p.getEl().on("dblclick", function() {
-									me.onTriggerClick();
-								});
-					},
-					single : true
 				});
 	},
 
@@ -50,8 +40,8 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 		var modelName = "PSIGoodsField";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "spec", "unitName",
-							"salePrice", "memo", "priceSystem"]
+					fields : ["id","one_code","one_name","tax_rate","two_code","brand","two_name", "code", "name", "spec", "unitName",
+							"salePrice", "memo", "priceSystem","balance_count","afloat_count"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -65,26 +55,70 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 					border : 0,
 					store : store,
 					columns : [{
-								header : "编码",
+								header : "分类编码",
+								dataIndex : "one_code",
+								menuDisabled : true,
+								width : 80
+							}, {
+								header : "分类",
+								dataIndex : "one_name",
+								menuDisabled : true,
+								flex : 1,
+								width : 100
+							},{
+								header : "子分类编码",
+								dataIndex : "two_code",
+								menuDisabled : true,
+								width : 80
+							}, {
+								header : "子分类",
+								dataIndex : "two_name",
+								menuDisabled : true,
+								flex : 1,
+								width : 100
+							},{
+								header : "商品编码",
 								dataIndex : "code",
 								menuDisabled : true,
-								width : 70
+								width : 80
 							}, {
 								header : "商品",
 								dataIndex : "name",
 								menuDisabled : true,
-								flex : 1
+								flex : 1,
+								width : 300
 							}, {
 								header : "规格型号",
 								dataIndex : "spec",
 								menuDisabled : true,
-								flex : 1
+								flex : 1,
+								width : 60
 							}, {
+								header : "待入库数量",
+								dataIndex : "afloat_count",
+								menuDisabled : true,
+								width : 100
+							},{
+								header : "库存数量",
+								dataIndex : "balance_count",
+								menuDisabled : true,
+								width : 80
+							},{
 								header : "单位",
 								dataIndex : "unitName",
 								menuDisabled : true,
 								width : 60
 							}, {
+								header : "品牌",
+								dataIndex : "brand",
+								menuDisabled : true,
+								width : 100
+							}, {
+								header : "税率",
+								dataIndex : "tax_rate",
+								menuDisabled : true,
+								width : 100
+							},{
 								header : "销售价",
 								dataIndex : "salePrice",
 								menuDisabled : true,
@@ -99,7 +133,7 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 								header : "备注",
 								dataIndex : "memo",
 								menuDisabled : true,
-								width : 300
+								width : 250
 							}]
 				});
 		me.lookupGrid = lookupGrid;
@@ -107,10 +141,9 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 商品",
-			header : false,
-			border : 0,
-			width : 950,
-			height : 300,
+			modal : true,
+			width : 1500,
+			height : 500,
 			layout : "border",
 			items : [{
 						region : "center",
@@ -165,18 +198,20 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 		});
 
 		var customerId = null;
+		var companyId = null;
 		var editCustomer = Ext.getCmp(me.getEditCustomerName());
+		var company = Ext.getCmp(me.getCompany());
 		if (editCustomer) {
 			customerId = editCustomer.getIdValue();
 		}
 
+        if (company) {
+            companyId = company.getIdValue();
+        }
+
 		wnd.on("close", function() {
 					me.focus();
 				});
-		wnd.on("deactivate", function() {
-					wnd.close();
-				});
-
 		me.wnd = wnd;
 
 		var editName = Ext.getCmp("__editGoods");
@@ -187,7 +222,8 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 								+ "Home/Goods/queryDataWithSalePrice",
 						params : {
 							queryKey : editName.getValue(),
-							customerId : customerId
+							customerId : customerId,
+							companyId:companyId
 						},
 						method : "POST",
 						callback : function(opt, success, response) {
@@ -251,7 +287,7 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 					editName.focus();
 					editName.fireEvent("change");
 				}, me);
-		wnd.showBy(me);
+		wnd.show();
 	},
 
 	onOK : function() {

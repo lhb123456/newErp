@@ -1,7 +1,7 @@
 /**
  * 商品品牌 - 主界面
  * 
- * @author 李静波
+ * @author
  */
 Ext.define("PSI.Goods.BrandMainForm", {
 			extend : "PSI.AFX.BaseOneGridMainForm",
@@ -15,24 +15,14 @@ Ext.define("PSI.Goods.BrandMainForm", {
 							text : "新增品牌",
 							handler : me.onAddBrand,
 							scope : me
-						}, "-", {
+						}, {
 							text : "编辑品牌",
 							handler : me.onEditBrand,
 							scope : me
-						}, "-", {
+						}, {
 							text : "删除品牌",
 							handler : me.onDeleteBrand,
 							scope : me
-						}, "-", {
-							text : "刷新",
-							handler : me.onRefreshGrid,
-							scope : me
-						}, "-", {
-							text : "帮助",
-							handler : function() {
-								window.open(me
-										.URL("/Home/Help/index?t=goodsBrand"));
-							}
 						}, "-", {
 							text : "关闭",
 							handler : function() {
@@ -93,14 +83,6 @@ Ext.define("PSI.Goods.BrandMainForm", {
 											dataIndex : "fullName",
 											flex : 2
 										}]
-							},
-							listeners : {
-								beforeitemdblclick : {
-									fn : function() {
-										me.onEditBrand();
-										return false;
-									}
-								}
 							}
 						});
 
