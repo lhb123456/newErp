@@ -209,6 +209,17 @@ class MainMenuController extends Controller {
 				// 销售订单
 				redirect(__ROOT__ . "/Home/Sale/soIndex");
 				break;
+            case FIdConst::CLEARING_FORM:
+                redirect(__ROOT__ . "/Home/ClearingForm/ClearingForm");
+                break;
+            case FIdConst::COIN_RATE :
+                // 汇率
+                redirect(__ROOT__ . "/Home/Currency/rateIndex");
+                break;
+            case FIdConst::COIN_CURRENCY :
+                // 币种
+                redirect(__ROOT__ . "/Home/Currency/currency");
+                break;
 			case FIdConst::GOODS_BRAND :
 				// 基础数据 - 商品品牌
 				redirect(__ROOT__ . "/Home/Goods/brandIndex");
