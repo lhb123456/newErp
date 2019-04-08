@@ -927,4 +927,265 @@ class COCompanyDAO extends PSIBaseExDAO {
 			];
 		}
 	}
+
+	public function addCreditAssess(&$params){
+	    $db=$this->db;
+        //var_dump($params);exit;
+        $companyName=trim($params["companyName"]);
+        $companyType=json_encode($params["companyType"]);
+        $limit=floatval(trim($params["limit"]));
+        $companyAssetType=$params["companyAssetType"];
+        $companyAddrType=$params["companyAddrType"];
+        $otherCompany=trim($params["otherCompany"]);
+        $companyTradeType=json_encode($params["companyTradeType"]);
+        $companyStrength=$params["companyStrength"];
+        $registerAddr=trim($params["registerAddr"]);
+        $legalPerson=trim($params["legalPerson"]);
+        $registerMoneySubscribe=trim($params["registerMoneySubscribe"]);
+        $registerMoneyPaid=trim($params["registerMoneyPaid"]);
+        $check=$params["check"];
+        $contact=trim($params["contact"]);
+        $contactTel=trim($params["contactTel"]);
+        $mainWork=trim($params["mainWork"]);
+        $operateArea=trim($params["operateArea"]);
+        $operateAddr=trim($params["operateAddr"]);
+        $assetOffice=$params["assetOffice"];
+        $assetWarehouse=$params["assetWarehouse"];
+        $assetProductline=$params["assetProductline"];
+        $asset=trim($params["asset"]);
+        $workTime=$params["workTime"];
+        $employeeNum=$params["employeeNum"];
+        $assureAgreement=json_encode($params["assureAgreement"]);
+        $baseData=json_encode($params["baseData"]);
+        $otherData=json_encode($params["otherData"]);
+        $tradeBreed=trim($params["tradeBreed"]);
+        $isTrade=$params["isTrade"];
+        $tradeReason=trim($params["tradeReason"]);
+        $position=$params["position"];
+        $planQuantity=trim($params["planQuantity"]);
+        $tradePeriod=trim($params["tradePeriod"]);
+        $influence=trim($params["influence"]);
+        $interflow=trim($params["interflow"]);
+        $risk=json_encode($params["risk"]);
+        $riskDescribe=trim($params["riskDescribe"]);
+        $riskKeepaway=trim($params["riskKeepaway"]);
+        $dataOrg=$params["dataOrg"];
+        $companyId=$params["companyId"];
+
+        $id=$this->newId();
+        $params['id']=$id;
+
+        $sql="insert into t_credit_assess_record(id,company_name,company_type,assess_times,limit_count,compay_asset_type,
+             company_addr_type,other_company,company_trade_type,company_strenght,legal_person,register_addr,
+             register_money_subscribe,register_money_paid,contact,contact_tel,main_work,check_result,partner_num,operate_area,
+             operate_addr,asset_office,asset_warehouse,asset_productline,work_time,employee_num,asset,relate_company,
+             base_data,assure_agreement,other_data,trade_breed,is_trade,trade_reason,company_position,plan_quantity,trade_period,
+             influence,interflow,risk,risk_describe,risk_keepaway,table_status,status,date_created,date_update,data_org,company_id) 
+             values('%s','%s','%s',1,%f,%d,%d,'%s','%s',%d,'%s','%s','%s','%s','%s','%s','%s',%d,1,'%s',
+                    '%s',%d,%d,%d,%d,%d,'%s','%s','%s','%s','%s','%s',%d,'%s',%d,'%s','%s','%s','%s',
+                    '%s','%s','%s',1,0,now(),now(),'%s','%s') ";
+
+        $insert=$db->execute($sql,$id,$companyName,$companyType,$limit,$companyAssetType,$companyAddrType,$otherCompany,
+                    $companyTradeType,$companyStrength,$legalPerson,$registerAddr,$registerMoneySubscribe,$registerMoneyPaid,
+                    $contact,$contactTel,$mainWork,$check,$operateArea,$operateAddr,$assetOffice,$assetWarehouse,$assetProductline,
+                    $workTime,$employeeNum,$asset,"",$baseData,$assureAgreement,$otherData,$tradeBreed,$isTrade,$tradeReason,
+                    $position,$planQuantity,$tradePeriod,$influence,$interflow,$risk,$riskDescribe,$riskKeepaway,1,0,$dataOrg,$companyId);
+        if($insert==false){
+            return $this->sqlError(__METHOD__,__LINE__);
+        }
+
+
+        return null;
+    }
+
+    public function updateCreditAssess($params){
+	    $db=$this->db;
+
+	    $id=$params["id"];
+        $companyName=trim($params["companyName"]);
+        $companyType=json_encode($params["companyType"]);
+        $limit=floatval(trim($params["limit"]));
+        $companyAssetType=$params["companyAssetType"];
+        $companyAddrType=$params["companyAddrType"];
+        $otherCompany=trim($params["otherCompany"]);
+        $companyTradeType=json_encode($params["companyTradeType"]);
+        $companyStrength=$params["companyStrength"];
+        $registerAddr=trim($params["registerAddr"]);
+        $legalPerson=trim($params["legalPerson"]);
+        $registerMoneySubscribe=trim($params["registerMoneySubscribe"]);
+        $registerMoneyPaid=trim($params["registerMoneyPaid"]);
+        $check=$params["check"];
+        $contact=trim($params["contact"]);
+        $contactTel=trim($params["contactTel"]);
+        $mainWork=trim($params["mainWork"]);
+        $operateArea=trim($params["operateArea"]);
+        $operateAddr=trim($params["operateAddr"]);
+        $assetOffice=$params["assetOffice"];
+        $assetWarehouse=$params["assetWarehouse"];
+        $assetProductline=$params["assetProductline"];
+        $asset=trim($params["asset"]);
+        $workTime=$params["workTime"];
+        $employeeNum=$params["employeeNum"];
+        $assureAgreement=json_encode($params["assureAgreement"]);
+        $baseData=json_encode($params["baseData"]);
+        $otherData=json_encode($params["otherData"]);
+        $tradeBreed=trim($params["tradeBreed"]);
+        $isTrade=$params["isTrade"];
+        $tradeReason=trim($params["tradeReason"]);
+        $position=$params["position"];
+        $planQuantity=trim($params["planQuantity"]);
+        $tradePeriod=trim($params["tradePeriod"]);
+        $influence=trim($params["influence"]);
+        $interflow=trim($params["interflow"]);
+        $risk=json_encode($params["risk"]);
+        $riskDescribe=trim($params["riskDescribe"]);
+        $riskKeepaway=trim($params["riskKeepaway"]);
+        $dataOrg=$params["dataOrg"];
+        $companyId=$params["companyId"];
+
+        $sql="select id from t_credit_assess_record where id='%s' ";
+        $res=$db->query($sql,$id);
+        if($res==false){
+            return $this->bad("本条记录不存在，不可进行编辑");
+        }
+
+        $sql="update t_credit_assess_record 
+              set company_name='%s',company_type='%s',limit_count=%f,compay_asset_type=%d,company_addr_type=%d,
+              other_company='%s',company_trade_type='%s',company_strenght=%d,legal_person='%s',register_addr='%s',
+              register_money_subscribe='%s',register_money_paid='%s',contact='%s',contact_tel='%s',main_work='%s',
+              check_result=%d,partner_num=1,operate_area='%s',operate_addr='%s',asset_office=%d,asset_warehouse=%d,
+              asset_productline=%d,work_time=%d,employee_num=%d,asset='%s',relate_company='',base_data='%s',
+              assure_agreement='%s',other_data='%s',trade_breed='%s',is_trade=%d,trade_reason='%s',company_position=%d,
+              plan_quantity='%s',trade_period='%s',influence='%s',interflow='%s',risk='%s',risk_describe='%s',
+              risk_keepaway='%s',date_update=now()
+              where id='%s'";
+        $update=$db->execute($sql,$companyName,$companyType,$limit,$companyAssetType,$companyAddrType,$otherCompany,
+                 $companyTradeType,$companyStrength,$legalPerson,$registerAddr,$registerMoneySubscribe,$registerMoneyPaid,
+                 $contact,$contactTel,$mainWork,$check,$operateArea,$operateAddr,$assetOffice,$assetWarehouse,
+                 $assetProductline,$workTime,$employeeNum,$asset,$baseData,$assureAgreement,$otherData,$tradeBreed,
+                $isTrade,$tradeReason,$position,$planQuantity,$tradePeriod,$influence,$interflow,$risk,$riskDescribe,
+                $riskKeepaway);
+
+        if($update==false){
+            return $this->sqlError(__METHOD__,__LINE__);
+        }
+
+        return null;
+    }
+
+    public function getAssessInfo($id){
+	    $db=$this->db;
+
+	    $sql="select*from t_credit_assess_record where id='%s' ";
+	    $data=$db->query($sql,$id);
+
+
+	    $result=[];
+	    foreach ($data as $v){
+	        $result["id"]=$v["id"];
+	        $result["companyName"]=$v["company_name"];
+	        $result["companyType"]=json_decode($v["company_type"]);
+	        $result["limit"]=floatval($v["limit_count"]);
+	        $result["companyAssetType"]=$v["company_asset_type"];
+	        $result["companyAddrType"]=$v["company_addr_type"];
+	        $result["otherCompany"]=$v["other_company"];
+	        $result["companyTradeType"]=json_decode($v["company_trade_type"]);
+	        $result["companyStrength"]=$v["company_strength"];
+	        $result["registerAddr"]=$v["register_addr"];
+	        $result["legalPerson"]=$v["legal_person"];
+	        $result["registerMoneySubscribe"]=$v["register_money_subscribe"];
+	        $result["registerMoneyPaid"]=$v["register_money_paid"];
+	        $result["check"]=$v["check_result"];
+	        $result["contact"]=$v["contact"];
+	        $result["contactTel"]=$v["contact_tel"];
+	        $result["mainWork"]=$v["main_work"];
+	        $result["operateArea"]=$v["operate_area"];
+	        $result["operateAddr"]=$v["operate_addr"];
+	        $result["assetOffice"]=$v["asset_office"];
+	        $result["assetWarehouse"]=$v["asset_warehouse"];
+	        $result["assetProductline"]=$v["asset_productline"];
+	        $result["asset"]=$v["asset"];
+	        $result["workTime"]=$v["work_time"];
+	        $result["employeeNum"]=$v["employee_num"];
+	        $result["assureAgreement"]=json_decode($v["assureAgreement"]);
+	        $result["baseData"]=json_decode($v["base_data"]);
+	        $result["otherData"]=json_decode($v["other_data"]);
+	        $result["tradeBreed"]=$v["trade_breed"];
+	        $result["isTrade"]=$v["is_trade"];
+	        $result["tradeReason"]=$v["trade_reason"];
+	        $result["position"]=$v["company_position"];
+	        $result["planQuantity"]=$v["plan_quantity"];
+	        $result["tradePeriod"]=$v["trade_period"];
+	        $result["influence"]=$v["influence"];
+	        $result["interflow"]=$v["interflow"];
+	        $result["risk"]=json_decode($v["risk"]);
+	        $result["riskDescribe"]=$v["risk_describe"];
+	        $result["riskKeepaway"]=$v["risk_keepaway"];
+	        $result["tableStatus"]=$v["table_status"];
+	        $result["status"]=$v["status"];
+        }
+
+
+        return $result;
+    }
+
+    public function creditAssessList($params){
+	    $db=$this->db;
+
+	    $companyName=trim($params["companyName"]);
+	    $start=$params["start"];
+	    $limit=$params["limit"];
+
+        $companyId=$params["companyid"];
+
+	    $sql="select id,company_name,company_type,assess_times,limit_count,compay_asset_type,company_addr_type,
+              company_trade_type,company_strenght,legal_person,register_addr,contact,contact_tel,main_work,
+              table_status,status 
+	          from t_credit_assess_record 
+	          where company_id='%s'";
+	    $queryParams=[];
+	    $queryParams[]=$companyId;
+
+	    if($companyName){
+	        $sql.=" and company_name like '%s' ";
+	        $queryParams[]="%{$companyName}%";
+        }
+
+        $sql2=$sql;
+	    $countData=$db->query($sql2,$queryParams);
+	    $cnt=count($countData);
+
+	    $sql.=" order by date_update,company_name ";
+	    $sql.=" limit %d,%d ";
+	    $queryParams[]=$start;
+	    $queryParams[]=$limit;
+
+	    $data=$db->query($sql,$queryParams);
+
+	    $result=[];
+	    foreach ($data as $v){
+            $result["id"]=$v["id"];
+            $result["companyName"]=$v["company_name"];
+            $result["assessTimes"]=$v["assess_times"];
+            $result["companyType"]=json_decode($v["company_type"]);
+            $result["limit"]=floatval($v["limit_count"]);
+            $result["companyAssetType"]=$v["company_asset_type"];
+            $result["companyAddrType"]=$v["company_addr_type"];
+            $result["companyTradeType"]=json_decode($v["company_trade_type"]);
+            $result["companyStrength"]=$v["company_strength"];
+            $result["registerAddr"]=$v["register_addr"];
+            $result["legalPerson"]=$v["legal_person"];
+            $result["contact"]=$v["contact"];
+            $result["contactTel"]=$v["contact_tel"];
+            $result["mainWork"]=$v["main_work"];
+            $result["tableStatus"]=$v["table_status"];
+            $result["status"]=$v["status"];
+        }
+
+        return [
+            "dataList"=>$result,
+            "totalCount"=>$cnt
+        ];
+    }
+
 }
