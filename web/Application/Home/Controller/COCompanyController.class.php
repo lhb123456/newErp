@@ -290,9 +290,59 @@ class COCompanyController extends PSIBaseController {
             $this->assign("pDeleteCustomer", $us->hasPermission(FIdConst::CUSTOMER_DELETE) ? 1 : 0);
             $this->assign("pImportCustomer", $us->hasPermission(FIdConst::CUSTOMER_IMPORT) ? 1 : 0);
             */
+
+            $this->assign("creditEdit",
+                $us->hasPermission(FIdConst::CREDIT_EDIT) ? 1 : 0);
+
+            $this->assign("creditEditBase",
+                $us->hasPermission(FIdConst::CREDIT_EDIT_BASE) ? 1 : 0);
+
+            $this->assign("creditEditAnalysis",
+                $us->hasPermission(FIdConst::CREDIT_EDIT_ANALYSIS) ? 1 : 0);
+
+            $this->assign("creditEditRisk",
+                $us->hasPermission(FIdConst::CREDIT_EDIT_RISK) ? 1 : 0);
+
             $this->display();
         } else {
             $this->gotoLoginPage("/Home/COCompany/creditAssess");
+        }
+    }
+
+    //新增或编辑评估信息
+    public function editCreditAssess(){
+        if(IS_POST){
+            //var_dump(json_decode(html_entity_decode($_POST["jsonStr"]), true));exit;
+
+            $params=json_decode(html_entity_decode($_POST["jsonStr"]), true);
+
+
+            $cs = new COCompanyService();
+            $this->ajaxReturn($cs->editCreditAssess($params));
+        }
+    }
+
+    //获取评估信息
+    public function getAssessInfo(){
+        if(IS_POST){
+            $id=I("post.id");
+
+            $cs = new COCompanyService();
+            $this->ajaxReturn($cs->getAssessInfo($id));
+        }
+    }
+
+    //往来单位评估列表
+    public function creditAssessList(){
+        if(IS_POST){
+            $params=[
+                "companyName" => I("post.paymentType"),
+                "start" => I("post.start"),
+                "limit" => I("post.limit")
+            ];
+
+            $cs = new COCompanyService();
+            $this->ajaxReturn($cs->creditAssessList($params));
         }
     }
 }

@@ -386,4 +386,86 @@ class COCompanyService extends PSIBaseExService {
 		$dao = new CustomerDAO($this->db());
 		return $dao->priceSystemList($params);
 	}
+
+    public function editCreditAssess($params){
+        if ($this->isNotOnline()) {
+            return $this->notOnlineError();
+        }
+
+        $id = $params["id"];
+
+        $db = $this->db();
+        $db->startTrans();
+
+        $dao = new COCompanyDAO($db);
+
+        $companyId = $this->getCompanyId();
+        $sql="select data_org from t_org where id='%s' ";
+        $org=$db->query($sql,$companyId);
+        $dataOrg=$org[0]["data_org"];
+
+        $params["companyId"] = $companyId;
+        $params["dataOrg"] = $dataOrg;
+
+
+        $log = null;
+
+        if ($id) {
+            // 编辑
+            $rc = $dao->updateCreditAssess($params);
+            if ($rc) {
+                $db->rollback();
+                return $rc;
+            }
+
+            //$log = "编辑往来单位：编码 = {$code}, 名称 = {$name}";
+        } else {
+            // 新增
+            $rc = $dao->addCreditAssess($params);
+            if ($rc) {
+                $db->rollback();
+                return $rc;
+            }
+
+            $id = $params["id"];
+            $companyName=$params["companyName"];
+
+            $log = "新增往来单位信用额度评估：往来单位[{$companyName}]";
+        }
+
+        // 处理应收账款
+        $rc = $dao->initReceivables($params);
+        if ($rc) {
+            $db->rollback();
+            return $rc;
+        }
+
+        // 记录业务日志
+        $bs = new BizlogService($db);
+        $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+        $db->commit();
+
+        return $this->ok($id);
+    }
+
+    public function getAssessInfo($id){
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $dao = new COCompanyDAO($this->db());
+        return $dao->getAssessInfo($id);
+    }
+
+    public function creditAssessList($params){
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $params["companyId"] = $this->getCompanyId();
+
+        $dao = new COCompanyDAO($this->db());
+        return $dao->creditAssessList($params);
+    }
 }

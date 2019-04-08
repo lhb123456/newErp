@@ -21,7 +21,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 			items : [{
 						id : "panelQueryCmp",
 						region : "north",
-						height : 65,
+						height : 50,
 						layout : "fit",
 						border : 0,
 						header : false,
@@ -182,74 +182,15 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	 */
 	getQueryCmp : function() {
 		var me = this;
-		return [{
-			id : "editQueryBillStatus",
-			xtype : "combo",
-			queryMode : "local",
-			editable : false,
-			valueField : "id",
-			labelWidth : 60,
+		return [ {
+			id : "editCompanyName",
+			labelWidth : 80,
+			width:300,
 			labelAlign : "right",
 			labelSeparator : "",
-			fieldLabel : "状态",
-			margin : "5, 0, 0, 0",
-			store : Ext.create("Ext.data.ArrayStore", {
-						fields : ["id", "text"],
-						data : [[-1, "全部"], [0, "待审核"], [1000, "已审核"],
-								[2000, "部分入库"], [3000, "全部入库"], [4000, "订单关闭"]]
-					}),
-			value : -1
-		}, {
-			id : "editQueryRef",
-			labelWidth : 60,
-			labelAlign : "right",
-			labelSeparator : "",
-			fieldLabel : "单号",
-			margin : "5, 0, 0, 0",
+			fieldLabel : "往来单位名称",
+			margin : "5, 20, 0, 10",
 			xtype : "textfield"
-		}, {
-			id : "editQueryFromDT",
-			xtype : "datefield",
-			margin : "5, 0, 0, 0",
-			format : "Y-m-d",
-			labelAlign : "right",
-			labelSeparator : "",
-			fieldLabel : "交货日期（起）"
-		}, {
-			id : "editQueryToDT",
-			xtype : "datefield",
-			margin : "5, 0, 0, 0",
-			format : "Y-m-d",
-			labelAlign : "right",
-			labelSeparator : "",
-			fieldLabel : "交货日期（止）"
-		}, {
-			id : "editQuerySupplier",
-			xtype : "psi_supplierfield",
-			parentCmp : me,
-			showModal : true,
-			labelAlign : "right",
-			labelSeparator : "",
-			labelWidth : 60,
-			margin : "5, 0, 0, 0",
-			fieldLabel : "供应商"
-		}, {
-			id : "editQueryPaymentType",
-			labelAlign : "right",
-			labelSeparator : "",
-			fieldLabel : "付款方式",
-			labelWidth : 60,
-			margin : "5, 0, 0, 0",
-			xtype : "combo",
-			queryMode : "local",
-			editable : false,
-			valueField : "id",
-			store : Ext.create("Ext.data.ArrayStore", {
-						fields : ["id", "text"],
-						data : [[-1, "全部"], [0, "记应付账款"], [1, "现金付款"],
-								[2, "预付款"]]
-					}),
-			value : -1
 		}, {
 			xtype : "container",
 			items : [{
@@ -298,12 +239,10 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 		var modelName = "PSIPOBill";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "ref", "supplierName", "contact", "tel",
-							"fax", "inputUserName", "bizUserName",
-							"billStatus", "goodsMoney", "dateCreated",
-							"paymentType", "tax", "moneyWithTax", "dealDate",
-							"dealAddress", "orgName", "confirmUserName",
-							"confirmDate", "billMemo"]
+					fields : ["id", "companyName", "assessTimes","companyType", "limit",
+                        	"companyAssetType","companyAddrType", "otherCompany", "companyTradeType",
+							"companyStrength", "registerAddr", "legalPerson","contact",
+                        	"contactTel", "mainWork","tableStatus", "status"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -315,7 +254,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : me.URL("Home/Purchase/pobillList"),
+						url : me.URL("Home/COCompany/creditAssessList"),
 						reader : {
 							root : 'dataList',
 							totalProperty : 'totalCount'
@@ -346,108 +285,46 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 				items : [{
 							xtype : "rownumberer",
 							width : 50
-						}, {
-							header : "状态",
-							dataIndex : "billStatus",
-							width : 100,
-							renderer : function(value) {
-								if (value == 0) {
-									return "<span style='color:red'>待审核</span>";
-								} else if (value == 1000) {
-									return "已审核";
-								} else if (value == 2000) {
-									return "<span style='color:green'>部分入库</span>";
-								} else if (value == 3000) {
-									return "全部入库";
-								} else if (value == 4000) {
-									return "关闭(未入库)";
-								} else if (value == 4001) {
-									return "关闭(部分入库)";
-								} else if (value == 4002) {
-									return "关闭(全部入库)";
-								} else {
-									return "";
-								}
-							}
-						}, {
-							header : "采购订单号",
-							dataIndex : "ref",
+						},  {
+							header : "往来单位名称",
+							dataIndex : "compangyName",
 							width : 110
 						}, {
-							header : "交货日期",
-							dataIndex : "dealDate"
+							header : "交易类型",
+							dataIndex : "companyType"
 						}, {
-							header : "交货地址",
-							dataIndex : "dealAddress"
+							header : "原额度(吨/公斤)",
+							dataIndex : "limit"
 						}, {
-							header : "供应商",
-							dataIndex : "supplierName",
-							width : 300
+							header : "法定代表人",
+							dataIndex : "legalPerson"
 						}, {
-							header : "供应商联系人",
+							header : "注册地址",
+							dataIndex : "registerAddr",
+                    		width : 300
+						}, {
+							header : "联系人",
 							dataIndex : "contact"
 						}, {
-							header : "供应商电话",
-							dataIndex : "tel"
+							header : "联系电话",
+							dataIndex : "contactTel"
 						}, {
-							header : "供应商传真",
-							dataIndex : "fax"
+							header : "公司性质",
+							dataIndex : "companyAssetType",
 						}, {
-							header : "采购金额",
-							dataIndex : "goodsMoney",
-							align : "right",
-							xtype : "numbercolumn",
-							width : 150
+							header : "公司类型",
+							dataIndex : "companyTradeType",
 						}, {
-							header : "税金",
-							dataIndex : "tax",
-							align : "right",
-							xtype : "numbercolumn",
-							width : 150
-						}, {
-							header : "价税合计",
+							header : "行业地位",
 							dataIndex : "moneyWithTax",
-							align : "right",
-							xtype : "numbercolumn",
-							width : 150
+							align : "right"
 						}, {
-							header : "付款方式",
+							header : "主营业务",
 							dataIndex : "paymentType",
-							width : 100,
-							renderer : function(value) {
-								if (value == 0) {
-									return "记应付账款";
-								} else if (value == 1) {
-									return "现金付款";
-								} else if (value == 2) {
-									return "预付款";
-								} else {
-									return "";
-								}
-							}
+							width : 350
 						}, {
 							header : "业务员",
 							dataIndex : "bizUserName"
-						}, {
-							header : "组织机构",
-							dataIndex : "orgName"
-						}, {
-							header : "制单人",
-							dataIndex : "inputUserName"
-						}, {
-							header : "制单时间",
-							dataIndex : "dateCreated",
-							width : 140
-						}, {
-							header : "审核人",
-							dataIndex : "confirmUserName"
-						}, {
-							header : "审核时间",
-							dataIndex : "confirmDate",
-							width : 140
-						}, {
-							header : "备注",
-							dataIndex : "billMemo"
 						}]
 			},
 			store : store,
@@ -953,12 +830,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	onClearQuery : function() {
 		var me = this;
 
-		Ext.getCmp("editQueryBillStatus").setValue(-1);
-		Ext.getCmp("editQueryRef").setValue(null);
-		Ext.getCmp("editQueryFromDT").setValue(null);
-		Ext.getCmp("editQueryToDT").setValue(null);
-		Ext.getCmp("editQuerySupplier").clearIdValue();
-		Ext.getCmp("editQueryPaymentType").setValue(-1);
+		Ext.getCmp("editCompanyName").setValue(null);
 
 		me.onQuery();
 	},
@@ -966,32 +838,12 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	getQueryParam : function() {
 		var me = this;
 
-		var result = {
-			billStatus : Ext.getCmp("editQueryBillStatus").getValue()
-		};
+		var result = {};
 
-		var ref = Ext.getCmp("editQueryRef").getValue();
-		if (ref) {
-			result.ref = ref;
+		var companyName = Ext.getCmp("editCompanyName").getValue();
+		if (companyName) {
+			result.companyName = companyName;
 		}
-
-		var supplierId = Ext.getCmp("editQuerySupplier").getIdValue();
-		if (supplierId) {
-			result.supplierId = supplierId;
-		}
-
-		var fromDT = Ext.getCmp("editQueryFromDT").getValue();
-		if (fromDT) {
-			result.fromDT = Ext.Date.format(fromDT, "Y-m-d");
-		}
-
-		var toDT = Ext.getCmp("editQueryToDT").getValue();
-		if (toDT) {
-			result.toDT = Ext.Date.format(toDT, "Y-m-d");
-		}
-
-		var paymentType = Ext.getCmp("editQueryPaymentType").getValue();
-		result.paymentType = paymentType;
 
 		return result;
 	},

@@ -1120,6 +1120,7 @@ class FIdConst {
     const CO_COMPANY_DEL = "3002-06";
 
     /**
+<<<<<<< HEAD
      * 货币币种
      * @var string
      */
@@ -1152,4 +1153,17 @@ class FIdConst {
     const COIN_RATE_DELETE = "2038-03";
     //结算方式
     const CLEARING_FORM = "1101";
+=======
+     * 信用额度填写权限
+     *
+     * @var string
+     */
+    const  CREDIT_EDIT ="3003";
+
+    const  CREDIT_EDIT_BASE ="3003-01";             //基本情况
+
+    const  CREDIT_EDIT_ANALYSIS ="3003-02";         //业务分析
+
+    const  CREDIT_EDIT_RISK ="3003-03";             //风险披露
+>>>>>>> liuhubiao
 }
