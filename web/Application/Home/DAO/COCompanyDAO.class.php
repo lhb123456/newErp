@@ -237,7 +237,7 @@ class COCompanyDAO extends PSIBaseExDAO {
 		
 		// 往来单位分类id
 		$id = $params["id"];
-		
+
 		$category = $this->getCOCompanyCategoryById($id);
 		if (! $category) {
 			return $this->bad("要删除的分类不存在");
@@ -972,10 +972,22 @@ class COCompanyDAO extends PSIBaseExDAO {
         $dataOrg=$params["dataOrg"];
         $companyId=$params["companyId"];
 
+        $basePermission=$params["basePermission"];
+        $analysisPermission=$params["analysisPermission"];
+        $riskPermission=$params["riskPermission"];
+
+        if($analysisPermission&&$tradeBreed){
+            $tableStaus=2000;
+        }elseif($riskPermission&&$params["risk"]){
+            $tableStaus=3000;
+        }else{
+            $tableStaus=1000;
+        }
+
         $id=$this->newId();
         $params['id']=$id;
 
-        $sql="insert into t_credit_assess_record(id,company_name,company_type,assess_times,limit_count,compay_asset_type,
+        $sql="insert into t_credit_assess_record(id,company_name,company_type,assess_times,limit_count,company_asset_type,
              company_addr_type,other_company,company_trade_type,company_strenght,legal_person,register_addr,
              register_money_subscribe,register_money_paid,contact,contact_tel,main_work,check_result,partner_num,operate_area,
              operate_addr,asset_office,asset_warehouse,asset_productline,work_time,employee_num,asset,relate_company,
@@ -983,17 +995,17 @@ class COCompanyDAO extends PSIBaseExDAO {
              influence,interflow,risk,risk_describe,risk_keepaway,table_status,status,date_created,date_update,data_org,company_id) 
              values('%s','%s','%s',1,%f,%d,%d,'%s','%s',%d,'%s','%s','%s','%s','%s','%s','%s',%d,1,'%s',
                     '%s',%d,%d,%d,%d,%d,'%s','%s','%s','%s','%s','%s',%d,'%s',%d,'%s','%s','%s','%s',
-                    '%s','%s','%s',1,0,now(),now(),'%s','%s') ";
+                    '%s','%s','%s','%s',0,now(),now(),'%s','%s') ";
 
         $insert=$db->execute($sql,$id,$companyName,$companyType,$limit,$companyAssetType,$companyAddrType,$otherCompany,
                     $companyTradeType,$companyStrength,$legalPerson,$registerAddr,$registerMoneySubscribe,$registerMoneyPaid,
                     $contact,$contactTel,$mainWork,$check,$operateArea,$operateAddr,$assetOffice,$assetWarehouse,$assetProductline,
                     $workTime,$employeeNum,$asset,"",$baseData,$assureAgreement,$otherData,$tradeBreed,$isTrade,$tradeReason,
-                    $position,$planQuantity,$tradePeriod,$influence,$interflow,$risk,$riskDescribe,$riskKeepaway,1,0,$dataOrg,$companyId);
+                    $position,$planQuantity,$tradePeriod,$influence,$interflow,$risk,$riskDescribe,$riskKeepaway,$tableStaus,
+                    $dataOrg,$companyId);
         if($insert==false){
             return $this->sqlError(__METHOD__,__LINE__);
         }
-
 
         return null;
     }
@@ -1040,31 +1052,44 @@ class COCompanyDAO extends PSIBaseExDAO {
         $risk=json_encode($params["risk"]);
         $riskDescribe=trim($params["riskDescribe"]);
         $riskKeepaway=trim($params["riskKeepaway"]);
+        $tableStatus=$params["tableStatus"];
         $dataOrg=$params["dataOrg"];
         $companyId=$params["companyId"];
 
+        $basePermission=$params["basePermission"];
+        $analysisPermission=$params["analysisPermission"];
+        $riskPermission=$params["riskPermission"];
+
         $sql="select id from t_credit_assess_record where id='%s' ";
         $res=$db->query($sql,$id);
-        if($res==false){
+        if(!$res[0]["id"]){
             return $this->bad("本条记录不存在，不可进行编辑");
         }
 
+        if($tableStatus==1000&&$analysisPermission&&$tradeBreed){
+            $tableStatus=2000;
+        }elseif($tableStatus>=1000&&$riskPermission&&$risk){
+            $tableStatus=3000;
+        }
+
+
         $sql="update t_credit_assess_record 
-              set company_name='%s',company_type='%s',limit_count=%f,compay_asset_type=%d,company_addr_type=%d,
+              set company_name='%s',company_type='%s',limit_count=%f,company_asset_type=%d,company_addr_type=%d,
               other_company='%s',company_trade_type='%s',company_strenght=%d,legal_person='%s',register_addr='%s',
               register_money_subscribe='%s',register_money_paid='%s',contact='%s',contact_tel='%s',main_work='%s',
               check_result=%d,partner_num=1,operate_area='%s',operate_addr='%s',asset_office=%d,asset_warehouse=%d,
               asset_productline=%d,work_time=%d,employee_num=%d,asset='%s',relate_company='',base_data='%s',
               assure_agreement='%s',other_data='%s',trade_breed='%s',is_trade=%d,trade_reason='%s',company_position=%d,
               plan_quantity='%s',trade_period='%s',influence='%s',interflow='%s',risk='%s',risk_describe='%s',
-              risk_keepaway='%s',date_update=now()
+              risk_keepaway='%s',table_status='%s',date_update=now()
               where id='%s'";
+
         $update=$db->execute($sql,$companyName,$companyType,$limit,$companyAssetType,$companyAddrType,$otherCompany,
                  $companyTradeType,$companyStrength,$legalPerson,$registerAddr,$registerMoneySubscribe,$registerMoneyPaid,
                  $contact,$contactTel,$mainWork,$check,$operateArea,$operateAddr,$assetOffice,$assetWarehouse,
                  $assetProductline,$workTime,$employeeNum,$asset,$baseData,$assureAgreement,$otherData,$tradeBreed,
-                $isTrade,$tradeReason,$position,$planQuantity,$tradePeriod,$influence,$interflow,$risk,$riskDescribe,
-                $riskKeepaway);
+                 $isTrade,$tradeReason,$position,$planQuantity,$tradePeriod,$influence,$interflow,$risk,$riskDescribe,
+                 $riskKeepaway,$tableStatus,$id);
 
         if($update==false){
             return $this->sqlError(__METHOD__,__LINE__);
@@ -1085,12 +1110,13 @@ class COCompanyDAO extends PSIBaseExDAO {
 	        $result["id"]=$v["id"];
 	        $result["companyName"]=$v["company_name"];
 	        $result["companyType"]=json_decode($v["company_type"]);
+            $result["assessTimes"]=$v["assess_times"];
 	        $result["limit"]=floatval($v["limit_count"]);
 	        $result["companyAssetType"]=$v["company_asset_type"];
 	        $result["companyAddrType"]=$v["company_addr_type"];
 	        $result["otherCompany"]=$v["other_company"];
 	        $result["companyTradeType"]=json_decode($v["company_trade_type"]);
-	        $result["companyStrength"]=$v["company_strength"];
+	        $result["companyStrength"]=$v["company_strenght"];
 	        $result["registerAddr"]=$v["register_addr"];
 	        $result["legalPerson"]=$v["legal_person"];
 	        $result["registerMoneySubscribe"]=$v["register_money_subscribe"];
@@ -1107,7 +1133,7 @@ class COCompanyDAO extends PSIBaseExDAO {
 	        $result["asset"]=$v["asset"];
 	        $result["workTime"]=$v["work_time"];
 	        $result["employeeNum"]=$v["employee_num"];
-	        $result["assureAgreement"]=json_decode($v["assureAgreement"]);
+	        $result["assureAgreement"]=json_decode($v["assure_agreement"]);
 	        $result["baseData"]=json_decode($v["base_data"]);
 	        $result["otherData"]=json_decode($v["other_data"]);
 	        $result["tradeBreed"]=$v["trade_breed"];
@@ -1133,18 +1159,39 @@ class COCompanyDAO extends PSIBaseExDAO {
 	    $db=$this->db;
 
 	    $companyName=trim($params["companyName"]);
+	    $tableStatus=$params["tableStatus"];
+	    $basePermission=$params["basePermission"];
+	    $analysisPermission=$params["analysisPermission"];
+	    $riskPermission=$params["riskPermission"];
 	    $start=$params["start"];
 	    $limit=$params["limit"];
 
-        $companyId=$params["companyid"];
+        $companyId=$params["companyId"];
 
-	    $sql="select id,company_name,company_type,assess_times,limit_count,compay_asset_type,company_addr_type,
+	    $sql="select id,company_name,company_type,assess_times,limit_count,company_asset_type,company_addr_type,
               company_trade_type,company_strenght,legal_person,register_addr,contact,contact_tel,main_work,
               table_status,status 
 	          from t_credit_assess_record 
 	          where company_id='%s'";
 	    $queryParams=[];
 	    $queryParams[]=$companyId;
+
+	    if($tableStatus==0){
+	        $sql.=" and table_status=0";
+        }else if($tableStatus==1){
+	        if($basePermission){
+                $sql.=" and table_status>0 and table_status<4000";
+            }
+            if(!$basePermission&&$analysisPermission){
+                $sql.=" and table_status>0 and table_status<4000";
+            }
+            if(!$basePermission&&!$analysisPermission&&$riskPermission){
+                $sql.=" and table_status>1000 and table_status<4000";
+            }
+
+        }else if($tableStatus==2){
+            $sql.=" and table_status=4000";
+        }
 
 	    if($companyName){
 	        $sql.=" and company_name like '%s' ";
@@ -1164,22 +1211,26 @@ class COCompanyDAO extends PSIBaseExDAO {
 
 	    $result=[];
 	    foreach ($data as $v){
-            $result["id"]=$v["id"];
-            $result["companyName"]=$v["company_name"];
-            $result["assessTimes"]=$v["assess_times"];
-            $result["companyType"]=json_decode($v["company_type"]);
-            $result["limit"]=floatval($v["limit_count"]);
-            $result["companyAssetType"]=$v["company_asset_type"];
-            $result["companyAddrType"]=$v["company_addr_type"];
-            $result["companyTradeType"]=json_decode($v["company_trade_type"]);
-            $result["companyStrength"]=$v["company_strength"];
-            $result["registerAddr"]=$v["register_addr"];
-            $result["legalPerson"]=$v["legal_person"];
-            $result["contact"]=$v["contact"];
-            $result["contactTel"]=$v["contact_tel"];
-            $result["mainWork"]=$v["main_work"];
-            $result["tableStatus"]=$v["table_status"];
-            $result["status"]=$v["status"];
+
+	        $result[]=[
+	            "id"=>$v["id"],
+	            "companyName"=>$v["company_name"],
+	            "assessTimes"=>$v["assess_times"],
+	            "companyType"=>json_decode($v["company_type"]),
+	            "limit"=>floatval($v["limit_count"]),
+	            "companyAssetType"=>$v["company_asset_type"],
+	            "companyAddrType"=>$v["company_addr_type"],
+	            "companyTradeType"=>json_decode($v["company_trade_type"]),
+	            "companyStrength"=>$v["company_strenght"],
+	            "registerAddr"=>$v["register_addr"],
+	            "legalPerson"=>$v["legal_person"],
+	            "contact"=>$v["contact"],
+	            "contactTel"=>$v["contact_tel"],
+	            "mainWork"=>$v["main_work"],
+	            "tableStatus"=>$v["table_status"],
+	            "status"=>$v["status"]
+            ];
+
         }
 
         return [
@@ -1188,4 +1239,41 @@ class COCompanyDAO extends PSIBaseExDAO {
         ];
     }
 
+    public function deleteAssess($id){
+	    $db=$this->db;
+
+	    $sql="select id from t_credit_assess_record where id='%s' and table_status>0";
+	    $assess=$db->query($sql,$id);
+
+	    if(!$assess[0]["id"]){
+	        return $this->bad("本条记录不存在或已删除");
+        }
+
+        $sql="update t_credit_assess_record set table_status=0,date_update=now() where id='%s'";
+	    $res=$db->execute($sql,$id);
+	    if($res==false){
+	        return $this->sqlError(__METHOD__,__LINE__);
+        }
+
+        return null;
+    }
+
+    public function commitAssess($id){
+	    $db=$this->db;
+
+        $sql="select id from t_credit_assess_record where id='%s' and table_status>0";
+        $assess=$db->query($sql,$id);
+        
+        if(!$assess[0]["id"]){
+            return $this->bad("本条记录不存在或已删除");
+        }
+
+        $sql="update t_credit_assess_record set table_status=4000,date_update=now() where id='%s'";
+        $res=$db->execute($sql,$id);
+        if($res==false){
+            return $this->sqlError(__METHOD__,__LINE__);
+        }
+
+        return null;
+    }
 }

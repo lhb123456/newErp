@@ -45,8 +45,8 @@
 	src="{$uri}Public/Scripts/PSI/Warehouse/WarehouseField.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 
-<script src="{$uri}Public/Lodop/LodopFuncs.js?dt={$dtFlag}"
-	type="text/javascript"></script>
+<!--<script src="{$uri}Public/Lodop/LodopFuncs.js?dt={$dtFlag}"
+	type="text/javascript"></script>-->
 
 <script>
 	Ext.onReady(function() {
@@ -56,16 +56,10 @@
 		});
 
 		var permission = {
-			add : "{$pAdd}",
-			edit : "{$pEdit}",
-			del : "{$pDelete}",
-			closeBill : "{$pCloseBill}",
-			genPDF : "{$pGenPDF}",
-			confirm : "{$pConfirm}",
-			genPWBill : "{$pGenPWBill}",
-			showAddGoodsButton : "{$showAddGoodsButton}",
-			print : "{$pPrint}",
-
+			add : "{$add}",
+			edit : "{$edit}",
+			del : "{$del}",
+			commit : "{$commit}",
             creditEdit:"{$creditEdit}",
             creditEditBase:"{$creditEditBase}",
             creditEditAnalysis:"{$creditEditAnalysis}",

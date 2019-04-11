@@ -1,5 +1,5 @@
 /**
- * 业务设置 - 编辑设置项目
+ * 信用评估信息填写
  */
 Ext.define("PSI.COCompany.EditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
@@ -10,10 +10,15 @@ Ext.define("PSI.COCompany.EditForm", {
 
 	initComponent : function() {
 		var me = this;
+        this.adding = me.getEntity() == null;
 
 		var buttons = [];
 
+		var permission=me.getParentForm().getPermission();
+
 		buttons.push({
+					id:"commitButton",
+					hidden:true,
 					text : "保存",
 					formBind : true,
 					iconCls : "PSI-button-ok",
@@ -99,8 +104,8 @@ Ext.define("PSI.COCompany.EditForm", {
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									columns: 2,  //在上面定义的宽度上展示3列
 									items: [
-										{boxLabel: '供应商', name: 'supplier',width:120,inputValue:1},
-										{boxLabel: '客户', name: 'customer',width:120,inputValue:2}
+										{boxLabel: '供应商',id:"companyType1", name: 'supplier',width:120,inputValue:1},
+										{boxLabel: '客户',id:"companyType2", name: 'customer',width:120,inputValue:2}
 									]
 								}, {
 									id:"assessTimes",
@@ -114,8 +119,8 @@ Ext.define("PSI.COCompany.EditForm", {
 									xtype : "radiogroup",
 									value:1,
 									items: [
-										{id:"assessTimes_y",name: 'assessTimes',inputValue: 1,boxLabel: '初次评估',width:120,checked:true},
-										{id:"assessTimes_n",name: 'assessTimes',inputValue: 2,boxLabel: '二次评估以上',width:120}
+										{id:"assessTimes1",name: 'assessTimes',inputValue: 1,boxLabel: '初次评估',width:120,checked:true,readOnly:true},
+										{id:"assessTimes2",name: 'assessTimes',inputValue: 2,boxLabel: '二次评估以上',width:120,readOnly:true}
 									]
 
 								}, {
@@ -138,13 +143,13 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 7,
 									value:1,
 									items: [
-										{name: 'companyAssetType',inputValue: 1,boxLabel: '国有独资',width:80,checked:true},
-										{name: 'companyAssetType',inputValue: 2,boxLabel: '上市公司',width:100},
-										{name: 'companyAssetType',inputValue: 3,boxLabel: '中外合资',width:100},
-										{name: 'companyAssetType',inputValue: 4,boxLabel: '外商独资',width:100},
-										{name: 'companyAssetType',inputValue: 5,boxLabel: '民营独资',width:100},
-										{name: 'companyAssetType',inputValue: 6,boxLabel: '民营股份',width:100},
-										{name: 'companyAssetType',inputValue: 7,boxLabel: '其他',width:100}
+										{name: 'companyAssetType',id:'companyAssetType1',inputValue: 1,boxLabel: '国有独资',width:80,checked:true},
+										{name: 'companyAssetType',id:'companyAssetType2',inputValue: 2,boxLabel: '上市公司',width:100},
+										{name: 'companyAssetType',id:'companyAssetType3',inputValue: 3,boxLabel: '中外合资',width:100},
+										{name: 'companyAssetType',id:'companyAssetType4',inputValue: 4,boxLabel: '外商独资',width:100},
+										{name: 'companyAssetType',id:'companyAssetType5',inputValue: 5,boxLabel: '民营独资',width:100},
+										{name: 'companyAssetType',id:'companyAssetType6',inputValue: 6,boxLabel: '民营股份',width:100},
+										{name: 'companyAssetType',id:'companyAssetType7',inputValue: 7,boxLabel: '其他',width:100}
 									]
 								},{
 									id : "companyAddrType",
@@ -156,9 +161,9 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 3,
 									value:0,
 									items: [
-										{name: 'companyAddrType',inputValue: 0,boxLabel: '无',width:80,checked:true},
-										{name: 'companyAddrType',inputValue: 1,boxLabel: '离岸公司',width:80},
-										{name: 'companyAddrType',inputValue: 2,boxLabel: '在岸公司',width:80}
+										{name: 'companyAddrType',id:'companyAddrType0',inputValue: 0,boxLabel: '无',width:80,checked:true},
+										{name: 'companyAddrType',id:'companyAddrType1',inputValue: 1,boxLabel: '离岸公司',width:80},
+										{name: 'companyAddrType',id:'companyAddrType2',inputValue: 2,boxLabel: '在岸公司',width:80}
 									]
 								},{
 									id : "otherCompany",
@@ -177,8 +182,8 @@ Ext.define("PSI.COCompany.EditForm", {
 									name: 'companyTradeType',
 									columns: 2,  //在上面定义的宽度上展示3列
 									items: [
-										{boxLabel: '制造商', name: 'companyTradeType',inputValue: 1,width:120},
-										{boxLabel: '贸易商', name: 'companyTradeType',inputValue: 2,width:120}
+										{boxLabel: '制造商', name: 'companyTradeType',id:'companyTradeType1',inputValue: 1,width:120},
+										{boxLabel: '贸易商', name: 'companyTradeType',id:'companyTradeType2',inputValue: 2,width:120}
 									]
 								},{
 									id : "companyStrength",
@@ -191,9 +196,9 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 3,
 									value:1,
 									items: [
-										{name: 'companyStrength',inputValue: 1,boxLabel: '全球500强',width:100,checked:true},
-										{name: 'companyStrength',inputValue: 2,boxLabel: '全国500强',width:100},
-										{name: 'companyStrength',inputValue: 3,boxLabel: '行业100强',width:100}
+										{name: 'companyStrength',id:'companyStrength1',inputValue: 1,boxLabel: '全球500强',width:100,checked:true},
+										{name: 'companyStrength',id:'companyStrength2',inputValue: 2,boxLabel: '全国500强',width:100},
+										{name: 'companyStrength',id:'companyStrength3',inputValue: 3,boxLabel: '行业100强',width:100}
 									]
 								},{
 									id : "registerAddr",
@@ -242,8 +247,8 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 2,
 									value:1,
 									items: [
-										{name: 'check',inputValue: 1,boxLabel: '正常',width:100,checked:true},
-										{name: 'check',inputValue: 0,boxLabel: '异常',width:100}
+										{name: 'check',id:'check1',inputValue: 1,boxLabel: '正常',width:100,checked:true},
+										{name: 'check',id:'check0',inputValue: 0,boxLabel: '异常',width:100}
 									]
 								}, {
 									id : "contact",
@@ -301,8 +306,8 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 2,
 									value:1,
 									items: [
-										{name: 'assetOffice',inputValue: 0,boxLabel: '自有',width:100},
-										{name: 'assetOffice',inputValue: 1,boxLabel: '租赁',width:100,checked:true}
+										{name: 'assetOffice',id:'assetOffice0',inputValue: 0,boxLabel: '自有',width:100},
+										{name: 'assetOffice',id:'assetOffice1',inputValue: 1,boxLabel: '租赁',width:100,checked:true}
 									]
 								},{
 									id : "assetWarehouse",
@@ -314,8 +319,8 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 2,
 									value:1,
 									items: [
-										{name: 'assetWarehouse',inputValue: 0,boxLabel: '自有',width:100},
-										{name: 'assetWarehouse',inputValue: 1,boxLabel: '租赁',width:75,checked:true}
+										{name: 'assetWarehouse',id:'assetWarehouse0',inputValue: 0,boxLabel: '自有',width:100},
+										{name: 'assetWarehouse',id:'assetWarehouse1',inputValue: 1,boxLabel: '租赁',width:75,checked:true}
 									]
 								},{
 									id : "assetProductline",
@@ -327,8 +332,8 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 2,
 									value:1,
 									items: [
-										{name: 'assetProductline',inputValue: 0,boxLabel: '自有',width:100},
-										{name: 'assetProductline',inputValue: 1,boxLabel: '租赁',width:100,checked:true}
+										{name: 'assetProductline',id:'assetProductline0',inputValue: 0,boxLabel: '自有',width:100},
+										{name: 'assetProductline',id:'assetProductline1',inputValue: 1,boxLabel: '租赁',width:100,checked:true}
 									]
 								},{
 									id : "asset",
@@ -349,9 +354,9 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 3,
 									value:1,
 									items: [
-										{name: 'workTime',inputValue: 1,boxLabel: '0-3年',width:80,checked:true},
-										{name: 'workTime',inputValue: 2,boxLabel: '3-5年',width:80},
-										{name: 'workTime',inputValue: 3,boxLabel: '5年以上',width:80}
+										{name: 'workTime',id:'workTime1',inputValue: 1,boxLabel: '0-3年',width:80,checked:true},
+										{name: 'workTime',id:'workTime2',inputValue: 2,boxLabel: '3-5年',width:80},
+										{name: 'workTime',id:'workTime3',inputValue: 3,boxLabel: '5年以上',width:80}
 									]
 								},{
 									id : "employeeNum",
@@ -363,9 +368,9 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 3,
 									value:1,
 									items: [
-										{name: 'employeeNum',inputValue: 1,boxLabel: '100人以下',width:80},
-										{name: 'employeeNum',inputValue: 2,boxLabel: '100-300人',width:80,checked:true},
-										{name: 'employeeNum',inputValue: 3,boxLabel: '300人以上',width:80}
+										{name: 'employeeNum',id:'employeeNum1',inputValue: 1,boxLabel: '100人以下',width:80},
+										{name: 'employeeNum',id:'employeeNum2',inputValue: 2,boxLabel: '100-300人',width:80,checked:true},
+										{name: 'employeeNum',id:'employeeNum3',inputValue: 3,boxLabel: '300人以上',width:80}
 									]
 								},{
 									id:"assureAgreement",
@@ -379,10 +384,10 @@ Ext.define("PSI.COCompany.EditForm", {
                             		colspan: 3,
 									columns: 4,  //在上面定义的宽度上展示3列
 									items: [
-										{boxLabel: '公司担保金额', name: 'assureAgreement',inputValue: 1,width:140},
-										{boxLabel: '个人担保金额', name: 'assureAgreement',inputValue: '2',width:140},
-                                        {boxLabel: '资产担保金额', name: 'assureAgreement',inputValue: '3',width:140},
-                                        {boxLabel: '其他担保金额', name: 'assureAgreement',inputValue: '4',width:140}
+										{boxLabel: '公司担保金额', name: 'assureAgreement',id:'assureAgreement1',inputValue: 1,width:140},
+										{boxLabel: '个人担保金额', name: 'assureAgreement',id:'assureAgreement2',inputValue: '2',width:140},
+                                        {boxLabel: '资产担保金额', name: 'assureAgreement',id:'assureAgreement3',inputValue: '3',width:140},
+                                        {boxLabel: '其他担保金额', name: 'assureAgreement',id:'assureAgreement4',inputValue: '4',width:140}
 									]
 								},{
 									id:"baseData",
@@ -396,9 +401,9 @@ Ext.define("PSI.COCompany.EditForm", {
 									colspan: 1,
 									columns: 3,  //在上面定义的宽度上展示3列
 									items: [
-										{boxLabel: '营业执照', name: 'baseData',inputValue: 1,width:100},
-										{boxLabel: '财务报表', name: 'baseData',inputValue: 2,width:100},
-										{boxLabel: '其他', name: 'baseData',inputValue: 3,width:80}
+										{boxLabel: '营业执照', name: 'baseData',id:'baseData1',inputValue: 1,width:100},
+										{boxLabel: '财务报表', name: 'baseData',id:'baseData2',inputValue: 2,width:100},
+										{boxLabel: '其他', name: 'baseData',id:'baseData3',inputValue: 3,width:80}
 									]
 								},{
 									id:"otherData",
@@ -412,10 +417,24 @@ Ext.define("PSI.COCompany.EditForm", {
 									colspan: 2,
 									columns: 2,  //在上面定义的宽度上展示3列
 									items: [
-										{boxLabel: '资质证书', name: 'otherData',inputValue: 1,width:140},
-										{boxLabel: '第三方报告', name: 'otherData',inputValue: 2,width:140}
+										{boxLabel: '资质证书', name: 'otherData',id:'otherData1',inputValue: 1,width:140},
+										{boxLabel: '第三方报告', name: 'otherData',id:'otherData2',inputValue: 2,width:140}
 									]
-								}]
+								}],
+							listeners: {
+								'show': function (t, eOpts) {
+
+                                    if(permission.creditEditBase==1){
+                                    	if(!me.adding&&(me.getEntity().get("tableStatus")==0||me.getEntity().get("tableStatus")==4000)){
+                                            Ext.getCmp("commitButton").hide();
+										}else{
+                                            Ext.getCmp("commitButton").show();
+										}
+                                    }else{
+                                        Ext.getCmp("commitButton").hide();
+									}
+								}
+							}
 					}, {
 						title : "业务分析",
 						border : 0,
@@ -443,18 +462,10 @@ Ext.define("PSI.COCompany.EditForm", {
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									columns: 2,
 									value:1,
-									items: [{
-										name: 'assetProductline',
-										inputValue: 1,
-										boxLabel: '是',
-										width:100,
-                                        checked:true
-									}, {
-										name: 'assetProductline',
-										inputValue: 0,
-										boxLabel: '否',
-										width:100
-									}]
+									items: [
+										{name: 'isTrade',id:'isTrade1',inputValue: 1,boxLabel: '是',width:100,checked:true},
+										{name: 'isTrade',id:'isTrade0',inputValue: 0,boxLabel: '否',width:100}
+									]
 								},{
 									id : "tradeReason",
 									fieldLabel : "交易理由",
@@ -475,10 +486,10 @@ Ext.define("PSI.COCompany.EditForm", {
 									columns: 4,
 									value:1,
 									items: [
-										{name: 'position',inputValue: 1,boxLabel: '战略供应商/客户',width:150,checked:true},
-										{name: 'position',inputValue: 2,boxLabel: '核心供应商/分销大客户',width:180},
-										{name: 'position',inputValue: 3,boxLabel: '稳定供应商/分销中小客户',width:180 },
-										{name: 'position',inputValue: 4,boxLabel: '行情投机供应商/客户',width:150}
+										{name: 'position',inputValue: 1,id:'inputValue1',boxLabel: '战略供应商/客户',width:150,checked:true},
+										{name: 'position',inputValue: 2,id:'inputValue2',boxLabel: '核心供应商/分销大客户',width:180},
+										{name: 'position',inputValue: 3,id:'inputValue3',boxLabel: '稳定供应商/分销中小客户',width:180 },
+										{name: 'position',inputValue: 4,id:'inputValue4',boxLabel: '行情投机供应商/客户',width:150}
 									]
 								},{
 									id : "planQuantity",
@@ -518,7 +529,21 @@ Ext.define("PSI.COCompany.EditForm", {
 									allowBlank : false,
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									width:900,
-								},]
+								}],
+						listeners: {
+							'show': function (t, eOpts) {
+                                if(permission.creditEditAnalysis==1){
+                                    if(!me.adding&&(me.getEntity().get("tableStatus")==0||me.getEntity().get("tableStatus")==4000)){
+                                        Ext.getCmp("commitButton").hide();
+                                    }else{
+                                        Ext.getCmp("commitButton").show();
+                                    }
+                                }else{
+                                    Ext.getCmp("commitButton").hide();
+                                }
+							}
+						}
+
 					}, {
 						title : "业务风险披露",
 						border : 0,
@@ -539,20 +564,20 @@ Ext.define("PSI.COCompany.EditForm", {
 									colspan: 2,
 									columns: 10,  //在上面定义的宽度上展示3列
 									items: [
-										{boxLabel: '信用违约', name: 'risk',inputValue: 1,width:80},
-										{boxLabel: '盈利差', name: 'risk',inputValue: 2,width:80},
-										{boxLabel: '高负债', name: 'risk',inputValue: 3,width:80},
-										{boxLabel: '融资差', name: 'risk',inputValue: 4,width:80},
-                                        {boxLabel: '高库存', name: 'risk',inputValue: 5,width:80},
-                                        {boxLabel: '地域环境', name: 'risk',inputValue: 6,width:80},
-                                        {boxLabel: '对外担保', name: 'risk',inputValue: 7,width:80},
-                                        {boxLabel: '安全责任', name: 'risk',inputValue: 8,width:80},
-                                        {boxLabel: '管理差', name: 'risk',inputValue: 9,width:80},
-                                        {boxLabel: '工商税务', name: 'risk',inputValue: 10,width:80},
-                                        {boxLabel: '法务诉讼', name: 'risk',inputValue: 11,width:80},
-                                        {boxLabel: '政策法规', name: 'risk',inputValue: 12,width:80},
-                                        {boxLabel: '负责人有不良习惯', name: 'risk',inputValue: 13,width:120},
-                                        {boxLabel: '其他', name: 'risk',inputValue: 14,width:80}
+										{boxLabel: '信用违约', name: 'risk',id:'risk1',inputValue: 1,width:80},
+										{boxLabel: '盈利差', name: 'risk',id:'risk2',inputValue: 2,width:80},
+										{boxLabel: '高负债', name: 'risk',id:'risk3',inputValue: 3,width:80},
+										{boxLabel: '融资差', name: 'risk',id:'risk4',inputValue: 4,width:80},
+                                        {boxLabel: '高库存', name: 'risk',id:'risk5',inputValue: 5,width:80},
+                                        {boxLabel: '地域环境', name: 'risk',id:'risk6',inputValue: 6,width:80},
+                                        {boxLabel: '对外担保', name: 'risk',id:'risk7',inputValue: 7,width:80},
+                                        {boxLabel: '安全责任', name: 'risk',id:'risk8',inputValue: 8,width:80},
+                                        {boxLabel: '管理差', name: 'risk',id:'risk9',inputValue: 9,width:80},
+                                        {boxLabel: '工商税务', name: 'risk',id:'risk10',inputValue: 10,width:80},
+                                        {boxLabel: '法务诉讼', name: 'risk',id:'risk11',inputValue: 11,width:80},
+                                        {boxLabel: '政策法规', name: 'risk',id:'risk12',inputValue: 12,width:80},
+                                        {boxLabel: '负责人有不良习惯', name: 'risk',id:'risk13',inputValue: 13,width:120},
+                                        {boxLabel: '其他', name: 'risk',id:'risk14',inputValue: 14,width:80}
 									]
 								},{
 									id : "riskDescribe",
@@ -570,7 +595,22 @@ Ext.define("PSI.COCompany.EditForm", {
 									colspan: 2,
 									xtype : "textfield",
 									width:900,
-								}]
+								}],
+							listeners: {
+								'show': function (t, eOpts) {
+                                    if(permission.creditEditRisk==1){
+										if(permission.creditEditAnalysis==0&&(!me.adding&&me.getEntity().get("tableStatus")<2000
+												||me.getEntity().get("tableStatus")==4000)){
+                                            Ext.getCmp("commitButton").hide();
+										}else{
+                                            Ext.getCmp("commitButton").show();
+										}
+
+                                    }else{
+                                        Ext.getCmp("commitButton").hide();
+                                    }
+								}
+							}
 					}],
 				buttons : buttons
 			}],
@@ -633,6 +673,7 @@ Ext.define("PSI.COCompany.EditForm", {
             risk:me.getCheckBoxGroup("risk"),
             riskDescribe:Ext.getCmp("riskDescribe").getValue(),
             riskKeepaway:Ext.getCmp("riskKeepaway").getValue(),
+			tableStatus:!me.adding?me.getEntity().get("tableStatus"):1000
 		};
 
 		return Ext.JSON.encode(result);
@@ -651,7 +692,68 @@ Ext.define("PSI.COCompany.EditForm", {
         return values;
 	},
 
+	setBoxGroup:function (idName,value) {
+        var check=Ext.getCmp(idName).items;
 
+        for (var i = 0; i <check.length; i++) {
+			var indexNum=check.items[i].inputValue;
+
+            if(value.indexOf(indexNum)>-1){
+				Ext.getCmp(idName+indexNum).setValue(true)
+			}
+        }
+    },
+
+	setBaseReadOnly:function (bool) {
+
+		Ext.getCmp("companyName").setDisabled(bool);
+		Ext.getCmp("companyType").setDisabled(bool);
+		Ext.getCmp("assessTimes").setDisabled(bool);
+		Ext.getCmp("limit").setDisabled(bool);
+		Ext.getCmp("companyAssetType").setDisabled(bool);
+		Ext.getCmp("companyAddrType").setDisabled(bool);
+		Ext.getCmp("otherCompany").setDisabled(bool);
+		Ext.getCmp("companyTradeType").setDisabled(bool);
+		Ext.getCmp("companyStrength").setDisabled(bool);
+		Ext.getCmp("registerAddr").setDisabled(bool);
+		Ext.getCmp("legalPerson").setDisabled(bool);
+		Ext.getCmp("registerMoneySubscribe").setDisabled(bool);
+		Ext.getCmp("registerMoneyPaid").setDisabled(bool);
+		Ext.getCmp("check").setDisabled(bool);
+		Ext.getCmp("contact").setDisabled(bool);
+		Ext.getCmp("contactTel").setDisabled(bool);
+		Ext.getCmp("mainWork").setDisabled(bool);
+		Ext.getCmp("operateAddr").setDisabled(bool);
+		Ext.getCmp("operateArea").setDisabled(bool);
+		Ext.getCmp("assetOffice").setDisabled(bool);
+		Ext.getCmp("assetWarehouse").setDisabled(bool);
+		Ext.getCmp("assetProductline").setDisabled(bool);
+		Ext.getCmp("asset").setDisabled(bool);
+		Ext.getCmp("workTime").setDisabled(bool);
+		Ext.getCmp("employeeNum").setDisabled(bool);
+		Ext.getCmp("assureAgreement").setDisabled(bool);
+		Ext.getCmp("baseData").setDisabled(bool);
+		Ext.getCmp("otherData").setDisabled(bool);
+
+    },
+
+    setAnalysisReadOnly:function (bool) {
+        Ext.getCmp("tradeBreed").setDisabled(bool);
+        Ext.getCmp("isTrade").setDisabled(bool);
+        Ext.getCmp("tradeReason").setDisabled(bool);
+        Ext.getCmp("position").setDisabled(bool);
+        Ext.getCmp("planQuantity").setDisabled(bool);
+        Ext.getCmp("tradePeriod").setDisabled(bool);
+        Ext.getCmp("influence").setDisabled(bool);
+        Ext.getCmp("interflow").setDisabled(bool);
+
+    },
+
+    setRiskReadOnly:function (bool) {
+        Ext.getCmp("risk").setDisabled(bool);
+        Ext.getCmp("riskDescribe").setDisabled(bool);
+        Ext.getCmp("riskKeepaway").setDisabled(bool);
+    },
 
 	onOK : function(thenAdd) {
 		var me = this;
@@ -693,12 +795,52 @@ Ext.define("PSI.COCompany.EditForm", {
 		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
 
 		if (me.__saved) {
-			me.getParentForm().refreshGrid();
+			me.getParentForm().refreshMainGrid();
 		}
 	},
 
+	setItemReadOnly:function () {
+		var me=this;
+		var permission=me.getParentForm().getPermission();
+        me.setBaseReadOnly(true);
+        me.setAnalysisReadOnly(true);
+        me.setRiskReadOnly(true);
+
+		if(permission.creditEditBase==1){
+			me.setBaseReadOnly(false);
+		}
+
+        if(permission.creditEditAnalysis==1){
+            me.setAnalysisReadOnly(false);
+        }
+
+        if(permission.creditEditRisk==1){
+            me.setRiskReadOnly(false);
+        }
+
+    },
+
 	onWndShow : function() {
 		var me = this;
+		 me.setItemReadOnly();		//通过权限设置可否编辑
+
+		if(!me.adding){
+			var id=me.getEntity().get("id");
+			var tableStatus=me.getEntity().get("tableStatus");
+			if(tableStatus>0&&tableStatus<4000&&me.getParentForm().getPermission().creditEdit==1){
+				if(me.getParentForm().getPermission().creditEditBase==1){
+					Ext.getCmp("commitButton").show();
+				}
+			}else{
+				me.setBaseReadOnly(true);
+				me.setAnalysisReadOnly(true);
+				me.setRiskReadOnly(true);
+			}
+		}else{
+			var id="";
+            Ext.getCmp("commitButton").show();
+		}
+
 		me.__saved = false;
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
@@ -707,29 +849,63 @@ Ext.define("PSI.COCompany.EditForm", {
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
 					url : PSI.Const.BASE_URL
-							+ "Home/BizConfig/allConfigsWithExtData",
+							+ "Home/COCompany/getAssessInfo",
 					params : {
-						companyId : me.getCompanyId()
+						id : id
 					},
 					method : "POST",
 					callback : function(options, success, response) {
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
-							me.__storePW.add(data.extData.warehouse);
-							me.__storeWS.add(data.extData.warehouse);
+							if(!me.adding){
+                                Ext.getCmp("hiddenId").setValue(data.id);
+                                Ext.getCmp("companyName").setValue(data.companyName);
+                                Ext.getCmp("limit").setValue(data.limit);
+                                Ext.getCmp("otherCompany").setValue(data.otherCompany);
+                                Ext.getCmp("registerAddr").setValue(data.registerAddr);
+                                Ext.getCmp("legalPerson").setValue(data.legalPerson);
+                                Ext.getCmp("registerMoneySubscribe").setValue(data.registerMoneySubscribe);
+                                Ext.getCmp("registerMoneyPaid").setValue(data.registerMoneyPaid);
+                                Ext.getCmp("contact").setValue(data.contact);
+                                Ext.getCmp("contactTel").setValue(data.contactTel);
+                                Ext.getCmp("mainWork").setValue(data.mainWork);
+                                Ext.getCmp("operateArea").setValue(data.operateArea);
+                                Ext.getCmp("operateAddr").setValue(data.operateAddr);
+                                Ext.getCmp("asset").setValue(data.asset);
+                                Ext.getCmp("tradeBreed").setValue(data.tradeBreed);
+                                Ext.getCmp("tradeReason").setValue(data.tradeReason);
+                                Ext.getCmp("planQuantity").setValue(data.planQuantity);
+                                Ext.getCmp("tradePeriod").setValue(data.tradePeriod);
+                                Ext.getCmp("influence").setValue(data.influence);
+                                Ext.getCmp("interflow").setValue(data.interflow);
+                                Ext.getCmp("riskDescribe").setValue(data.riskDescribe);
+                                Ext.getCmp("riskKeepaway").setValue(data.riskKeepaway);
 
-							for (var i = 0; i < data.dataList.length; i++) {
-								var item = data.dataList[i];
-								var editName = Ext.getCmp("editName" + item.id);
-								if (editName) {
-									editName.setValue(item.name);
-								}
-								var editValue = Ext.getCmp("editValue"
-										+ item.id);
-								if (editValue) {
-									editValue.setValue(item.value);
-								}
+                                if(data.assessTimes>=2){
+                                    Ext.getCmp("assessTimes2").setValue(true);
+                                }else{
+                                    Ext.getCmp("assessTimes1").setValue(true);
+                                }
+
+                                me.setBoxGroup("companyType",data.companyType);
+                                me.setBoxGroup("companyAssetType",data.companyAssetType);
+                                me.setBoxGroup("companyAddrType",data.companyAddrType);
+                                me.setBoxGroup("companyTradeType",data.companyTradeType);
+                                me.setBoxGroup("companyStrength",data.companyStrength);
+                                me.setBoxGroup("check",data.check);
+                                me.setBoxGroup("assetOffice",data.assetOffice);
+                                me.setBoxGroup("assetWarehouse",data.assetWarehouse);
+                                me.setBoxGroup("assetProductline",data.assetProductline);
+                                me.setBoxGroup("workTime",data.workTime);
+                                me.setBoxGroup("employeeNum",data.employeeNum);
+                                me.setBoxGroup("assureAgreement",data.assureAgreement);
+                                me.setBoxGroup("baseData",data.baseData);
+                                me.setBoxGroup("otherData",data.otherData);
+                                me.setBoxGroup("isTrade",data.isTrade);
+                                me.setBoxGroup("risk",data.risk);
 							}
+
+
 						} else {
 							PSI.MsgBox.showInfo("网络错误");
 						}
