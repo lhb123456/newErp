@@ -1152,7 +1152,6 @@ class FIdConst {
     const COIN_RATE_DELETE = "2038-03";
     //结算方式
     const CLEARING_FORM = "1101";
-<<<<<<< HEAD
     //银行信息管理
     const BANK_MESSAGE = "1100";
 
@@ -1164,7 +1163,6 @@ class FIdConst {
 
     //银行信息管理
     const BANK_DEFAULT = "1100-03";
-=======
 
     //基础税控编码
     const  TAX_CODE="1102";
@@ -1179,5 +1177,4 @@ class FIdConst {
     const  CREDIT_EDIT_ANALYSIS ="3003-02";         //业务分析
 
     const  CREDIT_EDIT_RISK ="3003-03";             //风险披露
->>>>>>> hubaozhen
 }
