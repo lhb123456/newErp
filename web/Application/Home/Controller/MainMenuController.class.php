@@ -272,7 +272,12 @@ class MainMenuController extends Controller {
                 // 往来单位档案
                 redirect(__ROOT__ . "/Home/COCompany/index");
                 break;
-			default :
+            case FIdConst::BANK_MESSAGE:
+                //银行信息
+                redirect(__ROOT__ . "/Home/Bank/index");
+                break;
+
+            default :
 				redirect(__ROOT__ . "/Home");
 		}
 	}

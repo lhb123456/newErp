@@ -1,135 +1,160 @@
 <?php
 
+/**
+ * Created by PhpStorm.
+ * User: dell
+ * Date: 2018/7/23
+ * Time: 15:42
+ */
 namespace Home\Service;
 
 use Home\DAO\BankDAO;
-use Home\Common\FIdConst;
-use Home\DAO\OrgDAO;
+use Home\DAO\ReceivablesDAO;
 
-/**
- * 银行账户Service
- *
- * @author 李静波
- */
-class BankService extends PSIBaseExService {
-	private $LOG_CATEGORY = "银行账户";
+class BankService extends PSIBaseExService
+{
 
-	/**
-	 * 返回所有的公司列表
-	 *
-	 * @return array
-	 */
-	public function companyList() {
-		if ($this->isNotOnline()) {
-			return $this->emptyResult();
-		}
-		
-		$params = [
-				"loginUserId" => $this->getLoginUserId(),
-				"fid" => FIdConst::GL_BANK_ACCOUNT
-		];
-		
-		$dao = new OrgDAO($this->db());
-		return $dao->getCompanyExList($params);
-	}
 
-	/**
-	 * 某个公司的银行账户
-	 *
-	 * @param array $params        	
-	 */
-	public function bankList($params) {
-		if ($this->isNotOnline()) {
-			return $this->emptyResult();
-		}
-		
-		$params["loginUserId"] = $this->getLoginUserId();
-		
-		$dao = new BankDAO($this->db());
-		return $dao->bankList($params);
-	}
+    public function bankList($params)
+    {
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
 
-	/**
-	 * 新增或编辑银行账户
-	 *
-	 * @param array $params        	
-	 */
-	public function editBank($params) {
-		if ($this->isNotOnline()) {
-			return $this->notOnlineError();
-		}
-		
-		$id = $params["id"];
-		$bankName = $params["bankName"];
-		$bankNumber = $params["bankNumber"];
-		
-		$params["dataOrg"] = $this->getLoginUserDataOrg();
-		
-		$db = $this->db();
-		$db->startTrans();
-		
-		$log = null;
-		$dao = new BankDAO($db);
-		if ($id) {
-			// 编辑
-			$rc = $dao->updateBank($params);
-			if ($rc) {
-				$db->rollback();
-				return $rc;
-			}
-			
-			$log = "编辑银行账户：{$bankName}-{$bankNumber}";
-		} else {
-			// 新增
-			$rc = $dao->addBank($params);
-			if ($rc) {
-				$db->rollback();
-				return $rc;
-			}
-			
-			$id = $params["id"];
-			$log = "新增银行账户：{$bankName}-{$bankNumber}";
-		}
-		
-		// 记录业务日志
-		$bs = new BizlogService($db);
-		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
-		$db->commit();
-		
-		return $this->ok($id);
-	}
+        $params["loginUserId"] = $this->getLoginUserId();
+        $params["companyId"] = $this->getCompanyId();
+        $dao = new BankDAO($this->db());
+        return $dao->bankList($params);
 
-	/**
-	 * 删除银行账户
-	 *
-	 * @param array $params        	
-	 */
-	public function deleteBank($params) {
-		if ($this->isNotOnline()) {
-			return $this->notOnlineError();
-		}
-		
-		$db = $this->db();
-		$db->startTrans();
-		
-		$dao = new BankDAO($db);
-		
-		$rc = $dao->deleteBank($params);
-		if ($rc) {
-			$db->rollback();
-			return $rc;
-		}
-		
-		// 记录业务日志
-		$bankName = $params["bankName"];
-		$bankNumber = $params["bankNumber"];
-		$log = "删除银行账户：{$bankName}-{$bankNumber}";
-		$bs = new BizlogService($db);
-		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
-		$db->commit();
-		
-		return $this->ok();
-	}
+    }
+
+    public function bankInfo($params) {
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $dao = new BankDAO($this->db());
+        return $dao->bankInfo($params);
+    }
+
+    public function bankDetail($params) {
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $params["companyId"] = $this->getCompanyId();
+        $params["loginUserId"] = $this->getLoginUserId();
+        $params["loginUserName"] = $this->getLoginUserName();
+        $params["dataOrg"] = $this->getLoginUserDataOrg();
+
+        $dao = new BankDAO($this->db());
+        return $dao->bankDetail($params);
+        }
+
+
+ public function bankAdd($json) {
+     if ($this->isNotOnline()) {
+         return $this->notOnlineError();
+     }
+
+     $bill = json_decode(html_entity_decode($json), true);
+     if ($bill == null) {
+         return $this->bad("传入的参数错误，不是正确的JSON格式");
+     }
+     if(!$bill["companyId"]){
+         $bill["companyId"] = $this->getCompanyId();
+     }
+     if(!$bill["dataOrg"]){
+         $bill["dataOrg"] = $this->getLoginUserDataOrg();
+     }
+     if(!$bill["bizUserId"]){
+         $bill["loginUserId"] = $this->getLoginUserId();
+     }
+     $db = $this->db();
+     $db->startTrans();
+    if($bill["id"]){
+        $dao = new BankDAO($db);
+        $rc = $dao->bankEdit($bill);
+        if ($rc) {
+            $db->rollback();
+            return $rc;
+        }
+        // 记录业务日志
+        $log = "为{$bill["caName"]}编辑银行信息，银行名称：{$bill["bankName"]},银行账户：{$bill["bankAccount"]}";
+
+    }else{
+        $dao = new BankDAO($db);
+        $rc = $dao->bankAdd($bill);
+        if ($rc) {
+            $db->rollback();
+            return $rc;
+        }
+        // 记录业务日志
+        $log = "为{$bill["caName"]}新建银行信息，银行名称：{$bill["bankName"]},银行账户：{$bill["bankAccount"]}";
+
+    }
+
+
+    $bs = new BizlogService($db);
+     $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+     $db->commit();
+
+     return $this->ok();
+    }
+
+
+    public function deleteBank($id) {
+
+         if ($this->isNotOnline()) {
+             return $this->notOnlineError();
+         }
+
+         $db = $this->db();
+         $db->startTrans();
+
+         $dao = new BankDAO($db);
+         $rc = $dao->deleteBank($id);
+
+         if ($rc) {
+             $db->rollback();
+             return $rc;
+         }
+         // 记录业务日志
+         $log = "删除银行信息";
+         $bs = new BizlogService($db);
+         $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+         $db->commit();
+
+         return $this->ok();
+        }
+
+
+
+ public function isDefault($id) {
+
+         if ($this->isNotOnline()) {
+             return $this->notOnlineError();
+         }
+
+         $db = $this->db();
+         $db->startTrans();
+
+         $dao = new BankDAO($db);
+         $rc = $dao->isDefault($id);
+
+         if ($rc) {
+             $db->rollback();
+             return $rc;
+         }
+         $db->commit();
+
+         return $this->ok();
+        }
+
+
+
+
+
 }

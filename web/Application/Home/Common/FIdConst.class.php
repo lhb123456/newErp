@@ -1152,4 +1152,15 @@ class FIdConst {
     const COIN_RATE_DELETE = "2038-03";
     //结算方式
     const CLEARING_FORM = "1101";
+    //银行信息管理
+    const BANK_MESSAGE = "1100";
+
+    //银行信息管理
+    const BANK_ADD = "1100-01";
+
+    //银行信息管理
+    const BANK_DELETE = "1100-02";
+
+    //银行信息管理
+    const BANK_DEFAULT = "1100-03";
 }

@@ -1,322 +1,530 @@
 /**
- * 银行账户 - 主界面
+ * 银行信息管理界面
+ *
  */
 Ext.define("PSI.Bank.MainForm", {
-			extend : "PSI.AFX.BaseMainExForm",
+    extend : "PSI.AFX.BaseMainExForm",
+    config:{
+        permission:null
+    },
+    initComponent : function() {
+        var me = this;
 
-			/**
-			 * 初始化组件
-			 */
-			initComponent : function() {
-				var me = this;
+        Ext.define("PSICACategory", {
+            extend : "Ext.data.Model",
+            fields : ["id", "name"]
+        });
 
-				Ext.apply(me, {
-							tbar : me.getToolbarCmp(),
-							items : [{
-										region : "west",
-										width : 300,
-										layout : "fit",
-										border : 0,
-										split : true,
-										items : [me.getCompanyGrid()]
-									}, {
-										region : "center",
-										xtype : "panel",
-										layout : "fit",
-										border : 0,
-										items : [me.getMainGrid()]
-									}]
-						});
+        Ext.apply(me, {
 
-				me.callParent(arguments);
+            items : [{
+                id : "panelQueryCmp",
+                region : "north",
+                height : 45,
+                layout : "fit",
+                border : 0,
+                header : false,
+                collapsible : true,
+                collapseMode : "mini",
+                layout : {
+                    type : "table",
+                    columns : 5
+                },
+                items : me.getQueryCmp()
+            }, {
+                region : "center",
+                layout : "border",
+                border : 0,
+                items : [{
+                    region : "center",
+                    layout : "fit",
+                    height : "40%",
+                    border : 0,
+                    items : [me.getRvGrid()]
+                }, {
+                    region : "south",
+                    layout : "border",
+                    border : 0,
+                    split : true,
+                    height : "50%",
+                    items : [{
+                        region : "east",
+                        layout : "fit",
+                        border : 0,
+                        width : "100%",
+                        split : true,
+                        items : [me.getRvRecordGrid()]
+                    }]
+                }]
+            }],
+        });
 
-				me.refreshCompanyGrid();
-			},
+        me.callParent(arguments);
+        me.onQuery()
+    },
 
-			getToolbarCmp : function() {
-				var me = this;
-				return [{
-							text : "新增银行账户",
-							handler : me.onAddBank,
-							scope : me
-						}, "-", {
-							text : "编辑银行账户",
-							handler : me.onEditBank,
-							scope : me
-						}, "-", {
-							text : "删除银行账户",
-							handler : me.onDeleteBank,
-							scope : me
-						}, "-", {
-							text : "关闭",
-							handler : function() {
-								me.closeWindow();
-							}
-						}];
-			},
+    /**
+     * 查询条件
+     */
+    getQueryCmp : function() {
+        var me = this;
+        return [{
+            id : "status",
+            xtype : "combo",
+            queryMode : "local",
+            editable : false,
+            valueField : "id",
+            labelWidth : 60,
+            labelAlign : "right",
+            labelSeparator : "",
+            fieldLabel : "状态",
+            margin : "5, 0, 0, 0",
+            store : Ext.create("Ext.data.ArrayStore", {
+                fields : ["id", "text"],
+                data : [[0, "客户"], [1000, "供应商"],[2000, "组织机构"]]
+            }),
+            value :0
+        },{
+            id : "name",
+            labelWidth : 80,
+            labelAlign : "right",
+            labelSeparator : "",
+            fieldLabel : "往来单位名称",
+            margin : "5, 0, 0, 0",
+            xtype : "textfield"
+        }, {
+            id : "code",
+            labelWidth : 80,
+            labelAlign : "right",
+            labelSeparator : "",
+            fieldLabel : "往来单位编码",
+            margin : "5, 0, 0, 0",
+            xtype : "textfield"
+        }, {
+            xtype : "container",
+            items : [{
+                xtype : "button",
+                text : "查询",
+                width : 100,
+                height : 26,
+                margin : "5 0 0 10",
+                handler : me.onQuery,
+                scope : me
+            }, {
+                xtype : "button",
+                text : "清空查询条件",
+                width : 100,
+                height : 26,
+                margin : "5, 0, 0, 10",
+                handler : me.onClearQuery,
+                scope : me
+            }]
+        }, {
+            xtype : "container",
+            items : [{
+                xtype : "button",
+                iconCls : "PSI-button-hide",
+                text : "隐藏查询条件栏",
+                width : 130,
+                height : 26,
+                margin : "5 0 0 10",
+                handler : function() {
+                    Ext.getCmp("panelQueryCmp").collapse();
+                },
+                scope : me
+            }]
+        }];
+    },
 
-			refreshCompanyGrid : function() {
-				var me = this;
-				var el = Ext.getBody();
-				var store = me.getCompanyGrid().getStore();
-				el.mask(PSI.Const.LOADING);
-				var r = {
-					url : me.URL("Home/Bank/companyList"),
-					callback : function(options, success, response) {
-						store.removeAll();
+    getRvGrid : function() {
+        var me = this;
+        if (me.__rvGrid) {
+            return me.__rvGrid;
+        }
 
-						if (success) {
-							var data = me.decodeJSON(response.responseText);
-							store.add(data);
-							if (store.getCount() > 0) {
-								me.getCompanyGrid().getSelectionModel()
-										.select(0);
-							}
-						}
+        Ext.define("PSIRv", {
+            extend : "Ext.data.Model",
+            fields : ["id","ca_code","ca_name","supplier","customer"]
+        });
 
-						el.unmask();
-					}
-				};
-				me.ajax(r);
-			},
+        var store = Ext.create("Ext.data.Store", {
+            model : "PSIRv",
+            pageSize : 20,
+            proxy : {
+                type : "ajax",
+                actionMethods : {
+                    read : "POST"
+                },
+                url : PSI.Const.BASE_URL + "Home/Bank/bankList",
+                reader : {
+                    root : 'dataList',
+                    totalProperty : 'totalCount'
+                }
+            },
+            autoLoad : false,
+            data : []
+        });
+        store.on("beforeload", function() {
+            Ext.apply(store.proxy.extraParams, {
 
-			refreshMainGrid : function() {
-				var me = this;
+                status : Ext.getCmp("status").getValue(),
+                name : Ext.getCmp("name").getValue(),
+                code : Ext.getCmp("code").getValue(),
+            });
+        });
 
-				me.getMainGrid().setTitle(me.formatGridHeaderTitle("银行账户"));
-				var item = me.getCompanyGrid().getSelectionModel()
-						.getSelection();
-				if (item == null || item.length != 1) {
-					return;
-				}
+        me.__rvGrid = Ext.create("Ext.grid.Panel", {
+            cls : "PSI",
+            viewConfig : {
+                enableTextSelection : true
+            },
+            bbar : ["->", {
+                xtype : "pagingtoolbar",
+                border : 0,
+                store : store
+            }],
+            columnLines : true,
+            columns : [{
+                xtype : "rownumberer",
+                width :50,
+            }, {
+                header : "往来单位编码",
+                dataIndex : "ca_code",
+                width : 100,
+                menuDisabled : true,
+                sortable : false
+            }, {
+                header : "往来单位名称",
+                dataIndex : "ca_name",
+                menuDisabled : true,
+                sortable : false,
+                width : 200
+            },{
+                header : "是否是供应商",
+                dataIndex : "supplier",
+                width:100,
+                menuDisabled : true,
+                sortable : false,
+                renderer : function(value,md,record) {
+                    if (value == 0) {
+                        return "<span style='color:red'>是</span>";
+                    } else if (value == 1) {
+                        return "否";
+                    } else {
+                        return "";
+                    }
+                }
+            }, {
+                header : "是否是客户",
+                dataIndex : "customer",
+                width:100,
+                menuDisabled : true,
+                sortable : false,
+                renderer : function(value,md,record) {
+                    if (value == 0) {
+                        return "<span style='color:red'>是</span>";
+                    } else if (value == 1) {
+                        return "否";
+                    } else {
+                        return "";
+                    }
+                }
+            }],
+            store : store,
+            listeners : {
+                show :{
+                    fn: me.onWinshow,
+                    scope :me
+                },
+                select : {
+                    fn : me.onRvGridSelect,
+                    scope : me
+                }
+            }
+        });
 
-				var company = item[0];
-				var title = Ext.String
-						.format("{0} - 银行账户", company.get("name"));
-				me.getMainGrid().setTitle(me.formatGridHeaderTitle(title));
+        return me.__rvGrid;
+    },
 
-				var el = me.getMainGrid().getEl();
-				var store = me.getMainGrid().getStore();
-				el && el.mask(PSI.Const.LOADING);
-				var r = {
-					params : {
-						companyId : company.get("id")
-					},
-					url : me.URL("Home/Bank/bankList"),
-					callback : function(options, success, response) {
-						store.removeAll();
+    getRvParam : function() {
+        var item = this.getRvGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            return null;
+        }
+        var rv = item[0];
+        return rv.get("id");
+    },
+    /**
+     * 清除查询条件
+     */
+    onClearQuery : function() {
+        var me = this;
 
-						if (success) {
-							var data = me.decodeJSON(response.responseText);
-							store.add(data);
-							if (store.getCount() > 0) {
-								me.getMainGrid().getSelectionModel().select(0);
-							}
-						}
+        Ext.getCmp("status").setValue(0);
+        Ext.getCmp("name").setValue(null);
+        Ext.getCmp("code").setValue(null);
 
-						el && el.unmask();
-					}
-				};
-				me.ajax(r);
-			},
+        me.onQuery();
+    },
+    onRvGridSelect : function() {
+        var me = this;
 
-			getCompanyGrid : function() {
-				var me = this;
-				if (me.__companyGrid) {
-					return me.__companyGrid;
-				}
+        this.getRvRecordGrid().getStore().removeAll();
+        this.getRvRecordGrid().setTitle(me.formatGridHeaderTitle("银行信息"));
 
-				var modelName = "PSI_Bank_CompanyModel";
+        this.getRvRecordGrid().getStore().loadPage(1);
+    },
+    onWinshow:function(){
+        me.getRvGrid()
+    },
 
-				Ext.define(modelName, {
-							extend : "Ext.data.Model",
-							fields : ["id", "code", "name", "orgType"]
-						});
+    getRvRecordGrid : function() {
+        var me = this;
+        if (me.__rvRecordGrid) {
+            return me.__rvRecordGrid;
+        }
 
-				me.__companyGrid = Ext.create("Ext.grid.Panel", {
-							cls : "PSI",
-							header : {
-								height : 30,
-								title : me.formatGridHeaderTitle("核算组织机构")
-							},
-							forceFit : true,
-							columnLines : true,
-							columns : [{
-										header : "编码",
-										dataIndex : "code",
-										menuDisabled : true,
-										sortable : false,
-										width : 70
-									}, {
-										header : "组织机构名称",
-										dataIndex : "name",
-										flex : 1,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "组织机构性质",
-										dataIndex : "orgType",
-										width : 100,
-										menuDisabled : true,
-										sortable : false
-									}],
-							store : Ext.create("Ext.data.Store", {
-										model : modelName,
-										autoLoad : false,
-										data : []
-									}),
-							listeners : {
-								select : {
-									fn : me.onCompanyGridSelect,
-									scope : me
-								}
-							}
-						});
-				return me.__companyGrid;
-			},
+        Ext.define("PSIRvRecord", {
+            extend : "Ext.data.Model",
+            fields : ["id", "bank_name" ,"bank_account","status","memo"]
+        });
 
-			getMainGrid : function() {
-				var me = this;
-				if (me.__mainGrid) {
-					return me.__mainGrid;
-				}
+        var store = Ext.create("Ext.data.Store", {
+            model : "PSIRvRecord",
+            pageSize : 20,
+            proxy : {
+                type : "ajax",
+                actionMethods : {
+                    read : "POST"
+                },
+                url : PSI.Const.BASE_URL + "Home/Bank/bankInfo",
+                reader : {
+                    root : 'dataList',
+                    totalProperty : 'totalCount'
+                }
+            },
+            autoLoad : false,
+            data : []
+        });
 
-				var modelName = "PSI_Bank_BankAccountModel";
+        store.on("beforeload", function() {
+            Ext.apply(store.proxy.extraParams, {
+                caId : me.getRvParam()
+            });
+        });
 
-				Ext.define(modelName, {
-							extend : "Ext.data.Model",
-							fields : ["id", "bankName", "bankNumber", "memo"]
-						});
+        me.__rvRecordGrid = Ext.create("Ext.grid.Panel", {
+            cls : "PSI",
+            viewConfig : {
+                enableTextSelection : true
+            },
+            header : {
+                height : 30,
+                title : me.formatGridHeaderTitle("银行信息")
+            },
+            tbar : [{
+                text : "添加银行信息",
+                iconCls : "PSI-button-add",
+                margin : "0 0 0 0",
+                hidden : me.getPermission().add == "0",
+                handler : me.onAddBank,
+                scope : me
+            }, "-",{
+                text : "编辑银行信息",
+                iconCls : "PSI-button-add",
+                margin : "0 0 0 0",
+                hidden : me.getPermission().add == "0",
+                handler : me.onEditBank,
+                scope : me
+            }, "-",{
+                text : "删除银行信息",
+                iconCls : "PSI-button-delete",
+                hidden : me.getPermission().delete == "0",
+                handler : me.deleteBank,
+                scope : me
+            },  "-",{
+                text : "设为默认账户",
+                iconCls : "PSI-button-default",
+                hidden : me.getPermission().default == "0",
+                handler : me.default,
+                scope : me
+            }, "-", {
+                text : "关闭",
+                handler : function() {
+                    me.closeWindow();
+                }
+            }],
+            bbar : ["->", {
+                xtype : "pagingtoolbar",
+                border : 0,
+                store : store
+            }],
+            columnLines : true,
+            columns : [{
+                xtype : "rownumberer",
+                width :50,
+            },{
+                header : "id",
+                dataIndex : "id",
+                hidden :true,
+                menuDisabled : true,
+                sortable : false,
+                width : 60
+            },{
+                header : "银行名称",
+                dataIndex : "bank_name",
+                menuDisabled : true,
+                sortable : false,
+                width : 200
+            }, {
+                header : "银行账号",
+                dataIndex : "bank_account",
+                menuDisabled : true,
+                sortable : false,
+                width : 250
+            },{
+                header : "是否是默认账号",
+                dataIndex : "status",
+                menuDisabled : true,
+                sortable : false,
+                width : 100,
+                renderer : function(value) {
+                    if (value == 0) {
+                        return "<span style='color:red'>是</span>";
+                    }  else if (value == 1) {
+                        return "<span style='color:green'>否</span>";
+                    }else {
+                        return "";
+                    }
+                }
+            },{
+                header : "备注",
+                dataIndex : "memo",
+                menuDisabled : true,
+                sortable : false,
+                width : 250
+            },],
+            store : store
+        });
 
-				me.__mainGrid = Ext.create("Ext.grid.Panel", {
-							cls : "PSI",
-							header : {
-								height : 30,
-								title : me.formatGridHeaderTitle("银行账户")
-							},
-							columnLines : true,
-							columns : [{
-										header : "银行",
-										dataIndex : "bankName",
-										menuDisabled : true,
-										sortable : false,
-										width : 300
-									}, {
-										header : "账号",
-										dataIndex : "bankNumber",
-										width : 300,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "备注",
-										dataIndex : "memo",
-										width : 200,
-										menuDisabled : true,
-										sortable : false
-									}],
-							store : Ext.create("Ext.data.Store", {
-										model : modelName,
-										autoLoad : false,
-										data : []
-									})
-						});
-				return me.__mainGrid;
-			},
+        return me.__rvRecordGrid;
+    },
+    onQuery : function() {
+        var me = this;
+        me.getRvRecordGrid().getStore().removeAll();
+        me.getRvRecordGrid().setTitle(me.formatGridHeaderTitle("银行信息"));
 
-			onCompanyGridSelect : function() {
-				var me = this;
+        me.getRvGrid().getStore().loadPage(1);
+    },
 
-				me.refreshMainGrid();
-			},
+    onAddBank : function() {
+        var me = this;
+        var item = me.getRvGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择往来单位");
+            return;
+        }
 
-			onAddBank : function() {
-				var me = this;
 
-				var item = me.getCompanyGrid().getSelectionModel()
-						.getSelection();
-				if (item == null || item.length != 1) {
-					me.showInfo("没有选择公司");
-					return;
-				}
+        var contract = item[0] ;
 
-				var company = item[0];
+        var form = Ext.create("PSI.Bank.EditForm", {
+            parentForm : me,
+            contract : contract
+        })
+        form.show();
+    },
 
-				var form = Ext.create("PSI.Bank.EditForm", {
-							parentForm : me,
-							company : company
-						});
-				form.show();
-			},
+    onEditBank : function() {
+        var me = this;
+        var item = me.getRvRecordGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择银行信息");
+            return;
+        }
+        var bank = item[0] ;
+        var item = me.getRvGrid().getSelectionModel().getSelection();
 
-			onEditBank : function() {
-				var me = this;
-				var item = me.getCompanyGrid().getSelectionModel()
-						.getSelection();
-				if (item == null || item.length != 1) {
-					me.showInfo("没有选择公司");
-					return;
-				}
+        var contract = item[0] ;
 
-				var company = item[0];
+        var form = Ext.create("PSI.Bank.EditForm", {
+            parentForm : me,
+            contract : contract,
+            bank:bank
+        })
+        form.show();
+    },
 
-				var item = me.getMainGrid().getSelectionModel().getSelection();
-				if (item == null || item.length != 1) {
-					me.showInfo("没有选择要编辑的银行账户");
-					return;
-				}
+    invoiceCorrespondence :function(){
+        var me =this;
+        var form = Ext.create("PSI.Invoice.InvoiceCorres", {
+            parentForm : me,
+        })
+        form.show();
+    },
+    deleteBank : function(){
+        var me =this;
+        var item = me.getRvRecordGrid().getSelectionModel().getSelection();
+        if (item == null || item.length != 1) {
+            PSI.MsgBox.showInfo("请选择要删除的银行信息");
+            return;
+        }
+        var items= item[0]
+        PSI.MsgBox.confirm("确认删除此银行信息",function () {
+            Ext.Ajax.request({
+                url : PSI.Const.BASE_URL + "Home/Bank/deleteBank",
+                method : "POST",
+                params : {
+                    id:items.get("id"),
+                },
+                callback : function(options, success, response) {
+                    if (success) {
+                        var data = Ext.JSON.decode(response.responseText);
+                        if (data.success) {
+                            PSI.MsgBox.showInfo("删除成功", function() {
+                                me.getRvRecordGrid().getStore().loadPage(1);
+                            });
+                        } else {
+                            PSI.MsgBox.showInfo("网络错误");
+                        }
+                    }
+                }
 
-				var bank = item[0];
-				var form = Ext.create("PSI.Bank.EditForm", {
-							parentForm : me,
-							company : company,
-							entity : bank
-						});
-				form.show();
-			},
+            });
+        })
+    },
 
-			onDeleteBank : function() {
-				var me = this;
-				var item = me.getMainGrid().getSelectionModel().getSelection();
-				if (item == null || item.length != 1) {
-					me.showInfo("没有选择要删除的银行账户");
-					return;
-				}
+    default : function(){
+            var me =this;
+            var item = me.getRvRecordGrid().getSelectionModel().getSelection();
+            if (item == null || item.length != 1) {
+                PSI.MsgBox.showInfo("请选择要设置的银行信息");
+                return;
+            }
+            var items= item[0]
+            PSI.MsgBox.confirm("是否设置此信息为默认信息",function () {
+                Ext.Ajax.request({
+                    url : PSI.Const.BASE_URL + "Home/Bank/isDefault",
+                    method : "POST",
+                    params : {
+                        id:items.get("id"),
+                    },
+                    callback : function(options, success, response) {
+                        if (success) {
+                            var data = Ext.JSON.decode(response.responseText);
+                            if (data.success) {
+                                PSI.MsgBox.showInfo("设置成功", function() {
+                                    me.getRvRecordGrid().getStore().loadPage(1);
+                                });
+                            } else {
+                                PSI.MsgBox.showInfo("网络错误");
+                            }
+                        }
+                    }
 
-				var bank = item[0];
+                });
+            })
+        },
 
-				var info = Ext.String.format(
-						"请确认是否删除银行账户 <span style='color:red'>{0}-{1}</span> ?",
-						bank.get("bankName"), bank.get("bankNumber"));
 
-				var funcConfirm = function() {
-					var el = Ext.getBody();
-					el.mask(PSI.Const.LOADING);
-					var r = {
-						url : me.URL("Home/Bank/deleteBank"),
-						params : {
-							id : bank.get("id")
-						},
-						method : "POST",
-						callback : function(options, success, response) {
-							el.unmask();
-							if (success) {
-								var data = me.decodeJSON(response.responseText);
-								if (data.success) {
-									me.tip("成功完成删除操作");
-									me.refreshMainGrid();
-								} else {
-									me.showInfo(data.msg);
-								}
-							} else {
-								me.showInfo("网络错误");
-							}
-						}
-					};
-
-					me.ajax(r);
-				};
-
-				me.confirm(info, funcConfirm);
-
-			}
-		});
+});

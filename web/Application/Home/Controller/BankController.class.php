@@ -1,89 +1,122 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * User: hongwang
+ * Date: 2018/8/24
+ * Time: 15:42
+ */
 namespace Home\Controller;
 
 use Home\Common\FIdConst;
-use Home\Service\UserService;
 use Home\Service\BankService;
+use Home\Service\BizConfigService;
+use Home\Service\UserService;
 
-/**
- * 银行账户Controller
- *
- * @author 李静波
- *        
- */
+
+
+
+
 class BankController extends PSIBaseController {
+    public function index(){
+        $us = new UserService();
 
-	/**
-	 * 银行账户 - 主页面
-	 */
-	public function index() {
-		$us = new UserService();
-		
-		if ($us->hasPermission(FIdConst::GL_BANK_ACCOUNT)) {
-			$this->initVar();
-			
-			$this->assign("title", "银行账户");
-			
-			$this->display();
-		} else {
-			$this->gotoLoginPage("/Home/Bank/index");
-		}
-	}
+        if ($us->hasPermission(FIdConst::BANK_MESSAGE)) {
+            $this->initVar();
 
-	/**
-	 * 返回所有的公司列表
-	 */
-	public function companyList() {
-		if (IS_POST) {
-			$service = new BankService();
-			$this->ajaxReturn($service->companyList());
-		}
-	}
+            $this->assign("title", "往来单位银行设定");
 
-	/**
-	 * 某个公司的银行账户
-	 */
-	public function bankList() {
-		if (IS_POST) {
-			$params = [
-					"companyId" => I("post.companyId")
-			];
-			
-			$service = new BankService();
-			$this->ajaxReturn($service->bankList($params));
-		}
-	}
 
-	/**
-	 * 新增或编辑银行账户
-	 */
-	public function editBank() {
-		if (IS_POST) {
-			$params = [
-					"id" => I("post.id"),
-					"companyId" => I("post.companyId"),
-					"bankName" => I("post.bankName"),
-					"bankNumber" => I("post.bankNumber"),
-					"memo" => I("post.memo")
-			];
-			
-			$service = new BankService();
-			$this->ajaxReturn($service->editBank($params));
-		}
-	}
+            $this->assign("pAdd",
+                $us->hasPermission(FIdConst::BANK_ADD) ? "1" : "0");
 
-	/**
-	 * 删除银行账户
-	 */
-	public function deleteBank() {
-		if (IS_POST) {
-			$params = [
-					"id" => I("post.id")
-			];
-			
-			$service = new BankService();
-			$this->ajaxReturn($service->deleteBank($params));
-		}
-	}
+
+            $this->assign("pDelete",
+                $us->hasPermission(FIdConst::BANK_DELETE) ? "1" : "0");
+
+
+            $this->assign("pDefault",
+                $us->hasPermission(FIdConst::BANK_DEFAULT) ? "1" : "0");
+            $this->display();
+        } else {
+            $this->gotoLoginPage("/Home/Bank/index");
+        }
+    }
+    /**
+     * 往来单位列表
+     */
+    public function bankList() {
+        if (IS_POST) {
+            $params = array(
+                "status" => I("post.status"),
+                "name" => I("post.name"),
+                "code" => I("post.code"),
+                "page" => I("post.page"),
+                "start" => I("post.start"),
+                "limit" => I("post.limit")
+            );
+            $rs = new BankService();
+            $this->ajaxReturn($rs->bankList($params));
+        }
+    }
+
+    public function bankDetail(){
+        if (IS_POST) {
+            $params = array(
+                "id" => I("post.id")
+            );
+
+            $ps = new BankService();
+            $this->ajaxReturn($ps->bankDetail($params));
+        }
+    }
+
+
+    /**
+     * 银行信息列表
+     */
+    public function bankInfo() {
+        if (IS_POST) {
+            $params = array(
+                "caId" => I("post.caId"),
+                "page" => I("post.page"),
+                "start" => I("post.start"),
+                "limit" => I("post.limit")
+            );
+            $rs = new BankService();
+            $this->ajaxReturn($rs->bankInfo($params));
+        }
+    }
+
+
+ /**
+     * 添加银行信息
+     */
+    public function bankAdd() {
+        if (IS_POST) {
+            $json = I("post.jsonStr");
+            $rs = new BankService();
+            $this->ajaxReturn($rs->bankAdd($json));
+        }
+    }
+
+    public function deleteBank(){
+        if (IS_POST) {
+            $id = I("post.id");
+
+            $rs = new BankService();
+            $this->ajaxReturn($rs->deleteBank($id));
+        }
+    }
+
+    public function isDefault(){
+        if (IS_POST) {
+            $id = I("post.id");
+
+            $rs = new BankService();
+            $this->ajaxReturn($rs->isDefault($id));
+        }
+    }
+
+
+
 }
