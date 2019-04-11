@@ -11,10 +11,10 @@ Ext.define("PSI.COCompany.MainForm", {
 		pAddCategory : null,
 		pEditCategory : null,
 		pDeleteCategory : null,
-		pAddCustomer : null,
-		pEditCustomer : null,
-		pDeleteCustomer : null,
-		pImportCustomer : null
+		pAddCOCompany : null,
+		pEditCOCompany : null,
+		pDeleteCOCompany : null,
+		pImportCOCompany : null
 	},
 
 	/**
@@ -67,7 +67,7 @@ Ext.define("PSI.COCompany.MainForm", {
 		me.callParent(arguments);
 
 		me.categoryGrid = me.getCategoryGrid();
-		me.customerGrid = me.getMainGrid();
+		me.cocompanyGrid = me.getMainGrid();
 
 		me.__queryEditNameList = ["editQueryCode", "editQueryName",
 				"editQueryAddress", "editQueryContact", "editQueryMobile",
@@ -96,28 +96,23 @@ Ext.define("PSI.COCompany.MainForm", {
 					scope : me
 				}, "-", {
 					text : "新增往来单位",
-					disabled : me.getPAddCustomer() == "0",
-					handler : me.onAddCustomer,
+					disabled : me.getPAddCOCompany() == "0",
+					handler : me.onAddCOCompany,
 					scope : me
 				}, {
 					text : "导入往来单位",
-					disabled : me.getPImportCustomer() == "0",
-					handler : me.onImportCustomer,
+					disabled : me.getPImportCOCompany() == "0",
+					handler : me.onImportCOCompany,
 					scope : me
 				}, {
 					text : "编辑往来单位",
-					disabled : me.getPEditCustomer() == "0",
-					handler : me.onEditCustomer,
+					disabled : me.getPEditCOCompany() == "0",
+					handler : me.onEditCOCompany,
 					scope : me
-				}, {
-					text : "删除往来单位",
-					disabled : me.getPDeleteCustomer() == "0",
-					handler : me.onDeleteCustomer,
-					scope : me
-				}, "-", {
+				},  "-", {
 					text : "帮助",
 					handler : function() {
-						window.open(me.URL("/Home/Help/index?t=customer"));
+						window.open(me.URL("/Home/Help/index?t=cocompany"));
 					}
 				}, "-", {
 					text : "关闭",
@@ -284,7 +279,7 @@ Ext.define("PSI.COCompany.MainForm", {
 			return me.__categoryGrid;
 		}
 
-		var modelName = "PSICustomerCategory";
+		var modelName = "PSICOCompanyCategory";
 
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
@@ -378,17 +373,14 @@ Ext.define("PSI.COCompany.MainForm", {
 			return me.__mainGrid;
 		}
 
-		var modelName = "PSICustomer";
+		var modelName = "PSICOCompany";
 
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "contact01", "tel01",
-							"mobile01", "qq01", "contact02", "tel02",
-							"mobile02", "qq02", "categoryId",
-							"initReceivables", "initReceivablesDT", "address",
-							"addressReceipt", "bankName", "bankAccount", "tax",
-							"fax", "note", "dataOrg", "warehouseName",
-							"recordStatus"]
+					fields : ["id", "categoryId","code","name","anotherName","address","is_customer","is_supplier",
+							"rankId","rank","limitCount","addressInvoice","invoiceTel","bankName","bankAccount",
+							"addressReceipt","contact","qq","tel","mobile","tax","fax","legalPerson","registerMoney",
+							"companyIntro","memo","dataOrg","status"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -401,9 +393,9 @@ Ext.define("PSI.COCompany.MainForm", {
 						actionMethods : {
 							read : "POST"
 						},
-						url : me.URL("Home/Customer/customerList"),
+						url : me.URL("Home/COCompany/cocompanyList"),
 						reader : {
-							root : 'customerList',
+							root : 'cocompanyList',
 							totalProperty : 'totalCount'
 						}
 					},
@@ -418,7 +410,7 @@ Ext.define("PSI.COCompany.MainForm", {
 							fn : function(e, records, successful) {
 								if (successful) {
 									me.refreshCategoryCount();
-									me.gotoCustomerGridRecord(me.__lastId);
+									me.gotoCOCompanyGridRecord(me.__lastId);
 								}
 							},
 							scope : me
@@ -449,7 +441,7 @@ Ext.define("PSI.COCompany.MainForm", {
 							dataIndex : "code",
 							locked : true,
 							renderer : function(value, metaData, record) {
-								if (parseInt(record.get("recordStatus")) == 1000) {
+								if (parseInt(record.get("status")) == 1000) {
 									return value;
 								} else {
 									return "<span style='color:gray;text-decoration:line-through;'>"
@@ -460,77 +452,101 @@ Ext.define("PSI.COCompany.MainForm", {
 							header : "往来单位名称",
 							dataIndex : "name",
 							locked : true,
-							width : 300
+							width : 200
 						}, {
-							header : "地址",
-							dataIndex : "address",
-							width : 300
-						}, {
-							header : "联系人",
-							dataIndex : "contact01"
-						}, {
-							header : "手机",
-							dataIndex : "mobile01"
-						}, {
-							header : "固话",
-							dataIndex : "tel01"
-						}, {
-							header : "QQ",
-							dataIndex : "qq01"
-						}, {
-							header : "备用联系人",
-							dataIndex : "contact02"
-						}, {
-							header : "备用联系人手机",
-							dataIndex : "mobile02",
-							width : 150
-						}, {
-							header : "备用联系人固话",
-							dataIndex : "tel02",
-							width : 150
-						}, {
-							header : "备用联系人QQ",
-							dataIndex : "qq02",
-							width : 150
-						}, {
-							header : "收货地址",
-							dataIndex : "addressReceipt",
-							width : 300
-						}, {
-							header : "开户行",
-							dataIndex : "bankName"
-						}, {
-							header : "开户行账号",
-							dataIndex : "bankAccount"
-						}, {
-							header : "税号",
-							dataIndex : "tax"
+							header : "往来单位别名",
+							dataIndex : "anotherName",
+							locked : true,
+							width : 200
+						},{
+							header : "往来单位类型",
+							dataIndex : "companyType",
+							width : 150,
+							renderer : function(value, metaData, record) {
+								var str="";
+								if (parseInt(record.get("is_supplier")) == 1) {
+									str="供应商";
+								}
+                                if (parseInt(record.get("is_customer")) == 1) {
+									if(str){
+										str+="/客户";
+									}else{
+                                        str="客户";
+									}
+
+                                }
+                                return str;
+
+                            }
+						},{
+							header : "等级",
+							dataIndex : "rank",
+							width : 60
+						},{
+							header : "数量限制",
+							dataIndex : "limitCount",
+							width : 100
+						},{
+							header : "社会信用代码",
+							dataIndex : "tax",
+                    		width : 100
 						}, {
 							header : "传真",
 							dataIndex : "fax"
 						}, {
-							header : "应收期初余额",
-							dataIndex : "initReceivables",
-							align : "right",
-							xtype : "numbercolumn"
+							header : "开票地址",
+							dataIndex : "addressInvoice",
+                    		width : 200
 						}, {
-							header : "应收期初余额日期",
-							dataIndex : "initReceivablesDT",
-							width : 150
+							header : "开票电话",
+							dataIndex : "invoiceTel"
 						}, {
-							header : "销售出库仓库",
-							dataIndex : "warehouseName",
+							header : "开户行",
+							dataIndex : "bankName",
+                    		width : 200
+						}, {
+							header : "开户行账号",
+							dataIndex : "bankAccount"
+						},{
+							header : "法人",
+							dataIndex : "legalPerson"
+						},{
+							header : "注册资金",
+							dataIndex : "registerMoney"
+						},{
+							header : "简介",
+							dataIndex : "companyIntro",
+                    		width : 200
+						}, {
+							header : "地址",
+							dataIndex : "address",
 							width : 200
 						}, {
+							header : "联系人",
+							dataIndex : "contact"
+						}, {
+							header : "手机",
+							dataIndex : "mobile"
+						}, {
+							header : "固话",
+							dataIndex : "tel"
+						}, {
+							header : "QQ",
+							dataIndex : "qq"
+						}, {
+							header : "收货地址",
+							dataIndex : "addressReceipt",
+							width : 200
+						},  {
 							header : "备注",
-							dataIndex : "note",
-							width : 400
+							dataIndex : "memo",
+							width : 300
 						}, {
 							header : "数据域",
 							dataIndex : "dataOrg"
 						}, {
 							header : "状态",
-							dataIndex : "recordStatus",
+							dataIndex : "status",
 							renderer : function(value) {
 								if (parseInt(value) == 1000) {
 									return "启用";
@@ -578,7 +594,7 @@ Ext.define("PSI.COCompany.MainForm", {
 					}],
 			listeners : {
 				itemdblclick : {
-					fn : me.onEditCustomer,
+					fn : me.onEditCOCompany,
 					scope : me
 				}
 			}
@@ -722,7 +738,7 @@ Ext.define("PSI.COCompany.MainForm", {
 	/**
 	 * 刷新往来单位资料Grid
 	 */
-	freshCustomerGrid : function(id) {
+	freshCOCompanyGrid : function(id) {
 		var me = this;
 
 		var item = me.getCategoryGrid().getSelectionModel().getSelection();
@@ -745,13 +761,13 @@ Ext.define("PSI.COCompany.MainForm", {
 	onCategoryGridSelect : function() {
 		var me = this;
 		me.getMainGrid().getStore().currentPage = 1;
-		me.freshCustomerGrid();
+		me.freshCOCompanyGrid();
 	},
 
 	/**
 	 * 新增往来单位资料
 	 */
-	onAddCustomer : function() {
+    onAddCOCompany : function() {
 		var me = this;
 
 		if (me.getCategoryGrid().getStore().getCount() == 0) {
@@ -769,8 +785,8 @@ Ext.define("PSI.COCompany.MainForm", {
 	/**
 	 * 导入往来单位资料
 	 */
-	onImportCustomer : function() {
-		var form = Ext.create("PSI.Customer.CustomerImportForm", {
+	onImportCOCompany : function() {
+		var form = Ext.create("PSI.COCompany.COCompanyImportForm", {
 					parentForm : this
 				});
 
@@ -780,9 +796,9 @@ Ext.define("PSI.COCompany.MainForm", {
 	/**
 	 * 编辑往来单位资料
 	 */
-	onEditCustomer : function() {
+	onEditCOCompany : function() {
 		var me = this;
-		if (me.getPEditCustomer() == "0") {
+		if (me.getPEditCOCompany() == "0") {
 			return;
 		}
 
@@ -799,73 +815,19 @@ Ext.define("PSI.COCompany.MainForm", {
 			return;
 		}
 
-		var customer = item[0];
-		customer.set("categoryId", category.get("id"));
+		var cocompany = item[0];
+		cocompany.set("categoryId", category.get("id"));
 		var form = Ext.create("PSI.COCompany.COCompanyEditForm", {
 					parentForm : me,
-					entity : customer
+					entity : cocompany
 				});
 
 		form.show();
 	},
 
-	/**
-	 * 删除往来单位资料
-	 */
-	onDeleteCustomer : function() {
-		var me = this;
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("请选择要删除的往来单位");
-			return;
-		}
 
-		var customer = item[0];
 
-		var store = me.getMainGrid().getStore();
-		var index = store.findExact("id", customer.get("id"));
-		index--;
-		var preIndex = null;
-		var preItem = store.getAt(index);
-		if (preItem) {
-			preIndex = preItem.get("id");
-		}
-
-		var info = "请确认是否删除往来单位: <span style='color:red'>" + customer.get("name")
-				+ "</span>";
-
-		var funcConfirm = function() {
-			var el = Ext.getBody();
-			el.mask("正在删除中...");
-
-			var r = {
-				url : me.URL("Home/Customer/deleteCustomer"),
-				params : {
-					id : customer.get("id")
-				},
-				callback : function(options, success, response) {
-					el.unmask();
-
-					if (success) {
-						var data = me.decodeJSON(response.responseText);
-						if (data.success) {
-							me.tip("成功完成删除操作");
-							me.freshCustomerGrid(preIndex);
-						} else {
-							me.showInfo(data.msg);
-						}
-					}
-				}
-
-			};
-
-			me.ajax(r);
-		};
-
-		me.confirm(info, funcConfirm);
-	},
-
-	gotoCustomerGridRecord : function(id) {
+	gotoCOCompanyGridRecord : function(id) {
 		var me = this;
 		var grid = me.getMainGrid();
 		var store = grid.getStore();

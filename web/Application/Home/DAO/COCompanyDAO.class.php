@@ -269,41 +269,37 @@ class COCompanyDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function addCustomer(& $params) {
+	public function addCOCompany(& $params) {
 		$db = $this->db;
 		
 		$code = $params["code"];
-		$name = $params["name"];
-		$address = $params["address"];
+		$name = trim($params["name"]);
+		$anotherName = trim($params["anotherName"]);
+        $address = $params["address"];
+		$categoryId = $params["categoryId"];
+		$companyType = $params["companyType"];
+		$rankId = $params["rankId"];
+		$limitCount = trim($params["limitCount"]);
+		$addressInvoice = $params["addressInvoice"];
+		$invoiceTel = $params["invoiceTel"];
+        $bankName = $params["bankName"];
+        $bankAccount = $params["bankAccount"];
+        $legalPerson = $params["legalPerson"];
+        $registerMoney = $params["registerMoney"];
+        $companyIntro = $params["companyIntro"];
 		$addressReceipt = $params["addressReceipt"];
-		$contact01 = $params["contact01"];
-		$mobile01 = $params["mobile01"];
-		$tel01 = $params["tel01"];
-		$qq01 = $params["qq01"];
-		$contact02 = $params["contact02"];
-		$mobile02 = $params["mobile02"];
-		$tel02 = $params["tel02"];
-		$qq02 = $params["qq02"];
-		$bankName = $params["bankName"];
-		$bankAccount = $params["bankAccount"];
+		$contact = $params["contact"];
+		$mobile = $params["mobile"];
+		$tel = $params["tel"];
+		$qq = $params["qq"];
 		$tax = $params["tax"];
 		$fax = $params["fax"];
-		$note = $params["note"];
-		
-		// 销售出库仓库
-		$warehouseId = $params["warehouseId"];
-		$warehouseDAO = new WarehouseDAO($db);
-		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
-		if (! $warehouse) {
-			// 没有选择销售出库仓库
-			$warehouseId = "";
-		}
-		
+		$memo = $params["memo"];
 		$py = $params["py"];
-		$categoryId = $params["categoryId"];
-		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+        $status = $params["status"];
+
 		if ($this->dataOrgNotExists($dataOrg)) {
 			return $this->badParam("dataOrg");
 		}
@@ -311,31 +307,40 @@ class COCompanyDAO extends PSIBaseExDAO {
 			return $this->badParam("companyId");
 		}
 		
-		$recordStatus = $params["recordStatus"];
-		
+
 		// 检查编码是否已经存在
-		$sql = "select count(*) as cnt from t_customer where code = '%s' ";
-		$data = $db->query($sql, $code);
+		$sql = "select count(*) as cnt from t_co_company where name = '%s' ";
+		$data = $db->query($sql, $name);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
-			return $this->bad("编码为 [{$code}] 的往来单位已经存在");
+			return $this->bad("名称为 [{$name}] 的往来单位已经存在");
 		}
-		
+
+		if(in_array("customer",$companyType)){
+		    $is_customer=1;
+        }else{
+		    $is_customer=0;
+        }
+
+        if(in_array("supplier",$companyType)){
+            $is_supplier=1;
+        }else{
+            $is_supplier=0;
+        }
+
 		$id = $this->newId();
 		$params["id"] = $id;
 		
-		$sql = "insert into t_customer (id, category_id, code, name, py, contact01,
-					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
-					bank_name, bank_account, tax_number, fax, note, data_org, company_id, sales_warehouse_id,
-					record_status)
-				values ('%s', '%s', '%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-						%d)  ";
-		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
-				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId, $warehouseId, 
-				$recordStatus);
+		$sql = "insert into t_co_company (id, category_id,is_customer,is_supplier, code, name,another_name, py,
+                    rank_id,limit_count,address_invoice,invoice_tel,bank_name, bank_account,legal_person,register_money,
+                    company_intro,contact,qq, tel, mobile, address, address_receipt,tax_number, fax, memo, data_org,
+                    company_id,date_created,date_update,status)
+				values ('%s', '%s', %d, %d, '%s', '%s','%s', '%s', '%s', %f, '%s', '%s', '%s', '%s', '%s','%s',
+						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s','%s','%s','%s','%s',now(),now(),%d)  ";
+		$rc = $db->execute($sql, $id, $categoryId,$is_customer,$is_supplier, $code, $name,$anotherName, $py,
+                $rankId,$limitCount,$addressInvoice,$invoiceTel,$bankName,$bankAccount,$legalPerson,$registerMoney,
+                $companyIntro,$contact,$qq,$tel,$mobile,$address,$addressReceipt,$tax,$fax,$memo,$dataOrg,
+                $companyId,$status);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -470,63 +475,59 @@ class COCompanyDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return NULL|array
 	 */
-	public function updateCustomer(& $params) {
+	public function updateCOCompany(& $params) {
 		$db = $this->db;
+
+		$id=$params["id"];
+        $name = trim($params["name"]);
+        $anotherName = trim($params["anotherName"]);
+        $address = $params["address"];
+        $categoryId = $params["categoryId"];
+        $companyType = $params["companyType"];
+        $rankId = $params["rankId"];
+        $limitCount = trim($params["limitCount"]);
+        $addressInvoice = $params["addressInvoice"];
+        $invoiceTel = $params["invoiceTel"];
+        $bankName = $params["bankName"];
+        $bankAccount = $params["bankAccount"];
+        $legalPerson = $params["legalPerson"];
+        $registerMoney = $params["registerMoney"];
+        $companyIntro = $params["companyIntro"];
+        $addressReceipt = $params["addressReceipt"];
+        $contact = $params["contact"];
+        $mobile = $params["mobile"];
+        $tel = $params["tel"];
+        $qq = $params["qq"];
+        $tax = $params["tax"];
+        $fax = $params["fax"];
+        $memo = $params["memo"];
+        $py = $params["py"];
+        $status = $params["status"];
+
+        if(in_array("customer",$companyType)){
+            $is_customer=1;
+        }else{
+            $is_customer=0;
+        }
+
+        if(in_array("supplier",$companyType)){
+            $is_supplier=1;
+        }else{
+            $is_supplier=0;
+        }
 		
-		$id = $params["id"];
-		$code = $params["code"];
-		$name = $params["name"];
-		$address = $params["address"];
-		$addressReceipt = $params["addressReceipt"];
-		$contact01 = $params["contact01"];
-		$mobile01 = $params["mobile01"];
-		$tel01 = $params["tel01"];
-		$qq01 = $params["qq01"];
-		$contact02 = $params["contact02"];
-		$mobile02 = $params["mobile02"];
-		$tel02 = $params["tel02"];
-		$qq02 = $params["qq02"];
-		$bankName = $params["bankName"];
-		$bankAccount = $params["bankAccount"];
-		$tax = $params["tax"];
-		$fax = $params["fax"];
-		$note = $params["note"];
-		
-		// 销售出库仓库
-		$warehouseId = $params["warehouseId"];
-		$warehouseDAO = new WarehouseDAO($db);
-		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
-		if (! $warehouse) {
-			// 没有选择销售出库仓库
-			$warehouseId = "";
-		}
-		
-		$py = $params["py"];
-		$categoryId = $params["categoryId"];
-		
-		$recordStatus = $params["recordStatus"];
-		
-		// 检查编码是否已经存在
-		$sql = "select count(*) as cnt from t_customer where code = '%s'  and id <> '%s' ";
-		$data = $db->query($sql, $code, $id);
-		$cnt = $data[0]["cnt"];
-		if ($cnt > 0) {
-			return $this->bad("编码为 [{$code}] 的往来单位已经存在");
-		}
-		
-		$sql = "update t_customer
-					set code = '%s', name = '%s', category_id = '%s', py = '%s',
-					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s',
-					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
-					address = '%s', address_receipt = '%s',
-					bank_name = '%s', bank_account = '%s', tax_number = '%s',
-					fax = '%s', note = '%s', sales_warehouse_id = '%s',
-					record_status = %d
+		$sql = "update t_co_company
+					set  category_id = '%s',is_customer=%d,is_supplier=%d,name = '%s',another_name='%s', py = '%s',
+					rank_id='%s',limit_count=%f,address_invoice='%s',invoice_tel='%s',bank_name='%s',bank_account='%s',
+					legal_person='%s',register_money='%s',company_intro='%s',contact = '%s', qq = '%s', tel = '%s',
+					mobile = '%s',address = '%s', address_receipt = '%s',tax_number = '%s',fax = '%s',
+                    memo='%s',status = %d,date_update=now()
 				where id = '%s'  ";
 		
-		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
-				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-				$bankName, $bankAccount, $tax, $fax, $note, $warehouseId, $recordStatus, $id);
+		$rc = $db->execute($sql, $categoryId,$is_customer,$is_supplier, $name,$anotherName, $py,
+                $rankId,$limitCount,$addressInvoice,$invoiceTel,$bankName, $bankAccount,
+                $legalPerson,$registerMoney,$companyIntro,$contact, $qq, $tel,
+				$mobile,$address, $addressReceipt,$tax, $fax, $memo, $status, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -632,170 +633,102 @@ class COCompanyDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return array
 	 */
-	public function customerList($params) {
+	public function cocompanyList($params) {
 		$db = $this->db;
 		
 		$categoryId = $params["categoryId"];
-		$page = $params["page"];
-		$start = $params["start"];
-		$limit = $params["limit"];
-		
-		$code = $params["code"];
-		$name = $params["name"];
-		$address = $params["address"];
-		$contact = $params["contact"];
-		$mobile = $params["mobile"];
-		$tel = $params["tel"];
-		$qq = $params["qq"];
+		$companyType=$params["companyType"];
+		$name = trim($params["name"]);
+		$categoryName = trim($params["categoryName"]);
+        $page = $params["page"];
+        $start = $params["start"];
+        $limit = $params["limit"];
 		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01,
-				 	contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
-					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org,
-					sales_warehouse_id, record_status
-				 from t_customer where (category_id = '%s') ";
+		$sql = "select c.*,r.rank
+		        from t_co_company c,t_company_category cg,t_rank r 
+		        where c.category_id=cg.id and c.rank_id=r.id and cg.id='%s'";
 		$queryParam = [];
 		$queryParam[] = $categoryId;
-		if ($code) {
-			$sql .= " and (code like '%s' ) ";
-			$queryParam[] = "%{$code}%";
-		}
+
+		if(in_array("customer",$companyType)){
+		    $sql=" and c.is_customer=1 ";
+        }
+
+        if(in_array("supplier",$companyType)){
+		    $sql=" and c.is_supplier=1 ";
+        }
 		if ($name) {
-			$sql .= " and (name like '%s' or py like '%s' ) ";
+			$sql .= " and (c.name like '%s' or c.py like '%s' ) ";
 			$queryParam[] = "%{$name}%";
 			$queryParam[] = "%{$name}%";
 		}
-		if ($address) {
-			$sql .= " and (address like '%s' or address_receipt like '%s') ";
-			$queryParam[] = "%$address%";
-			$queryParam[] = "%{$address}%";
-		}
-		if ($contact) {
-			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
-			$queryParam[] = "%{$contact}%";
-			$queryParam[] = "%{$contact}%";
-		}
-		if ($mobile) {
-			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
-			$queryParam[] = "%{$mobile}%";
-			$queryParam[] = "%{$mobile}";
-		}
-		if ($tel) {
-			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
-			$queryParam[] = "%{$tel}%";
-			$queryParam[] = "%{$tel}";
-		}
-		if ($qq) {
-			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
-			$queryParam[] = "%{$qq}%";
-			$queryParam[] = "%{$qq}";
-		}
+
+		if($categoryName){
+		    $sql.= " and cg.name like '%s' ";
+		    $queryParam[]="%{$categoryName}%";
+        }
 		
 		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", $loginUserId);
+		$rs = $ds->buildSQL(FIdConst::CO_COMPANY, "c", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
-		
+
+		$sql2=$sql;
+
+		$count=$db->query($sql,$queryParam);
+		$cnt=count($count);
+
 		$sql .= " order by code limit %d, %d";
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
 		$result = [];
 		$data = $db->query($sql, $queryParam);
-		$warehouseDAO = new WarehouseDAO($db);
+
 		foreach ( $data as $v ) {
-			$initDT = $v["init_receivables_dt"] ? $this->toYMD($v["init_receivables_dt"]) : null;
-			
-			$warehouseId = $v["sales_warehouse_id"];
-			$warehouseName = "";
-			if ($warehouseId) {
-				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
-				$warehouseName = $warehouse["name"];
-			}
-			
+
 			$result[] = [
 					"id" => $v["id"],
 					"categoryId" => $v["category_id"],
 					"code" => $v["code"],
 					"name" => $v["name"],
+					"anotherName" => $v["another_name"],
 					"address" => $v["address"],
+                    "is_customer"=>$v["is_customer"],
+                    "is_supplier"=>$v["is_supplier"],
+                    "rankId"=>$v["rank_id"],
+                    "rank"=>$v["rank"],
+                    "limitCount"=>$v["limit_count"],
+                    "addressInvoice"=>$v["address_invoice"],
+                    "invoiceTel"=>$v["invoice_tel"],
+                    "bankName" => $v["bank_name"],
+                    "bankAccount" => $v["bank_account"],
 					"addressReceipt" => $v["address_receipt"],
-					"contact01" => $v["contact01"],
-					"qq01" => $v["qq01"],
-					"tel01" => $v["tel01"],
-					"mobile01" => $v["mobile01"],
-					"contact02" => $v["contact02"],
-					"qq02" => $v["qq02"],
-					"tel02" => $v["tel02"],
-					"mobile02" => $v["mobile02"],
-					"initReceivables" => $v["init_receivables"],
-					"initReceivablesDT" => $initDT,
-					"bankName" => $v["bank_name"],
-					"bankAccount" => $v["bank_account"],
+					"contact" => $v["contact"],
+					"qq" => $v["qq"],
+					"tel" => $v["tel"],
+					"mobile" => $v["mobile"],
 					"tax" => $v["tax_number"],
 					"fax" => $v["fax"],
-					"note" => $v["note"],
+                    "legalPerson"=>$v["legal_person"],
+                    "registerMoney"=>$v["register_money"],
+                    "companyIntro"=>$v["company_intro"],
+					"memo" => $v["memo"],
 					"dataOrg" => $v["data_org"],
-					"warehouseName" => $warehouseName,
-					"recordStatus" => $v["record_status"]
+					"status" => $v["status"]
 			];
 		}
 		
-		$sql = "select count(*) as cnt from t_customer where (category_id  = '%s') ";
-		$queryParam = [];
-		$queryParam[] = $categoryId;
-		if ($code) {
-			$sql .= " and (code like '%s' ) ";
-			$queryParam[] = "%{$code}%";
-		}
-		if ($name) {
-			$sql .= " and (name like '%s' or py like '%s' ) ";
-			$queryParam[] = "%{$name}%";
-			$queryParam[] = "%{$name}%";
-		}
-		if ($address) {
-			$sql .= " and (address like '%s' or address_receipt like '%s') ";
-			$queryParam[] = "%$address%";
-			$queryParam[] = "%$address%";
-		}
-		if ($contact) {
-			$sql .= " and (contact01 like '%s' or contact02 like '%s' ) ";
-			$queryParam[] = "%{$contact}%";
-			$queryParam[] = "%{$contact}%";
-		}
-		if ($mobile) {
-			$sql .= " and (mobile01 like '%s' or mobile02 like '%s' ) ";
-			$queryParam[] = "%{$mobile}%";
-			$queryParam[] = "%{$mobile}";
-		}
-		if ($tel) {
-			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
-			$queryParam[] = "%{$tel}%";
-			$queryParam[] = "%{$tel}";
-		}
-		if ($qq) {
-			$sql .= " and (qq01 like '%s' or qq02 like '%s' ) ";
-			$queryParam[] = "%{$qq}%";
-			$queryParam[] = "%{$qq}";
-		}
-		
-		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", $loginUserId);
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParam = array_merge($queryParam, $rs[1]);
-		}
-		
-		$data = $db->query($sql, $queryParam);
-		
+
 		return [
-				"customerList" => $result,
-				"totalCount" => $data[0]["cnt"]
+				"cocompanyList" => $result,
+				"totalCount" =>$cnt
 		];
 	}
 
@@ -880,56 +813,44 @@ class COCompanyDAO extends PSIBaseExDAO {
 	 *        	往来单位id
 	 * @return array
 	 */
-	public function customerInfo($id) {
+	public function cocompanyInfo($id) {
 		$db = $this->db;
 		
 		$result = [];
-		
-		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
-					contact02, qq02, mobile02, tel02, address, address_receipt,
-					init_receivables, init_receivables_dt,
-					bank_name, bank_account, tax_number, fax, note, sales_warehouse_id,
-					record_status
-				from t_customer
-				where id = '%s' ";
+
+        $sql = "select c.*,r.rank
+		        from t_co_company c,t_rank r 
+		        where  c.rank_id=r.id and c.id='%s'";
 		$data = $db->query($sql, $id);
+
+
 		if ($data) {
 			$result["categoryId"] = $data[0]["category_id"];
 			$result["code"] = $data[0]["code"];
 			$result["name"] = $data[0]["name"];
-			$result["contact01"] = $data[0]["contact01"];
-			$result["qq01"] = $data[0]["qq01"];
-			$result["mobile01"] = $data[0]["mobile01"];
-			$result["tel01"] = $data[0]["tel01"];
-			$result["contact02"] = $data[0]["contact02"];
-			$result["qq02"] = $data[0]["qq02"];
-			$result["mobile02"] = $data[0]["mobile02"];
-			$result["tel02"] = $data[0]["tel02"];
-			$result["address"] = $data[0]["address"];
-			$result["addressReceipt"] = $data[0]["address_receipt"];
+			$result["anotherName"] = $data[0]["another_name"];
+            $result["address"] = $data[0]["address"];
+            $result["is_customer"] = $data[0]["is_customer"];
+            $result["is_supplier"] = $data[0]["is_supplier"];
+            $result["rankId"] = $data[0]["rank_id"];
+            $result["rank"] = $data[0]["rank"];
+            $result["limitCount"] = $data[0]["limit_count"];
+            $result["addressInvoice"] = $data[0]["address_invoice"];
+            $result["invoiceTel"] = $data[0]["invoice_tel"];
+            $result["bankName"] = $data[0]["bank_name"];
+            $result["bankAccount"] = $data[0]["bank_account"];
+            $result["addressReceipt"] = $data[0]["address_receipt"];
+			$result["contact"] = $data[0]["contact"];
+			$result["qq"] = $data[0]["qq"];
+			$result["mobile"] = $data[0]["mobile"];
+			$result["tel"] = $data[0]["tel"];
 			$result["initReceivables"] = $data[0]["init_receivables"];
-			$d = $data[0]["init_receivables_dt"];
-			if ($d) {
-				$result["initReceivablesDT"] = $this->toYMD($d);
-			}
-			$result["bankName"] = $data[0]["bank_name"];
-			$result["bankAccount"] = $data[0]["bank_account"];
 			$result["tax"] = $data[0]["tax_number"];
 			$result["fax"] = $data[0]["fax"];
-			$result["note"] = $data[0]["note"];
-			$result["recordStatus"] = $data[0]["record_status"];
-			
-			$result["warehouseId"] = null;
-			$result["warehouseName"] = null;
-			$warehouseId = $data[0]["sales_warehouse_id"];
-			if ($warehouseId) {
-				$warehouseDAO = new WarehouseDAO($db);
-				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
-				if ($warehouse) {
-					$result["warehouseId"] = $warehouseId;
-					$result["warehouseName"] = $warehouse["name"];
-				}
-			}
+			$result["memo"] = $data[0]["memo"];
+			$result["dataOrg"] = $data[0]["data_org"];
+			$result["status"] = $data[0]["status"];
+
 		}
 		
 		return $result;
@@ -1006,4 +927,265 @@ class COCompanyDAO extends PSIBaseExDAO {
 			];
 		}
 	}
+
+	public function addCreditAssess(&$params){
+	    $db=$this->db;
+        //var_dump($params);exit;
+        $companyName=trim($params["companyName"]);
+        $companyType=json_encode($params["companyType"]);
+        $limit=floatval(trim($params["limit"]));
+        $companyAssetType=$params["companyAssetType"];
+        $companyAddrType=$params["companyAddrType"];
+        $otherCompany=trim($params["otherCompany"]);
+        $companyTradeType=json_encode($params["companyTradeType"]);
+        $companyStrength=$params["companyStrength"];
+        $registerAddr=trim($params["registerAddr"]);
+        $legalPerson=trim($params["legalPerson"]);
+        $registerMoneySubscribe=trim($params["registerMoneySubscribe"]);
+        $registerMoneyPaid=trim($params["registerMoneyPaid"]);
+        $check=$params["check"];
+        $contact=trim($params["contact"]);
+        $contactTel=trim($params["contactTel"]);
+        $mainWork=trim($params["mainWork"]);
+        $operateArea=trim($params["operateArea"]);
+        $operateAddr=trim($params["operateAddr"]);
+        $assetOffice=$params["assetOffice"];
+        $assetWarehouse=$params["assetWarehouse"];
+        $assetProductline=$params["assetProductline"];
+        $asset=trim($params["asset"]);
+        $workTime=$params["workTime"];
+        $employeeNum=$params["employeeNum"];
+        $assureAgreement=json_encode($params["assureAgreement"]);
+        $baseData=json_encode($params["baseData"]);
+        $otherData=json_encode($params["otherData"]);
+        $tradeBreed=trim($params["tradeBreed"]);
+        $isTrade=$params["isTrade"];
+        $tradeReason=trim($params["tradeReason"]);
+        $position=$params["position"];
+        $planQuantity=trim($params["planQuantity"]);
+        $tradePeriod=trim($params["tradePeriod"]);
+        $influence=trim($params["influence"]);
+        $interflow=trim($params["interflow"]);
+        $risk=json_encode($params["risk"]);
+        $riskDescribe=trim($params["riskDescribe"]);
+        $riskKeepaway=trim($params["riskKeepaway"]);
+        $dataOrg=$params["dataOrg"];
+        $companyId=$params["companyId"];
+
+        $id=$this->newId();
+        $params['id']=$id;
+
+        $sql="insert into t_credit_assess_record(id,company_name,company_type,assess_times,limit_count,compay_asset_type,
+             company_addr_type,other_company,company_trade_type,company_strenght,legal_person,register_addr,
+             register_money_subscribe,register_money_paid,contact,contact_tel,main_work,check_result,partner_num,operate_area,
+             operate_addr,asset_office,asset_warehouse,asset_productline,work_time,employee_num,asset,relate_company,
+             base_data,assure_agreement,other_data,trade_breed,is_trade,trade_reason,company_position,plan_quantity,trade_period,
+             influence,interflow,risk,risk_describe,risk_keepaway,table_status,status,date_created,date_update,data_org,company_id) 
+             values('%s','%s','%s',1,%f,%d,%d,'%s','%s',%d,'%s','%s','%s','%s','%s','%s','%s',%d,1,'%s',
+                    '%s',%d,%d,%d,%d,%d,'%s','%s','%s','%s','%s','%s',%d,'%s',%d,'%s','%s','%s','%s',
+                    '%s','%s','%s',1,0,now(),now(),'%s','%s') ";
+
+        $insert=$db->execute($sql,$id,$companyName,$companyType,$limit,$companyAssetType,$companyAddrType,$otherCompany,
+                    $companyTradeType,$companyStrength,$legalPerson,$registerAddr,$registerMoneySubscribe,$registerMoneyPaid,
+                    $contact,$contactTel,$mainWork,$check,$operateArea,$operateAddr,$assetOffice,$assetWarehouse,$assetProductline,
+                    $workTime,$employeeNum,$asset,"",$baseData,$assureAgreement,$otherData,$tradeBreed,$isTrade,$tradeReason,
+                    $position,$planQuantity,$tradePeriod,$influence,$interflow,$risk,$riskDescribe,$riskKeepaway,1,0,$dataOrg,$companyId);
+        if($insert==false){
+            return $this->sqlError(__METHOD__,__LINE__);
+        }
+
+
+        return null;
+    }
+
+    public function updateCreditAssess($params){
+	    $db=$this->db;
+
+	    $id=$params["id"];
+        $companyName=trim($params["companyName"]);
+        $companyType=json_encode($params["companyType"]);
+        $limit=floatval(trim($params["limit"]));
+        $companyAssetType=$params["companyAssetType"];
+        $companyAddrType=$params["companyAddrType"];
+        $otherCompany=trim($params["otherCompany"]);
+        $companyTradeType=json_encode($params["companyTradeType"]);
+        $companyStrength=$params["companyStrength"];
+        $registerAddr=trim($params["registerAddr"]);
+        $legalPerson=trim($params["legalPerson"]);
+        $registerMoneySubscribe=trim($params["registerMoneySubscribe"]);
+        $registerMoneyPaid=trim($params["registerMoneyPaid"]);
+        $check=$params["check"];
+        $contact=trim($params["contact"]);
+        $contactTel=trim($params["contactTel"]);
+        $mainWork=trim($params["mainWork"]);
+        $operateArea=trim($params["operateArea"]);
+        $operateAddr=trim($params["operateAddr"]);
+        $assetOffice=$params["assetOffice"];
+        $assetWarehouse=$params["assetWarehouse"];
+        $assetProductline=$params["assetProductline"];
+        $asset=trim($params["asset"]);
+        $workTime=$params["workTime"];
+        $employeeNum=$params["employeeNum"];
+        $assureAgreement=json_encode($params["assureAgreement"]);
+        $baseData=json_encode($params["baseData"]);
+        $otherData=json_encode($params["otherData"]);
+        $tradeBreed=trim($params["tradeBreed"]);
+        $isTrade=$params["isTrade"];
+        $tradeReason=trim($params["tradeReason"]);
+        $position=$params["position"];
+        $planQuantity=trim($params["planQuantity"]);
+        $tradePeriod=trim($params["tradePeriod"]);
+        $influence=trim($params["influence"]);
+        $interflow=trim($params["interflow"]);
+        $risk=json_encode($params["risk"]);
+        $riskDescribe=trim($params["riskDescribe"]);
+        $riskKeepaway=trim($params["riskKeepaway"]);
+        $dataOrg=$params["dataOrg"];
+        $companyId=$params["companyId"];
+
+        $sql="select id from t_credit_assess_record where id='%s' ";
+        $res=$db->query($sql,$id);
+        if($res==false){
+            return $this->bad("本条记录不存在，不可进行编辑");
+        }
+
+        $sql="update t_credit_assess_record 
+              set company_name='%s',company_type='%s',limit_count=%f,compay_asset_type=%d,company_addr_type=%d,
+              other_company='%s',company_trade_type='%s',company_strenght=%d,legal_person='%s',register_addr='%s',
+              register_money_subscribe='%s',register_money_paid='%s',contact='%s',contact_tel='%s',main_work='%s',
+              check_result=%d,partner_num=1,operate_area='%s',operate_addr='%s',asset_office=%d,asset_warehouse=%d,
+              asset_productline=%d,work_time=%d,employee_num=%d,asset='%s',relate_company='',base_data='%s',
+              assure_agreement='%s',other_data='%s',trade_breed='%s',is_trade=%d,trade_reason='%s',company_position=%d,
+              plan_quantity='%s',trade_period='%s',influence='%s',interflow='%s',risk='%s',risk_describe='%s',
+              risk_keepaway='%s',date_update=now()
+              where id='%s'";
+        $update=$db->execute($sql,$companyName,$companyType,$limit,$companyAssetType,$companyAddrType,$otherCompany,
+                 $companyTradeType,$companyStrength,$legalPerson,$registerAddr,$registerMoneySubscribe,$registerMoneyPaid,
+                 $contact,$contactTel,$mainWork,$check,$operateArea,$operateAddr,$assetOffice,$assetWarehouse,
+                 $assetProductline,$workTime,$employeeNum,$asset,$baseData,$assureAgreement,$otherData,$tradeBreed,
+                $isTrade,$tradeReason,$position,$planQuantity,$tradePeriod,$influence,$interflow,$risk,$riskDescribe,
+                $riskKeepaway);
+
+        if($update==false){
+            return $this->sqlError(__METHOD__,__LINE__);
+        }
+
+        return null;
+    }
+
+    public function getAssessInfo($id){
+	    $db=$this->db;
+
+	    $sql="select*from t_credit_assess_record where id='%s' ";
+	    $data=$db->query($sql,$id);
+
+
+	    $result=[];
+	    foreach ($data as $v){
+	        $result["id"]=$v["id"];
+	        $result["companyName"]=$v["company_name"];
+	        $result["companyType"]=json_decode($v["company_type"]);
+	        $result["limit"]=floatval($v["limit_count"]);
+	        $result["companyAssetType"]=$v["company_asset_type"];
+	        $result["companyAddrType"]=$v["company_addr_type"];
+	        $result["otherCompany"]=$v["other_company"];
+	        $result["companyTradeType"]=json_decode($v["company_trade_type"]);
+	        $result["companyStrength"]=$v["company_strength"];
+	        $result["registerAddr"]=$v["register_addr"];
+	        $result["legalPerson"]=$v["legal_person"];
+	        $result["registerMoneySubscribe"]=$v["register_money_subscribe"];
+	        $result["registerMoneyPaid"]=$v["register_money_paid"];
+	        $result["check"]=$v["check_result"];
+	        $result["contact"]=$v["contact"];
+	        $result["contactTel"]=$v["contact_tel"];
+	        $result["mainWork"]=$v["main_work"];
+	        $result["operateArea"]=$v["operate_area"];
+	        $result["operateAddr"]=$v["operate_addr"];
+	        $result["assetOffice"]=$v["asset_office"];
+	        $result["assetWarehouse"]=$v["asset_warehouse"];
+	        $result["assetProductline"]=$v["asset_productline"];
+	        $result["asset"]=$v["asset"];
+	        $result["workTime"]=$v["work_time"];
+	        $result["employeeNum"]=$v["employee_num"];
+	        $result["assureAgreement"]=json_decode($v["assureAgreement"]);
+	        $result["baseData"]=json_decode($v["base_data"]);
+	        $result["otherData"]=json_decode($v["other_data"]);
+	        $result["tradeBreed"]=$v["trade_breed"];
+	        $result["isTrade"]=$v["is_trade"];
+	        $result["tradeReason"]=$v["trade_reason"];
+	        $result["position"]=$v["company_position"];
+	        $result["planQuantity"]=$v["plan_quantity"];
+	        $result["tradePeriod"]=$v["trade_period"];
+	        $result["influence"]=$v["influence"];
+	        $result["interflow"]=$v["interflow"];
+	        $result["risk"]=json_decode($v["risk"]);
+	        $result["riskDescribe"]=$v["risk_describe"];
+	        $result["riskKeepaway"]=$v["risk_keepaway"];
+	        $result["tableStatus"]=$v["table_status"];
+	        $result["status"]=$v["status"];
+        }
+
+
+        return $result;
+    }
+
+    public function creditAssessList($params){
+	    $db=$this->db;
+
+	    $companyName=trim($params["companyName"]);
+	    $start=$params["start"];
+	    $limit=$params["limit"];
+
+        $companyId=$params["companyid"];
+
+	    $sql="select id,company_name,company_type,assess_times,limit_count,compay_asset_type,company_addr_type,
+              company_trade_type,company_strenght,legal_person,register_addr,contact,contact_tel,main_work,
+              table_status,status 
+	          from t_credit_assess_record 
+	          where company_id='%s'";
+	    $queryParams=[];
+	    $queryParams[]=$companyId;
+
+	    if($companyName){
+	        $sql.=" and company_name like '%s' ";
+	        $queryParams[]="%{$companyName}%";
+        }
+
+        $sql2=$sql;
+	    $countData=$db->query($sql2,$queryParams);
+	    $cnt=count($countData);
+
+	    $sql.=" order by date_update,company_name ";
+	    $sql.=" limit %d,%d ";
+	    $queryParams[]=$start;
+	    $queryParams[]=$limit;
+
+	    $data=$db->query($sql,$queryParams);
+
+	    $result=[];
+	    foreach ($data as $v){
+            $result["id"]=$v["id"];
+            $result["companyName"]=$v["company_name"];
+            $result["assessTimes"]=$v["assess_times"];
+            $result["companyType"]=json_decode($v["company_type"]);
+            $result["limit"]=floatval($v["limit_count"]);
+            $result["companyAssetType"]=$v["company_asset_type"];
+            $result["companyAddrType"]=$v["company_addr_type"];
+            $result["companyTradeType"]=json_decode($v["company_trade_type"]);
+            $result["companyStrength"]=$v["company_strength"];
+            $result["registerAddr"]=$v["register_addr"];
+            $result["legalPerson"]=$v["legal_person"];
+            $result["contact"]=$v["contact"];
+            $result["contactTel"]=$v["contact_tel"];
+            $result["mainWork"]=$v["main_work"];
+            $result["tableStatus"]=$v["table_status"];
+            $result["status"]=$v["status"];
+        }
+
+        return [
+            "dataList"=>$result,
+            "totalCount"=>$cnt
+        ];
+    }
+
 }

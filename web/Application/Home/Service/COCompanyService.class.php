@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\COCompanyDAO;
+use Home\DAO\CustomerDAO;
 
 
 /**
@@ -169,7 +170,7 @@ class COCompanyService extends PSIBaseExService {
 	 * @param array $params        	
 	 * @return array
 	 */
-	public function editCustomer($params) {
+	public function editCOCompany($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
@@ -184,12 +185,12 @@ class COCompanyService extends PSIBaseExService {
 		$db = $this->db();
 		$db->startTrans();
 		
-		$dao = new CustomerDAO($db);
+		$dao = new COCompanyDAO($db);
 		
 		$params["dataOrg"] = $this->getLoginUserDataOrg();
 		$params["companyId"] = $this->getCompanyId();
 		
-		$category = $dao->getCustomerCategoryById($params["categoryId"]);
+		$category = $dao->getCOCompanyCategoryById($params["categoryId"]);
 		if (! $category) {
 			$db->rollback();
 			return $this->bad("往来单位分类不存在");
@@ -199,7 +200,7 @@ class COCompanyService extends PSIBaseExService {
 		
 		if ($id) {
 			// 编辑
-			$rc = $dao->updateCustomer($params);
+			$rc = $dao->updateCOCompany($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
@@ -208,7 +209,7 @@ class COCompanyService extends PSIBaseExService {
 			$log = "编辑往来单位：编码 = {$code}, 名称 = {$name}";
 		} else {
 			// 新增
-			$rc = $dao->addCustomer($params);
+			$rc = $dao->addCOCompany($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
@@ -235,21 +236,47 @@ class COCompanyService extends PSIBaseExService {
 		return $this->ok($id);
 	}
 
+	//获得新code
+    public function getCompanyNewCode(){
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $db=$this->db();
+
+        $sql="select max(code) as max_code from t_co_company ";
+        $code=$db->query($sql);
+        $max_code=$code[0]["max_code"];
+
+        $num=$max_code+1;
+        if($num<10){
+            $newCode="00".$num;
+        }else if($num>=10&&$num<99){
+            $newCode="0".$num;
+        }else{
+            $newCode=$num;
+        }
+
+        $result=["code"=>$newCode];
+
+        return $result;
+    }
+
 	/**
 	 * 获得某个分类的往来单位列表
 	 *
 	 * @param array $params        	
 	 * @return array
 	 */
-	public function customerList($params) {
+	public function cocompanyList($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
 		$params["loginUserId"] = $this->getLoginUserId();
 		
-		$dao = new CustomerDAO($this->db());
-		return $dao->customerList($params);
+		$dao = new COCompanyDAO($this->db());
+		return $dao->cocompanyList($params);
 	}
 
 	/**
@@ -310,13 +337,13 @@ class COCompanyService extends PSIBaseExService {
 	 *        	往来单位资料id
 	 * @return array
 	 */
-	public function customerInfo($id) {
+	public function cocompanyInfo($id) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
 		
-		$dao = new CustomerDAO($this->db());
-		return $dao->customerInfo($id);
+		$dao = new COCompanyDAO($this->db());
+		return $dao->cocompanyInfo($id);
 	}
 
 	/**
@@ -359,4 +386,86 @@ class COCompanyService extends PSIBaseExService {
 		$dao = new CustomerDAO($this->db());
 		return $dao->priceSystemList($params);
 	}
+
+    public function editCreditAssess($params){
+        if ($this->isNotOnline()) {
+            return $this->notOnlineError();
+        }
+
+        $id = $params["id"];
+
+        $db = $this->db();
+        $db->startTrans();
+
+        $dao = new COCompanyDAO($db);
+
+        $companyId = $this->getCompanyId();
+        $sql="select data_org from t_org where id='%s' ";
+        $org=$db->query($sql,$companyId);
+        $dataOrg=$org[0]["data_org"];
+
+        $params["companyId"] = $companyId;
+        $params["dataOrg"] = $dataOrg;
+
+
+        $log = null;
+
+        if ($id) {
+            // 编辑
+            $rc = $dao->updateCreditAssess($params);
+            if ($rc) {
+                $db->rollback();
+                return $rc;
+            }
+
+            //$log = "编辑往来单位：编码 = {$code}, 名称 = {$name}";
+        } else {
+            // 新增
+            $rc = $dao->addCreditAssess($params);
+            if ($rc) {
+                $db->rollback();
+                return $rc;
+            }
+
+            $id = $params["id"];
+            $companyName=$params["companyName"];
+
+            $log = "新增往来单位信用额度评估：往来单位[{$companyName}]";
+        }
+
+        // 处理应收账款
+        $rc = $dao->initReceivables($params);
+        if ($rc) {
+            $db->rollback();
+            return $rc;
+        }
+
+        // 记录业务日志
+        $bs = new BizlogService($db);
+        $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+        $db->commit();
+
+        return $this->ok($id);
+    }
+
+    public function getAssessInfo($id){
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $dao = new COCompanyDAO($this->db());
+        return $dao->getAssessInfo($id);
+    }
+
+    public function creditAssessList($params){
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $params["companyId"] = $this->getCompanyId();
+
+        $dao = new COCompanyDAO($this->db());
+        return $dao->creditAssessList($params);
+    }
 }
