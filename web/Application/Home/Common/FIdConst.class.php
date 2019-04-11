@@ -1076,6 +1076,14 @@ class FIdConst {
      */
     const CREDIT_ASSESS = "3000";
 
+    const CREDIT_ASSESS_ADD = "3000-01";
+
+    const CREDIT_ASSESS_EDIT = "3000-02";
+
+    const CREDIT_ASSESS_DEL = "3000-03";
+
+    const CREDIT_ASSESS_COMMIT = "3000-04";
+
     /**
      * 往来单位等级评定
      *
