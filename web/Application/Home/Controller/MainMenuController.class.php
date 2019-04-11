@@ -276,6 +276,10 @@ class MainMenuController extends Controller {
                 // 信用额度评估
                 redirect(__ROOT__ . "/Home/COCompany/creditAssess");
                 break;
+            case FIdConst::TAX_CODE :
+                // 税控编码
+                redirect(__ROOT__ . "/Home/TaxCode/taxCode");
+                break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
