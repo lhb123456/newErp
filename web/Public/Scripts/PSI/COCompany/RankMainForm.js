@@ -1,9 +1,9 @@
 /**
- * 信用额度评估 - 主界面
+ * 等级评分 - 主界面
  * 
  * @author 李静波
  */
-Ext.define("PSI.COCompany.CreditMainForm", {
+Ext.define("PSI.COCompany.RankMainForm", {
 	extend : "PSI.AFX.BaseMainExForm",
 
 	config : {
@@ -64,7 +64,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	getToolbarCmp : function() {
 		var me = this;
 		return [{
-					text : "新建信用评估",
+					text : "新建等级评分",
 					scope : me,
 					handler : me.onAddAssess,
 					hidden : me.getPermission().add == "0",
@@ -73,7 +73,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 					hidden : me.getPermission().add == "0",
 					xtype : "tbseparator"
 				}, {
-					text : "编辑信用评估",
+					text : "编辑等级评分",
 					scope : me,
 					handler : me.onEditAssess,
 					hidden : me.getPermission().edit == "0",
@@ -82,7 +82,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 					hidden : me.getPermission().edit == "0",
 					xtype : "tbseparator"
 				}, {
-					text : "删除信用评估",
+					text : "删除等级评分",
 					scope : me,
 					handler : me.onDeleteAssess,
 					hidden : me.getPermission().del == "0",
@@ -184,7 +184,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 信用评估列表
+	 * 等级评分列表
 	 */
 	getMainGrid : function() {
 		var me = this;
@@ -422,7 +422,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 信用评估明细记录
+	 * 等级评分明细记录
 	 */
 	getDetailGrid : function() {
 		var me = this;
@@ -446,7 +446,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "信用评估明细",
+					title : "等级评分明细",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -538,7 +538,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 刷新信用评估列表
+	 * 刷新等级评分列表
 	 */
 	refreshMainGrid : function(id) {
 		var me = this;
@@ -549,27 +549,37 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 新增信用评估
+	 * 新增等级评分
 	 */
 	onAddAssess : function() {
 		var me = this;
 
-		var form = Ext.create("PSI.COCompany.EditForm", {
+		var form = Ext.create("PSI.COCompany.SelectCreditAssess", {
 					parentForm : me,
 					showAddGoodsButton : me.getPermission().showAddGoodsButton
 				});
 		form.show();
 	},
 
+	onAddRankAssess:function (id) {
+        var me = this;
+
+        var form = Ext.create("PSI.COCompany.EditForm", {
+            parentForm : me,
+			creditAssessId:id
+        });
+        form.show();
+    },
+
 	/**
-	 * 编辑信用评估
+	 * 编辑等级评分
 	 */
     onEditAssess : function() {
 		var me = this;
 		
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要编辑的信用评估");
+			me.showInfo("没有选择要编辑的等级评分");
 			return;
 		}
 		var creditAssess = item[0];
@@ -583,25 +593,25 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 删除信用评估
+	 * 删除等级评分
 	 */
 	onDeleteAssess : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("请选择要删除的信用评估");
+			me.showInfo("请选择要删除的等级评分");
 			return;
 		}
 
 		var assess = item[0];
 
 		/*if (assess.get("billStatus") > 0) {
-			me.showInfo("当前信用评估已经审核，不能删除");
+			me.showInfo("当前等级评分已经审核，不能删除");
 			return;
 		}*/
 
 
-		var info = "请确认是否删除对[<span style='color:red'>"+assess.get("companyName")+"</span>]的信用评估 ";
+		var info = "请确认是否删除对[<span style='color:red'>"+assess.get("companyName")+"</span>]的等级评分 ";
 		var funcConfirm = function() {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");
@@ -637,7 +647,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	onMainGridSelect : function() {
 		var me = this;
 
-		me.getDetailGrid().setTitle("信用评估操作明细");
+		me.getDetailGrid().setTitle("等级评分操作明细");
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			Ext.getCmp("buttonEdit").setDisabled(true);
@@ -653,11 +663,11 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 		var buttonEdit = Ext.getCmp("buttonEdit");
 		buttonEdit.setDisabled(false);
 		if (tableStatus==0||tableStatus==4000||me.getPermission().creditEdit==0) {
-			buttonEdit.setText("查看信用评估");
+			buttonEdit.setText("查看等级评分");
 		} else {
-			buttonEdit.setText("编辑信用评估");
+			buttonEdit.setText("编辑等级评分");
 		}
-
+		console.log()
 		if(tableStatus!=3000){
             Ext.getCmp("buttonCommit").setDisabled(true);
 		}else{
@@ -669,11 +679,11 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 刷新信用评估明细记录
+	 * 刷新等级评分明细记录
 	 */
 	refreshDetailGrid : function(id) {
 		var me = this;
-		me.getDetailGrid().setTitle("信用评估明细");
+		me.getDetailGrid().setTitle("等级评分明细");
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return;
@@ -717,25 +727,25 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 审核信用评估
+	 * 审核等级评分
 	 */
 	onCommit : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要提交的信用评估");
+			me.showInfo("没有选择要提交的等级评分");
 			return;
 		}
 		var assess = item[0];
 
 		if (assess.get("tableStatus") !=3000) {
-			me.showInfo("当前信用评估不符合审核条件，不能提交");
+			me.showInfo("当前等级评分不符合审核条件，不能提交");
 			return;
 		}
 
 
 		var info = "请确认是否提交往来单位: <span style='color:red'>" + assess.get("companyName")
-				+ "</span> 的信用评估?";
+				+ "</span> 的等级评分?";
 		var id = assess.get("id");
 
 		var funcConfirm = function() {
@@ -776,18 +786,18 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要取消审核的信用评估");
+			me.showInfo("没有选择要取消审核的等级评分");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") == 0) {
-			me.showInfo("当前信用评估还没有审核，无法取消审核");
+			me.showInfo("当前等级评分还没有审核，无法取消审核");
 			return;
 		}
 
 		var info = "请确认是否取消审核单号为 <span style='color:red'>" + bill.get("ref")
-				+ "</span> 的信用评估?";
+				+ "</span> 的等级评分?";
 		var id = bill.get("id");
 		var funcConfirm = function() {
 			var el = Ext.getBody();
@@ -896,7 +906,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 
 		me.__pwGrid = Ext.create("Ext.grid.Panel", {
 			cls : "PSI",
-			title : "信用评估入库详情",
+			title : "等级评分入库详情",
 			viewConfig : {
 				enableTextSelection : true
 			},

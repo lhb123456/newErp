@@ -1,10 +1,16 @@
 <layout name="layout" />
 
 <script
-	src="{$uri}Public/Scripts/PSI/COCompany/CreditMainForm.js?dt={$dtFlag}"
+	src="{$uri}Public/Scripts/PSI/COCompany/RankMainForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 <script
+		src="{$uri}Public/Scripts/PSI/COCompany/SelectCreditAssess.js?dt={$dtFlag}"
+		type="text/javascript"></script>
+<script
 		src="{$uri}Public/Scripts/PSI/COCompany/EditForm.js?dt={$dtFlag}"
+		type="text/javascript"></script>
+<script
+		src="{$uri}Public/Scripts/PSI/COCompany/EditRankAssess.js?dt={$dtFlag}"
 		type="text/javascript"></script>
 <script
 	src="{$uri}Public/Scripts/PSI/PurchaseOrder/POEditForm.js?dt={$dtFlag}"
@@ -40,7 +46,7 @@
             creditEditRisk:"{$creditEditRisk}",
 		};
 
-		app.add(Ext.create("PSI.COCompany.CreditMainForm", {
+		app.add(Ext.create("PSI.COCompany.RankMainForm", {
 			permission : permission
 		}));
 		app.setAppHeader({

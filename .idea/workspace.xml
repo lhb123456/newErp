@@ -3,9 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="9d4952ef-4506-4fc1-99bf-2755443122e0" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/doc/02 表结构/表结构说明.xlsx" afterPath="$PROJECT_DIR$/doc/02 表结构/表结构说明.xlsx" />
-      <change beforePath="$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php" afterPath="$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php" />
       <change beforePath="$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php" afterPath="$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php" />
+      <change beforePath="$PROJECT_DIR$/web/Application/Home/Controller/MainMenuController.class.php" afterPath="$PROJECT_DIR$/web/Application/Home/Controller/MainMenuController.class.php" />
       <change beforePath="$PROJECT_DIR$/web/Application/Home/DAO/COCompanyDAO.class.php" afterPath="$PROJECT_DIR$/web/Application/Home/DAO/COCompanyDAO.class.php" />
       <change beforePath="$PROJECT_DIR$/web/Application/Home/Service/COCompanyService.class.php" afterPath="$PROJECT_DIR$/web/Application/Home/Service/COCompanyService.class.php" />
       <change beforePath="$PROJECT_DIR$/web/Application/Home/View/COCompany/creditAssess.html" afterPath="$PROJECT_DIR$/web/Application/Home/View/COCompany/creditAssess.html" />
@@ -24,8 +23,8 @@
       <file leaf-file-name="COCompanyController.class.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="496">
-              <caret line="379" column="43" lean-forward="true" selection-start-line="379" selection-start-column="43" selection-end-line="379" selection-end-column="43" />
+            <state relative-caret-position="444">
+              <caret line="425" column="44" lean-forward="false" selection-start-line="425" selection-start-column="44" selection-end-line="425" selection-end-column="44" />
               <folding />
             </state>
           </provider>
@@ -34,76 +33,87 @@
       <file leaf-file-name="COCompanyService.class.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Application/Home/Service/COCompanyService.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="434">
-              <caret line="522" column="28" lean-forward="false" selection-start-line="522" selection-start-column="28" selection-end-line="522" selection-end-column="28" />
+            <state relative-caret-position="19584">
+              <caret line="546" column="40" lean-forward="false" selection-start-line="546" selection-start-column="40" selection-end-line="546" selection-end-column="40" />
               <folding>
-                <element signature="e#32#57#0#PHP" expanded="true" />
-                <marker date="1554961677778" expanded="true" signature="821:905" ph="select code,... t_company_category" />
-                <marker date="1554961677778" expanded="true" signature="1233:1285" ph="select max(c... t_company_category" />
-                <marker date="1554961677778" expanded="true" signature="4782:4828" ph="select max(c... t_co_company" />
-                <marker date="1554961677778" expanded="true" signature="7794:7834" ph="select data_... t_org" />
+                <marker date="1555297519229" expanded="true" signature="821:905" ph="select code,... t_company_category" />
+                <marker date="1555297519229" expanded="true" signature="1233:1285" ph="select max(c... t_company_category" />
+                <marker date="1555297519229" expanded="true" signature="4782:4828" ph="select max(c... t_co_company" />
+                <marker date="1555297519229" expanded="true" signature="7794:7834" ph="select data_... t_org" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="COCompanyDAO.class.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="COCompanyDAO.class.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Application/Home/DAO/COCompanyDAO.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="496">
-              <caret line="1265" column="8" lean-forward="false" selection-start-line="1265" selection-start-column="8" selection-end-line="1265" selection-end-column="8" />
+            <state relative-caret-position="504">
+              <caret line="1317" column="28" lean-forward="false" selection-start-line="1317" selection-start-column="28" selection-end-line="1317" selection-end-column="28" />
               <folding>
-                <marker date="1554961694061" expanded="true" signature="677:749" ph="select c.id,... t_customer_category" />
-                <marker date="1554961694061" expanded="true" signature="1217:1305" ph="select count... t_customer" />
-                <marker date="1554961694061" expanded="true" signature="3053:3117" ph="select count... t_company_category" />
-                <marker date="1554961694061" expanded="true" signature="3318:3413" ph="insert into t_company_category... " />
-                <marker date="1554961694061" expanded="true" signature="4193:4273" ph="select count... t_customer_category" />
-                <marker date="1554961694061" expanded="true" signature="4425:4522" ph="update t_customer_category... " />
-                <marker date="1554961694061" expanded="true" signature="4878:4935" ph="select code,... t_customer_category" />
-                <marker date="1554961694061" expanded="true" signature="5533:5598" ph="select count... t_customer" />
-                <marker date="1554961694061" expanded="true" signature="5753:5799" ph="delete from t_customer_category... " />
-                <marker date="1554961694061" expanded="true" signature="7289:7347" ph="select count... t_customer" />
-                <marker date="1554961694061" expanded="true" signature="7784:8370" ph="insert into t_customer... " />
-                <marker date="1554961694061" expanded="true" signature="9306:9463" ph="select count... t_receivables_detail" />
-                <marker date="1554961694061" expanded="true" signature="9623:9720" ph="update t_customer... " />
-                <marker date="1554961694061" expanded="true" signature="9902:10040" ph="select id fr... t_receivables_detail" />
-                <marker date="1554961694061" expanded="true" signature="10146:10292" ph="update t_receivables_detail... " />
-                <marker date="1554961694061" expanded="true" signature="10530:10785" ph="insert into t_receivables_detail... " />
-                <marker date="1554961694061" expanded="true" signature="11034:11139" ph="select id fr... t_receivables" />
-                <marker date="1554961694061" expanded="true" signature="11245:11346" ph="update t_receivables... " />
-                <marker date="1554961694061" expanded="true" signature="11557:11729" ph="insert into t_receivables... " />
-                <marker date="1554961694061" expanded="true" signature="11948:12047" ph="update t_customer... " />
-                <marker date="1554961694061" expanded="true" signature="12191:12326" ph="delete from t_receivables_detail... " />
-                <marker date="1554961694061" expanded="true" signature="12477:12579" ph="delete from t_receivables... " />
-                <marker date="1554961694061" expanded="true" signature="14180:14674" ph="update t_customer... " />
-                <marker date="1554961694061" expanded="true" signature="15552:15614" ph="select count... t_ws_bill" />
-                <marker date="1554961694061" expanded="true" signature="15780:15967" ph="select count... t_receivables_detail" />
-                <marker date="1554961694061" expanded="true" signature="16156:16218" ph="select count... t_sr_bill" />
-                <marker date="1554961694061" expanded="true" signature="16385:16423" ph="delete from t_customer... " />
-                <marker date="1554961694061" expanded="true" signature="16569:16638" ph="delete from t_receivables... " />
-                <marker date="1554961694061" expanded="true" signature="16764:16840" ph="delete from t_receivables_detail... " />
-                <marker date="1554961694061" expanded="true" signature="17146:17195" ph="select code,... t_customer" />
-                <marker date="1554961694061" expanded="true" signature="17920:17973" ph="select from t_co_company" />
-                <marker date="1554961694061" expanded="true" signature="17920:18069" ph="select c.* f... t_co_company" />
-                <marker date="1554961694061" expanded="true" signature="20627:20889" ph="select id, c... t_customer" />
-                <marker date="1554961694061" expanded="true" signature="22244:22347" ph="select c.*,r... t_co_company" />
-                <marker date="1554961694061" expanded="true" signature="23852:23910" ph="select id, n... t_price_system" />
-                <marker date="1554961694061" expanded="true" signature="24164:24217" ph="select ps_id... t_customer_category" />
-                <marker date="1554961694061" expanded="true" signature="24578:24635" ph="select sales... t_customer" />
-                <marker date="1554961694061" expanded="true" signature="24774:24822" ph="select id, n... t_warehouse" />
-                <marker date="1554961694061" expanded="true" signature="27543:28312" ph="insert into t_credit_assess_record... " />
-                <marker date="1554961694061" expanded="true" signature="27543:28540" ph="insert into t_credit_assess_record... " />
-                <marker date="1554961694061" expanded="true" signature="31658:31709" ph="select id fr... t_credit_assess_record" />
-                <marker date="1554961694061" expanded="true" signature="32051:32977" ph="update t_credit_assess_record... " />
-                <marker date="1554961694061" expanded="true" signature="36674:36954" ph="select from t_credit_assess_record" />
-                <marker date="1554961694061" expanded="true" signature="36674:36988" ph="select id,co... t_credit_assess_record" />
-                <marker date="1554961694061" expanded="true" signature="39095:39132" ph="select id fr... t_credit_assess_record" />
-                <marker date="1554961694061" expanded="true" signature="39095:39146" ph="select id fr... t_credit_assess_record" />
-                <marker date="1554961694061" expanded="true" signature="39095:39165" ph="select id fr... t_credit_assess_record" />
-                <marker date="1554961694061" expanded="true" signature="39300:39366" ph="update t_credit_assess_record... " />
-                <marker date="1554961694061" expanded="true" signature="39300:39380" ph="update t_credit_assess_record... " />
-                <marker date="1554961694061" expanded="true" signature="39606:39676" ph="select id fr... t_credit_assess_record" />
-                <marker date="1554961694061" expanded="true" signature="39828:39911" ph="update t_credit_assess_record... " />
+                <marker date="1555378173494" expanded="true" signature="677:749" ph="select c.id,... t_company_category" />
+                <marker date="1555378173494" expanded="true" signature="1217:1305" ph="select count... t_co_company" />
+                <marker date="1555378173494" expanded="true" signature="3053:3117" ph="select count... t_company_category" />
+                <marker date="1555378173494" expanded="true" signature="3318:3413" ph="insert into t_company_category... " />
+                <marker date="1555378173494" expanded="true" signature="4193:4273" ph="select count... t_customer_category" />
+                <marker date="1555378173494" expanded="true" signature="4425:4522" ph="update t_company_category... " />
+                <marker date="1555378173494" expanded="true" signature="4878:4935" ph="select code,... t_company_category" />
+                <marker date="1555378173494" expanded="true" signature="5533:5598" ph="select count... t_co_company" />
+                <marker date="1555378173494" expanded="true" signature="5753:5799" ph="delete from t_company_category... " />
+                <marker date="1555378173494" expanded="true" signature="7289:7347" ph="select count... t_co_company" />
+                <marker date="1555378173494" expanded="true" signature="7784:8370" ph="insert into t_co_company... " />
+                <marker date="1555378173494" expanded="true" signature="9306:9463" ph="select count... t_receivables_detail" />
+                <marker date="1555378173494" expanded="true" signature="9623:9720" ph="update t_customer... " />
+                <marker date="1555378173494" expanded="true" signature="9902:10040" ph="select id fr... t_receivables_detail" />
+                <marker date="1555378173494" expanded="true" signature="10146:10292" ph="update t_receivables_detail... " />
+                <marker date="1555378173494" expanded="true" signature="10530:10785" ph="insert into t_receivables_detail... " />
+                <marker date="1555378173494" expanded="true" signature="11034:11139" ph="select id fr... t_receivables" />
+                <marker date="1555378173494" expanded="true" signature="11245:11346" ph="update t_receivables... " />
+                <marker date="1555378173494" expanded="true" signature="11557:11729" ph="insert into t_receivables... " />
+                <marker date="1555378173494" expanded="true" signature="11948:12047" ph="update t_customer... " />
+                <marker date="1555378173494" expanded="true" signature="12191:12326" ph="delete from t_receivables_detail... " />
+                <marker date="1555378173494" expanded="true" signature="12477:12579" ph="delete from t_receivables... " />
+                <marker date="1555378173494" expanded="true" signature="14180:14674" ph="update t_co_company... " />
+                <marker date="1555378173494" expanded="true" signature="15552:15614" ph="select count... t_ws_bill" />
+                <marker date="1555378173494" expanded="true" signature="15780:15967" ph="select count... t_receivables_detail" />
+                <marker date="1555378173494" expanded="true" signature="16156:16218" ph="select count... t_sr_bill" />
+                <marker date="1555378173494" expanded="true" signature="16385:16423" ph="delete from t_customer... " />
+                <marker date="1555378173494" expanded="true" signature="16569:16638" ph="delete from t_receivables... " />
+                <marker date="1555378173494" expanded="true" signature="16764:16840" ph="delete from t_receivables_detail... " />
+                <marker date="1555378173494" expanded="true" signature="17146:17195" ph="select code,... t_customer" />
+                <marker date="1555378173494" expanded="true" signature="17920:18069" ph="select c.*,r... t_co_company" />
+                <marker date="1555378173494" expanded="true" signature="20627:20889" ph="select id, c... t_customer" />
+                <marker date="1555378173494" expanded="true" signature="22244:22347" ph="select c.*,r... t_co_company" />
+                <marker date="1555378173494" expanded="true" signature="23852:23910" ph="select id, n... t_price_system" />
+                <marker date="1555378173494" expanded="true" signature="24164:24217" ph="select ps_id... t_customer_category" />
+                <marker date="1555378173494" expanded="true" signature="24578:24635" ph="select sales... t_customer" />
+                <marker date="1555378173494" expanded="true" signature="24774:24822" ph="select id, n... t_warehouse" />
+                <marker date="1555378173494" expanded="true" signature="27543:28540" ph="insert into t_credit_assess_record... " />
+                <marker date="1555378173494" expanded="true" signature="31658:31709" ph="select id fr... t_credit_assess_record" />
+                <marker date="1555378173494" expanded="true" signature="32051:32977" ph="update t_credit_assess_record... " />
+                <marker date="1555378173494" expanded="true" signature="36674:36988" ph="select id,co... t_credit_assess_record" />
+                <marker date="1555378173494" expanded="true" signature="39095:39165" ph="select id fr... t_credit_assess_record" />
+                <marker date="1555378173494" expanded="true" signature="39300:39380" ph="update t_credit_assess_record... " />
+                <marker date="1555378173494" expanded="true" signature="39606:39676" ph="select id fr... t_credit_assess_record" />
+                <marker date="1555378173494" expanded="true" signature="39828:39911" ph="update t_credit_assess_record... " />
+                <marker date="1555378173494" expanded="true" signature="40324:40549" ph="select id,co... t_credit_assess_record" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CreditMainForm.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/CreditMainForm.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="20736">
+              <caret line="576" column="53" lean-forward="false" selection-start-line="576" selection-start-column="34" selection-end-line="576" selection-end-column="53" />
+              <folding>
+                <marker date="1554969317237" expanded="true" signature="12440:12449" ph="..." />
+                <marker date="1554969317237" expanded="true" signature="14779:14788" ph="..." />
+                <marker date="1554969317237" expanded="true" signature="17775:17784" ph="..." />
+                <marker date="1554969317237" expanded="true" signature="18910:18919" ph="..." />
+                <marker date="1554969317237" expanded="true" signature="21530:21539" ph="..." />
+                <marker date="1554969317237" expanded="true" signature="21642:21652" ph="..." />
               </folding>
             </state>
           </provider>
@@ -112,45 +122,45 @@
       <file leaf-file-name="EditForm.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditForm.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="666">
-              <caret line="610" column="37" lean-forward="true" selection-start-line="610" selection-start-column="37" selection-end-line="610" selection-end-column="37" />
+            <state relative-caret-position="540">
+              <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FIdConst.class.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php">
+      <file leaf-file-name="RankMainForm.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/RankMainForm.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="798">
-              <caret line="1084" column="43" lean-forward="false" selection-start-line="1084" selection-start-column="43" selection-end-line="1084" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CreditMainForm.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/CreditMainForm.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="659" column="20" lean-forward="false" selection-start-line="659" selection-start-column="20" selection-end-line="659" selection-end-column="20" />
+            <state relative-caret-position="280">
+              <caret line="563" column="4" lean-forward="false" selection-start-line="563" selection-start-column="4" selection-end-line="563" selection-end-column="4" />
               <folding>
-                <marker date="1554960792562" expanded="true" signature="12440:12449" ph="..." />
-                <marker date="1554960792562" expanded="true" signature="14779:14788" ph="..." />
-                <marker date="1554960792562" expanded="true" signature="17790:17799" ph="..." />
-                <marker date="1554960792562" expanded="true" signature="18925:18934" ph="..." />
-                <marker date="1554960792562" expanded="true" signature="21545:21554" ph="..." />
-                <marker date="1554960792562" expanded="true" signature="21657:21667" ph="..." />
+                <marker date="1555395878266" expanded="true" signature="12436:12445" ph="..." />
+                <marker date="1555395878266" expanded="true" signature="14991:15000" ph="..." />
+                <marker date="1555395878266" expanded="true" signature="18002:18011" ph="..." />
+                <marker date="1555395878266" expanded="true" signature="19137:19146" ph="..." />
+                <marker date="1555395878266" expanded="true" signature="21757:21766" ph="..." />
+                <marker date="1555395878266" expanded="true" signature="21869:21879" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="creditAssess.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/Application/Home/View/COCompany/creditAssess.html">
+      <file leaf-file-name="EditRankAssess.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="474">
-              <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="12" selection-end-line="62" selection-end-column="22" />
+            <state relative-caret-position="0">
+              <caret line="3" column="40" lean-forward="false" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SelectCreditAssess.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/SelectCreditAssess.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="504">
+              <caret line="116" column="35" lean-forward="true" selection-start-line="116" selection-start-column="35" selection-end-line="116" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -159,7 +169,7 @@
       <file leaf-file-name="COCompanyEditForm.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/COCompanyEditForm.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="798">
+            <state relative-caret-position="29556">
               <caret line="821" column="39" lean-forward="false" selection-start-line="821" selection-start-column="39" selection-end-line="821" selection-end-column="39" />
               <folding>
                 <marker date="1553764010686" expanded="true" signature="986:1046" ph="..." />
@@ -173,22 +183,15 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>getCustomerCategoryById</find>
-      <find>getCategoryInfo</find>
-      <find>onw</find>
-      <find>customerList</find>
-      <find>customerInfo</find>
-      <find>cocompanyl</find>
-      <find>cocompanyInfo</find>
-      <find>warehouseName</find>
-      <find>editName9000-01</find>
-      <find>350</find>
-      <find>companyTradeType</find>
-      <find>10</find>
-      <find>editName2001-01</find>
-      <find>editValue9000-01</find>
       <find>复选框</find>
       <find>editCOCompany</find>
       <find>pobillList</find>
@@ -202,9 +205,23 @@
       <find>refreshMainGrid</find>
       <find>getEntity</find>
       <find>dele</find>
-      <find>onmai</find>
       <find>add</find>
       <find>addC</find>
+      <find>onmai</find>
+      <find>信用评估</find>
+      <find>deal_date</find>
+      <find>deal_dat</find>
+      <find>bnt</find>
+      <find>往来单位名称</find>
+      <find>往来单位</find>
+      <find>CompanyName</find>
+      <find>entity</find>
+      <find>editCreditAssess</find>
+      <find>getParentForm</find>
+      <find>getParentForm().getPermission()</find>
+      <find>companyName</find>
+      <find>company</find>
+      <find>ono</find>
     </findStrings>
     <replaceStrings>
       <replace>往来单位</replace>
@@ -215,6 +232,7 @@
       <replace>300</replace>
       <replace>5</replace>
       <replace>信用评估</replace>
+      <replace>等级评分</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -231,16 +249,20 @@
         <option value="$PROJECT_DIR$/web/Application/Home/Service/CustomerService.class.php" />
         <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/COCompanyEditForm.js" />
         <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/MainForm.js" />
-        <option value="$PROJECT_DIR$/web/Application/Home/Controller/MainMenuController.class.php" />
         <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/BizConfig/EditForm.js" />
         <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/BizConfig/MainForm.js" />
         <option value="$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php" />
         <option value="$PROJECT_DIR$/web/Application/Home/View/COCompany/creditAssess.html" />
-        <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditForm.js" />
+        <option value="$PROJECT_DIR$/web/Application/Home/Controller/MainMenuController.class.php" />
         <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/CreditMainForm.js" />
-        <option value="$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php" />
         <option value="$PROJECT_DIR$/web/Application/Home/Service/COCompanyService.class.php" />
+        <option value="$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php" />
         <option value="$PROJECT_DIR$/web/Application/Home/DAO/COCompanyDAO.class.php" />
+        <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditForm.js" />
+        <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/SelectCreditAssess.js" />
+        <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/RankMainForm.js" />
+        <option value="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js" />
+        <option value="$PROJECT_DIR$/web/Application/Home/View/COCompany/rankAssess.html" />
       </list>
     </option>
   </component>
@@ -251,7 +273,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="250" />
     <option name="y" value="127" />
     <option name="width" value="1400" />
@@ -273,7 +295,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -320,23 +341,6 @@
               <item name="web" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Application" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Home" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Common" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="newErp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newErp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="web" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Application" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Home" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="DAO" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="newErp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newErp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="web" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Application" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Home" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="DAO" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Common" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
@@ -404,19 +408,11 @@
               <item name="PSI" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="COCompany" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
-            <path>
-              <item name="newErp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="newErp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="web" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Public" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Scripts" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="PSI" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="PurchaseOrder" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -477,28 +473,31 @@
       <workItem from="1554686107540" duration="22377000" />
       <workItem from="1554772093612" duration="20129000" />
       <workItem from="1554860681617" duration="18903000" />
-      <workItem from="1554944631483" duration="10238000" />
+      <workItem from="1554944631483" duration="17052000" />
+      <workItem from="1555030824466" duration="4841000" />
+      <workItem from="1555289486540" duration="13858000" />
+      <workItem from="1555376549658" duration="5296000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="230591000" />
+    <option name="totallyTimeSpent" value="261400000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17643923" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17537314" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -519,35 +518,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/CustomerController.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="900">
-          <caret line="28" column="12" lean-forward="false" selection-start-line="28" selection-start-column="12" selection-end-line="38" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/MainForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21384">
-          <caret line="594" column="51" lean-forward="true" selection-start-line="594" selection-start-column="51" selection-end-line="594" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/Customer/CategoryEditForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="3" column="11" lean-forward="false" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/CategoryEditForm.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -676,13 +646,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/MainMenuController.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="640">
-          <caret line="261" column="68" lean-forward="true" selection-start-line="261" selection-start-column="68" selection-end-line="261" selection-end-column="68" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/Application/Home/View/COCompany/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
@@ -736,7 +699,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-534">
           <caret line="9" column="6" lean-forward="false" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -786,7 +748,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
           <caret line="37" column="20" lean-forward="false" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -801,18 +762,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="298">
           <caret line="103" column="23" lean-forward="false" selection-start-line="103" selection-start-column="23" selection-end-line="103" selection-end-column="23" />
-          <folding>
-            <marker date="1552034098315" expanded="true" signature="2340:2455" ph="select count... columns" />
-            <marker date="1552034098315" expanded="true" signature="2647:2790" ph="select count... columns" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="798">
-          <caret line="1084" column="43" lean-forward="false" selection-start-line="1084" selection-start-column="43" selection-end-line="1084" selection-end-column="43" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -820,15 +769,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="290">
           <caret line="20" column="669577" lean-forward="false" selection-start-line="20" selection-start-column="669577" selection-end-line="20" selection-end-column="669577" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Application/Home/View/COCompany/creditAssess.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="474">
-          <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="12" selection-end-line="62" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -836,24 +776,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="64">
           <caret line="624" column="4" lean-forward="false" selection-start-line="624" selection-start-column="4" selection-end-line="624" selection-end-column="4" />
-          <folding>
-            <marker date="1552034100173" expanded="true" signature="7980:7989" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="8129:8140" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="12939:12948" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="15838:15847" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="19011:19020" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="20089:20098" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="24296:24305" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="24408:24418" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="26906:26915" ph="..." />
-            <marker date="1552034100173" expanded="true" signature="27973:27982" ph="..." />
-          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Application/Home/View/COCompany/creditAssess.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-144">
+          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Application/Home/Common/FIdConst.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="39276">
+          <caret line="1091" column="12" lean-forward="false" selection-start-line="1091" selection-start-column="12" selection-end-line="1091" selection-end-column="12" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/COCompanyEditForm.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="798">
+        <state relative-caret-position="29556">
           <caret line="821" column="39" lean-forward="false" selection-start-line="821" selection-start-column="39" selection-end-line="821" selection-end-column="39" />
           <folding>
             <marker date="1553764010686" expanded="true" signature="986:1046" ph="..." />
@@ -864,108 +807,148 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditForm.js">
+    <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/MainMenuController.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="666">
-          <caret line="610" column="37" lean-forward="true" selection-start-line="610" selection-start-column="37" selection-end-line="610" selection-end-column="37" />
-          <folding />
+        <state relative-caret-position="906">
+          <caret line="264" column="25" lean-forward="false" selection-start-line="264" selection-start-column="25" selection-end-line="264" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Application/Home/Service/COCompanyService.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19584">
+          <caret line="546" column="40" lean-forward="false" selection-start-line="546" selection-start-column="40" selection-end-line="546" selection-end-column="40" />
+          <folding>
+            <marker date="1555297519229" expanded="true" signature="821:905" ph="select code,... t_company_category" />
+            <marker date="1555297519229" expanded="true" signature="1233:1285" ph="select max(c... t_company_category" />
+            <marker date="1555297519229" expanded="true" signature="4782:4828" ph="select max(c... t_co_company" />
+            <marker date="1555297519229" expanded="true" signature="7794:7834" ph="select data_... t_org" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/CreditMainForm.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="659" column="20" lean-forward="false" selection-start-line="659" selection-start-column="20" selection-end-line="659" selection-end-column="20" />
+        <state relative-caret-position="20736">
+          <caret line="576" column="53" lean-forward="false" selection-start-line="576" selection-start-column="34" selection-end-line="576" selection-end-column="53" />
           <folding>
-            <marker date="1554960792562" expanded="true" signature="12440:12449" ph="..." />
-            <marker date="1554960792562" expanded="true" signature="14779:14788" ph="..." />
-            <marker date="1554960792562" expanded="true" signature="17790:17799" ph="..." />
-            <marker date="1554960792562" expanded="true" signature="18925:18934" ph="..." />
-            <marker date="1554960792562" expanded="true" signature="21545:21554" ph="..." />
-            <marker date="1554960792562" expanded="true" signature="21657:21667" ph="..." />
+            <marker date="1554969317237" expanded="true" signature="12440:12449" ph="..." />
+            <marker date="1554969317237" expanded="true" signature="14779:14788" ph="..." />
+            <marker date="1554969317237" expanded="true" signature="17775:17784" ph="..." />
+            <marker date="1554969317237" expanded="true" signature="18910:18919" ph="..." />
+            <marker date="1554969317237" expanded="true" signature="21530:21539" ph="..." />
+            <marker date="1554969317237" expanded="true" signature="21642:21652" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="379" column="43" lean-forward="true" selection-start-line="379" selection-start-column="43" selection-end-line="379" selection-end-column="43" />
+        <state relative-caret-position="444">
+          <caret line="425" column="44" lean-forward="false" selection-start-line="425" selection-start-column="44" selection-end-line="425" selection-end-column="44" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Application/Home/Service/COCompanyService.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="434">
-          <caret line="522" column="28" lean-forward="false" selection-start-line="522" selection-start-column="28" selection-end-line="522" selection-end-column="28" />
-          <folding>
-            <element signature="e#32#57#0#PHP" expanded="true" />
-            <marker date="1554961677778" expanded="true" signature="821:905" ph="select code,... t_company_category" />
-            <marker date="1554961677778" expanded="true" signature="1233:1285" ph="select max(c... t_company_category" />
-            <marker date="1554961677778" expanded="true" signature="4782:4828" ph="select max(c... t_co_company" />
-            <marker date="1554961677778" expanded="true" signature="7794:7834" ph="select data_... t_org" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/Application/Home/DAO/COCompanyDAO.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="1265" column="8" lean-forward="false" selection-start-line="1265" selection-start-column="8" selection-end-line="1265" selection-end-column="8" />
+        <state relative-caret-position="504">
+          <caret line="1317" column="28" lean-forward="false" selection-start-line="1317" selection-start-column="28" selection-end-line="1317" selection-end-column="28" />
           <folding>
-            <marker date="1554961694061" expanded="true" signature="677:749" ph="select c.id,... t_customer_category" />
-            <marker date="1554961694061" expanded="true" signature="1217:1305" ph="select count... t_customer" />
-            <marker date="1554961694061" expanded="true" signature="3053:3117" ph="select count... t_company_category" />
-            <marker date="1554961694061" expanded="true" signature="3318:3413" ph="insert into t_company_category... " />
-            <marker date="1554961694061" expanded="true" signature="4193:4273" ph="select count... t_customer_category" />
-            <marker date="1554961694061" expanded="true" signature="4425:4522" ph="update t_customer_category... " />
-            <marker date="1554961694061" expanded="true" signature="4878:4935" ph="select code,... t_customer_category" />
-            <marker date="1554961694061" expanded="true" signature="5533:5598" ph="select count... t_customer" />
-            <marker date="1554961694061" expanded="true" signature="5753:5799" ph="delete from t_customer_category... " />
-            <marker date="1554961694061" expanded="true" signature="7289:7347" ph="select count... t_customer" />
-            <marker date="1554961694061" expanded="true" signature="7784:8370" ph="insert into t_customer... " />
-            <marker date="1554961694061" expanded="true" signature="9306:9463" ph="select count... t_receivables_detail" />
-            <marker date="1554961694061" expanded="true" signature="9623:9720" ph="update t_customer... " />
-            <marker date="1554961694061" expanded="true" signature="9902:10040" ph="select id fr... t_receivables_detail" />
-            <marker date="1554961694061" expanded="true" signature="10146:10292" ph="update t_receivables_detail... " />
-            <marker date="1554961694061" expanded="true" signature="10530:10785" ph="insert into t_receivables_detail... " />
-            <marker date="1554961694061" expanded="true" signature="11034:11139" ph="select id fr... t_receivables" />
-            <marker date="1554961694061" expanded="true" signature="11245:11346" ph="update t_receivables... " />
-            <marker date="1554961694061" expanded="true" signature="11557:11729" ph="insert into t_receivables... " />
-            <marker date="1554961694061" expanded="true" signature="11948:12047" ph="update t_customer... " />
-            <marker date="1554961694061" expanded="true" signature="12191:12326" ph="delete from t_receivables_detail... " />
-            <marker date="1554961694061" expanded="true" signature="12477:12579" ph="delete from t_receivables... " />
-            <marker date="1554961694061" expanded="true" signature="14180:14674" ph="update t_customer... " />
-            <marker date="1554961694061" expanded="true" signature="15552:15614" ph="select count... t_ws_bill" />
-            <marker date="1554961694061" expanded="true" signature="15780:15967" ph="select count... t_receivables_detail" />
-            <marker date="1554961694061" expanded="true" signature="16156:16218" ph="select count... t_sr_bill" />
-            <marker date="1554961694061" expanded="true" signature="16385:16423" ph="delete from t_customer... " />
-            <marker date="1554961694061" expanded="true" signature="16569:16638" ph="delete from t_receivables... " />
-            <marker date="1554961694061" expanded="true" signature="16764:16840" ph="delete from t_receivables_detail... " />
-            <marker date="1554961694061" expanded="true" signature="17146:17195" ph="select code,... t_customer" />
-            <marker date="1554961694061" expanded="true" signature="17920:17973" ph="select from t_co_company" />
-            <marker date="1554961694061" expanded="true" signature="17920:18069" ph="select c.* f... t_co_company" />
-            <marker date="1554961694061" expanded="true" signature="20627:20889" ph="select id, c... t_customer" />
-            <marker date="1554961694061" expanded="true" signature="22244:22347" ph="select c.*,r... t_co_company" />
-            <marker date="1554961694061" expanded="true" signature="23852:23910" ph="select id, n... t_price_system" />
-            <marker date="1554961694061" expanded="true" signature="24164:24217" ph="select ps_id... t_customer_category" />
-            <marker date="1554961694061" expanded="true" signature="24578:24635" ph="select sales... t_customer" />
-            <marker date="1554961694061" expanded="true" signature="24774:24822" ph="select id, n... t_warehouse" />
-            <marker date="1554961694061" expanded="true" signature="27543:28312" ph="insert into t_credit_assess_record... " />
-            <marker date="1554961694061" expanded="true" signature="27543:28540" ph="insert into t_credit_assess_record... " />
-            <marker date="1554961694061" expanded="true" signature="31658:31709" ph="select id fr... t_credit_assess_record" />
-            <marker date="1554961694061" expanded="true" signature="32051:32977" ph="update t_credit_assess_record... " />
-            <marker date="1554961694061" expanded="true" signature="36674:36954" ph="select from t_credit_assess_record" />
-            <marker date="1554961694061" expanded="true" signature="36674:36988" ph="select id,co... t_credit_assess_record" />
-            <marker date="1554961694061" expanded="true" signature="39095:39132" ph="select id fr... t_credit_assess_record" />
-            <marker date="1554961694061" expanded="true" signature="39095:39146" ph="select id fr... t_credit_assess_record" />
-            <marker date="1554961694061" expanded="true" signature="39095:39165" ph="select id fr... t_credit_assess_record" />
-            <marker date="1554961694061" expanded="true" signature="39300:39366" ph="update t_credit_assess_record... " />
-            <marker date="1554961694061" expanded="true" signature="39300:39380" ph="update t_credit_assess_record... " />
-            <marker date="1554961694061" expanded="true" signature="39606:39676" ph="select id fr... t_credit_assess_record" />
-            <marker date="1554961694061" expanded="true" signature="39828:39911" ph="update t_credit_assess_record... " />
+            <marker date="1555378173494" expanded="true" signature="677:749" ph="select c.id,... t_company_category" />
+            <marker date="1555378173494" expanded="true" signature="1217:1305" ph="select count... t_co_company" />
+            <marker date="1555378173494" expanded="true" signature="3053:3117" ph="select count... t_company_category" />
+            <marker date="1555378173494" expanded="true" signature="3318:3413" ph="insert into t_company_category... " />
+            <marker date="1555378173494" expanded="true" signature="4193:4273" ph="select count... t_customer_category" />
+            <marker date="1555378173494" expanded="true" signature="4425:4522" ph="update t_company_category... " />
+            <marker date="1555378173494" expanded="true" signature="4878:4935" ph="select code,... t_company_category" />
+            <marker date="1555378173494" expanded="true" signature="5533:5598" ph="select count... t_co_company" />
+            <marker date="1555378173494" expanded="true" signature="5753:5799" ph="delete from t_company_category... " />
+            <marker date="1555378173494" expanded="true" signature="7289:7347" ph="select count... t_co_company" />
+            <marker date="1555378173494" expanded="true" signature="7784:8370" ph="insert into t_co_company... " />
+            <marker date="1555378173494" expanded="true" signature="9306:9463" ph="select count... t_receivables_detail" />
+            <marker date="1555378173494" expanded="true" signature="9623:9720" ph="update t_customer... " />
+            <marker date="1555378173494" expanded="true" signature="9902:10040" ph="select id fr... t_receivables_detail" />
+            <marker date="1555378173494" expanded="true" signature="10146:10292" ph="update t_receivables_detail... " />
+            <marker date="1555378173494" expanded="true" signature="10530:10785" ph="insert into t_receivables_detail... " />
+            <marker date="1555378173494" expanded="true" signature="11034:11139" ph="select id fr... t_receivables" />
+            <marker date="1555378173494" expanded="true" signature="11245:11346" ph="update t_receivables... " />
+            <marker date="1555378173494" expanded="true" signature="11557:11729" ph="insert into t_receivables... " />
+            <marker date="1555378173494" expanded="true" signature="11948:12047" ph="update t_customer... " />
+            <marker date="1555378173494" expanded="true" signature="12191:12326" ph="delete from t_receivables_detail... " />
+            <marker date="1555378173494" expanded="true" signature="12477:12579" ph="delete from t_receivables... " />
+            <marker date="1555378173494" expanded="true" signature="14180:14674" ph="update t_co_company... " />
+            <marker date="1555378173494" expanded="true" signature="15552:15614" ph="select count... t_ws_bill" />
+            <marker date="1555378173494" expanded="true" signature="15780:15967" ph="select count... t_receivables_detail" />
+            <marker date="1555378173494" expanded="true" signature="16156:16218" ph="select count... t_sr_bill" />
+            <marker date="1555378173494" expanded="true" signature="16385:16423" ph="delete from t_customer... " />
+            <marker date="1555378173494" expanded="true" signature="16569:16638" ph="delete from t_receivables... " />
+            <marker date="1555378173494" expanded="true" signature="16764:16840" ph="delete from t_receivables_detail... " />
+            <marker date="1555378173494" expanded="true" signature="17146:17195" ph="select code,... t_customer" />
+            <marker date="1555378173494" expanded="true" signature="17920:18069" ph="select c.*,r... t_co_company" />
+            <marker date="1555378173494" expanded="true" signature="20627:20889" ph="select id, c... t_customer" />
+            <marker date="1555378173494" expanded="true" signature="22244:22347" ph="select c.*,r... t_co_company" />
+            <marker date="1555378173494" expanded="true" signature="23852:23910" ph="select id, n... t_price_system" />
+            <marker date="1555378173494" expanded="true" signature="24164:24217" ph="select ps_id... t_customer_category" />
+            <marker date="1555378173494" expanded="true" signature="24578:24635" ph="select sales... t_customer" />
+            <marker date="1555378173494" expanded="true" signature="24774:24822" ph="select id, n... t_warehouse" />
+            <marker date="1555378173494" expanded="true" signature="27543:28540" ph="insert into t_credit_assess_record... " />
+            <marker date="1555378173494" expanded="true" signature="31658:31709" ph="select id fr... t_credit_assess_record" />
+            <marker date="1555378173494" expanded="true" signature="32051:32977" ph="update t_credit_assess_record... " />
+            <marker date="1555378173494" expanded="true" signature="36674:36988" ph="select id,co... t_credit_assess_record" />
+            <marker date="1555378173494" expanded="true" signature="39095:39165" ph="select id fr... t_credit_assess_record" />
+            <marker date="1555378173494" expanded="true" signature="39300:39380" ph="update t_credit_assess_record... " />
+            <marker date="1555378173494" expanded="true" signature="39606:39676" ph="select id fr... t_credit_assess_record" />
+            <marker date="1555378173494" expanded="true" signature="39828:39911" ph="update t_credit_assess_record... " />
+            <marker date="1555378173494" expanded="true" signature="40324:40549" ph="select id,co... t_credit_assess_record" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/SelectCreditAssess.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="116" column="35" lean-forward="true" selection-start-line="116" selection-start-column="35" selection-end-line="116" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/RankMainForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="563" column="4" lean-forward="false" selection-start-line="563" selection-start-column="4" selection-end-line="563" selection-end-column="4" />
+          <folding>
+            <marker date="1555395878266" expanded="true" signature="12436:12445" ph="..." />
+            <marker date="1555395878266" expanded="true" signature="14991:15000" ph="..." />
+            <marker date="1555395878266" expanded="true" signature="18002:18011" ph="..." />
+            <marker date="1555395878266" expanded="true" signature="19137:19146" ph="..." />
+            <marker date="1555395878266" expanded="true" signature="21757:21766" ph="..." />
+            <marker date="1555395878266" expanded="true" signature="21869:21879" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Application/Home/View/COCompany/rankAssess.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="79" lean-forward="false" selection-start-line="12" selection-start-column="79" selection-end-line="12" selection-end-column="79" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="3" column="40" lean-forward="false" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -380,4 +380,56 @@ class COCompanyController extends PSIBaseController {
             $this->ajaxReturn($cs->commitAssess($params));
         }
     }
+
+    //等级评分主页面
+    public function rankAssess(){
+        $us = new UserService();
+
+        if ($us->hasPermission(FIdConst::RANK_ASSESS)) {
+            $this->initVar();
+
+            $this->assign("title", "往来单位等级评分");
+
+            $this->assign("add",
+                $us->hasPermission(FIdConst::CREDIT_ASSESS_ADD) ? 1 : 0);
+
+            $this->assign("edit",
+                $us->hasPermission(FIdConst::CREDIT_ASSESS_EDIT) ? 1 : 0);
+
+            $this->assign("del",
+                $us->hasPermission(FIdConst::CREDIT_ASSESS_DEL) ? 1 : 0);
+
+            $this->assign("commit",
+                $us->hasPermission(FIdConst::CREDIT_ASSESS_COMMIT) ? 1 : 0);
+
+            $this->assign("creditEdit",
+                $us->hasPermission(FIdConst::CREDIT_EDIT) ? 1 : 0);
+
+            $this->assign("creditEditBase",
+                $us->hasPermission(FIdConst::CREDIT_EDIT_BASE) ? 1 : 0);
+
+            $this->assign("creditEditAnalysis",
+                $us->hasPermission(FIdConst::CREDIT_EDIT_ANALYSIS) ? 1 : 0);
+
+            $this->assign("creditEditRisk",
+                $us->hasPermission(FIdConst::CREDIT_EDIT_RISK) ? 1 : 0);
+
+            $this->display();
+        } else {
+            $this->gotoLoginPage("/Home/COCompany/rankAssess");
+        }
+    }
+
+    public function selectAssessCompany(){
+        if(IS_POST){
+            $params=[
+                "company" => I("post.company"),
+                "start" => I("post.start"),
+                "limit" => I("post.limit")
+            ];
+
+            $cs = new COCompanyService();
+            $this->ajaxReturn($cs->selectAssessCompany($params));
+        }
+    }
 }

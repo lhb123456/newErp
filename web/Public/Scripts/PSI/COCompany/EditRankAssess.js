@@ -1,7 +1,7 @@
 /**
  * 信用评估信息填写
  */
-Ext.define("PSI.COCompany.EditForm", {
+Ext.define("PSI.COCompany.EditRankAssess", {
 	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
