@@ -261,6 +261,10 @@ class MainMenuController extends Controller {
                 // 信用额度评估
                 redirect(__ROOT__ . "/Home/COCompany/creditAssess");
                 break;
+            case FIdConst::RANK_ASSESS :
+                // 信用额度评估
+                redirect(__ROOT__ . "/Home/COCompany/rankAssess");
+                break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

@@ -535,4 +535,15 @@ class COCompanyService extends PSIBaseExService {
 
         return $this->ok();
     }
+
+    public function selectAssessCompany($params){
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $params["companyId"] = $this->getCompanyId();
+
+        $dao = new COCompanyDAO($this->db());
+        return $dao->selectAssessCompany($params);
+    }
 }

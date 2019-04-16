@@ -1276,4 +1276,59 @@ class COCompanyDAO extends PSIBaseExDAO {
 
         return null;
     }
+
+    public function selectAssessCompany($params){
+	    $db=$this->db;
+
+	    $id=$params["id"];
+	    $company=trim($params["company"]);
+	    $start=$params["start"];
+	    $limit=$params["limit"];
+
+        $companyId=$params["companyId"];
+
+        $sql="select id,company_name,company_type,company_asset_type,
+              legal_person,register_addr,table_status,status 
+	          from t_credit_assess_record 
+	          where company_id='%s' and table_status=4000 and status=0";
+        $queryParams=[];
+        $queryParams[]=$companyId;
+
+
+        if($company){
+            $sql.=" and company_name like '%s' ";
+            $queryParams[]="%{$company}%";
+        }
+
+        $sql2=$sql;
+        $countData=$db->query($sql2,$queryParams);
+        $cnt=count($countData);
+
+        $sql.=" order by date_update,company_name ";
+        $sql.=" limit %d,%d ";
+        $queryParams[]=$start;
+        $queryParams[]=$limit;
+
+        $data=$db->query($sql,$queryParams);
+        $result=[];
+        foreach ($data as $v){
+
+            $result[]=[
+                "id"=>$v["id"],
+                "companyName"=>$v["company_name"],
+                "companyType"=>json_decode($v["company_type"]),
+                "companyAssetType"=>$v["company_asset_type"],
+                "registerAddr"=>$v["register_addr"],
+                "legalPerson"=>$v["legal_person"],
+                "tableStatus"=>$v["table_status"],
+                "status"=>$v["status"]
+            ];
+
+        }
+
+        return [
+            "dataList"=>$result,
+            "totalCount"=>$cnt
+        ];
+    }
 }
