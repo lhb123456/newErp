@@ -564,7 +564,7 @@ Ext.define("PSI.COCompany.RankMainForm", {
 	onAddRankAssess:function (id) {
         var me = this;
 
-        var form = Ext.create("PSI.COCompany.EditForm", {
+        var form = Ext.create("PSI.COCompany.EditRankAssess", {
             parentForm : me,
 			creditAssessId:id
         });
