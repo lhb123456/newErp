@@ -35,7 +35,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		}
 		
 		$result = [];
-		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name,
+		$sql = "select g.id, g.code,g.method, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name,
 					g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id,g.tax_rate
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id) and (g.category_id = '%s') ";
@@ -88,6 +88,7 @@ class GoodsDAO extends PSIBaseExDAO {
 					"barCode" => $v["bar_code"],
 					"memo" => $v["memo"],
 					"dataOrg" => $v["data_org"],
+					"method" => $v["method"],
 					"brandFullName" => $brandFullName
 			];
 		}
@@ -154,7 +155,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$unitId = $params["unitId"];
 		$salePrice = $params["salePrice"];
 		$purchasePrice = $params["purchasePrice"];
-		$barCode = $params["barCode"];
+		$method = $params["method"];
 		$memo = $params["memo"];
 		$brandId = $params["brandId"];
 		$bizUser=$params["loginUserId"];
@@ -202,7 +203,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		}
 		
 		// 如果录入了条形码，则需要检查条形码是否唯一
-		if ($barCode) {
+		/*if ($barCode) {
 			$sql = "select count(*) as cnt from t_goods where bar_code = '%s' ";
 			$data = $db->query($sql, $barCode);
 			$cnt = $data[0]["cnt"];
@@ -210,14 +211,14 @@ class GoodsDAO extends PSIBaseExDAO {
 				return $this->bad("条形码[{$barCode}]已经被其他商品使用");
 			}
 		}
-		
+		*/
 		$id = $this->newId();
 		$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,
-					py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id,tax_rate)
+					py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id,tax_rate,method)
 				values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
-					if('%s' = '', null, '%s'),'%s')";
+					if('%s' = '', null, '%s'),'%s','%s')";
 		$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-				$purchasePrice, $barCode, $memo, "", "", $specPY, $brandId, $brandId,$taxRate);
+				$purchasePrice, "", $memo, "", "", $specPY, $brandId, $brandId,$taxRate,$method);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -257,7 +258,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$oldSalePrice = $params["oldSalePrice"];
 		$purchasePrice = $params["purchasePrice"];
 		$oldPurchasePrice = $params["oldPurchasePrice"];
-		$barCode = $params["barCode"];
+		$method = $params["method"];
 		$memo = $params["memo"];
 		$brandId = $params["brandId"];
 		$bizUser=$params["loginUserId"];
@@ -302,24 +303,24 @@ class GoodsDAO extends PSIBaseExDAO {
 		}
 		
 		// 如果录入了条形码，则需要检查条形码是否唯一
-		if ($barCode) {
+		/*if ($barCode) {
 			$sql = "select count(*) as cnt from t_goods where bar_code = '%s' and id <> '%s' ";
 			$data = $db->query($sql, $barCode, $id);
 			$cnt = $data[0]["cnt"];
 			if ($cnt != 0) {
 				return $this->bad("条形码[{$barCode}]已经被其他商品使用");
 			}
-		}
+		}*/
 		
 		$sql = "update t_goods
 				set code = '%s', name = '%s', spec = '%s', category_id = '%s',
 				    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
-					bar_code = '%s', memo = '%s', spec_py = '%s',tax_rate = '%s',
-					brand_id = if('%s' = '', null, '%s')
+					 memo = '%s', spec_py = '%s',tax_rate = '%s',
+					brand_id = if('%s' = '', null, '%s'),method = '%s' 
 				where id = '%s' ";
 		
 		$rc = $db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-				$purchasePrice, $barCode, $memo, $specPY,$taxRate ,$brandId, $brandId, $id);
+				$purchasePrice,  $memo, $specPY,$taxRate ,$brandId, $brandId,$method, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -478,6 +479,38 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+    public function queryCodeData($params) {
+            $db = $this->db;
+
+            $queryKey = $params["queryKey"];
+            if ($queryKey == null) {
+                $queryKey = "";
+            }
+            $key = "%{$queryKey}%";
+
+            $sql = "select id,merge_code,name,cate_name,memo 
+                    from t_tax_code where status = 1 AND 
+                     (merge_code like '%s' or name like '%s' or cate_name like '%s') ";
+            $queryParams = [];
+            $queryParams[] = $key;
+            $queryParams[] = $key;
+            $queryParams[] = $key;
+            $queryParams[] = $key;
+            $sql .= " order by merge_code
+                     limit 1000";
+            $data = $db->query($sql, $queryParams);
+            $result = [];
+            foreach ( $data as $v ) {
+                $result[] = [
+                        "id" => $v["id"],
+                        "code" => $v["merge_code"],
+                        "name" => $v["name"],
+                        "cate_name" => $v["cate_name"],
+                        "memo" => $v["memo"]
+                ];
+            }
+            return $result;
+        }
 
 	private function getPsIdForCustomer($customerId) {
 		$result = null;
@@ -678,7 +711,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$categoryId = $params["categoryId"];
 		
 		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price,
-					bar_code, memo, brand_id
+					bar_code, memo, brand_id ,method 
 				from t_goods
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -692,6 +725,7 @@ class GoodsDAO extends PSIBaseExDAO {
 			$result["spec"] = $data[0]["spec"];
 			$result["unitId"] = $data[0]["unit_id"];
 			$result["salePrice"] = $data[0]["sale_price"];
+			$result["method"] = $data[0]["method"];
 			$brandId = $data[0]["brand_id"];
 			$result["brandId"] = $brandId;
 			

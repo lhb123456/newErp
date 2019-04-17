@@ -244,7 +244,7 @@ class GoodsController extends PSIBaseController {
 					"purchasePrice" => I("post.purchasePrice"),
                     "oldSalePrice" => I("post.oldSalePrice"),
                     "oldPurchasePrice" => I("post.oldPurchasePrice"),
-					"barCode" => I("post.barCode"),
+					"method" => I("post.method"),
 					"brandId" => I("post.brandId"),
 					"taxRate" => I("post.taxRate"),
 					"memo" => I("post.memo")
@@ -281,6 +281,13 @@ class GoodsController extends PSIBaseController {
 			$queryKey = I("post.queryKey");
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->queryData($queryKey));
+		}
+	}
+    public function queryCodeData() {
+		if (IS_POST) {
+			$queryKey = I("post.queryKey");
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->queryCodeData($queryKey));
 		}
 	}
 

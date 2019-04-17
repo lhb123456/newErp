@@ -204,18 +204,21 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 										}
 									}
 								}, {
-									id : "PSI_Goods_GoodsEditForm_editBarCode",
-									fieldLabel : "条形码",
+									id : "PSI_Goods_GoodsEditForm_method",
+									fieldLabel : "计算方式",
 									width : 205,
-									name : "barCode",
-									value : entity == null ? null : entity
-											.get("barCode"),
-									listeners : {
-										specialkey : {
-											fn : me.onEditSpecialKey,
-											scope : me
-										}
-									}
+                            		xtype : "combo",
+									name : "method",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									labelAlign : "right",
+									labelSeparator : "",
+									store : Ext.create("Ext.data.ArrayStore", {
+										fields : ["id", "text"],
+										data : [[1, "个别计价法"],[2, "移动平均法"], [3, "先进先出法"]]
+									}),
+                            		value : 1
 								}, {
 									id : "PSI_Goods_GoodsEditForm_editBrandId",
 									xtype : "hidden",
@@ -332,7 +335,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 		me.editName = Ext.getCmp("PSI_Goods_GoodsEditForm_editName");
 		me.editSpec = Ext.getCmp("PSI_Goods_GoodsEditForm_editSpec");
 		me.editUnit = Ext.getCmp("PSI_Goods_GoodsEditForm_editUnit");
-		me.editBarCode = Ext.getCmp("PSI_Goods_GoodsEditForm_editBarCode");
+		me.method = Ext.getCmp("PSI_Goods_GoodsEditForm_method");
 		me.editBrand = Ext.getCmp("PSI_Goods_GoodsEditForm_editBrand");
 		me.taxRate = Ext.getCmp("PSI_Goods_GoodsEditForm_taxRate");
 		me.editBrandId = Ext.getCmp("PSI_Goods_GoodsEditForm_editBrandId");
@@ -342,7 +345,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 		me.editMemo = Ext.getCmp("PSI_Goods_GoodsEditForm_editMemo");
 
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
-				me.editSpec, me.editUnit, me.editBarCode, me.editBrand,
+				me.editSpec, me.editUnit, me.method, me.editBrand,
 				me.editSalePrice, me.editPurchasePrice, me.editMemo];
 	},
 
@@ -395,7 +398,11 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								me.editPurchasePrice.setValue(data.purchasePrice);
 								Ext.getCmp("oldSalePrice").setValue(data.salePrice);
 								Ext.getCmp("oldPurchasePrice").setValue(data.purchasePrice);
-								me.editBarCode.setValue(data.barCode);
+								if(data.method){
+                                    Ext.getCmp("PSI_Goods_GoodsEditForm_method").setValue(parseInt(data.method));
+                                }else{
+                                    Ext.getCmp("PSI_Goods_GoodsEditForm_method").setValue(1);
+                                }
 								me.editMemo.setValue(data.memo);
 								var brandId = data.brandId;
 								if (brandId) {
@@ -429,13 +436,15 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 
 		var brandId = me.editBrand.getIdValue();
 		me.editBrandId.setValue(brandId);
-
 		var f = me.editForm;
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);
 		f.submit({
 					url : me.URL("/Home/Goods/editGoods"),
 					method : "POST",
+					params : {
+						method : Ext.getCmp("PSI_Goods_GoodsEditForm_method").getValue(),
+					},
 					success : function(form, action) {
 						el.unmask();
 						me.__lastId = action.result.id;
@@ -497,7 +506,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 		me.editCode.focus();
 
 		var editors = [me.editCode, me.editName, me.editSpec, me.editSalePrice,
-				me.editPurchasePrice, me.editBarCode, me.editMemo];
+				me.editPurchasePrice, me.method, me.editMemo];
 		for (var i = 0; i < editors.length; i++) {
 			var edit = editors[i];
 			edit.setValue(null);

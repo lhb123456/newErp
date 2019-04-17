@@ -110,31 +110,31 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 							margin : "5"
 						},
 						items : [{
-									xtype : "hidden",
-									name : "id",
-									value : goods.get("id")
-								},{
-									id:"goodsCodeId",
-									xtype : "hidden",
-									name : "goodsCodeId",
-                            		fieldLabel : "编辑时税编码的id",
-									value : goods.get("id")
-								}, {
-									fieldLabel : "商品编码",
-									width : 470,
-									readOnly : true,
-									value : goods.get("code")
-								}, {
-									fieldLabel : "品名",
-									width : 470,
-									readOnly : true,
-									value : goods.get("name")
-								}, {
-									fieldLabel : "规格型号",
-									readOnly : true,
-									width : 470,
-									value : goods.get("spec")
-								}, {
+							xtype : "hidden",
+							name : "id",
+							value : goods.get("id")
+						},{
+							id:"goodsCodeId",
+							xtype : "hidden",
+							name : "goodsCodeId",
+							fieldLabel : "编辑时税编码的id",
+							value : goods.get("id")
+						}, {
+							fieldLabel : "商品编码",
+							width : 470,
+							readOnly : true,
+							value : goods.get("code")
+						}, {
+							fieldLabel : "品名",
+							width : 470,
+							readOnly : true,
+							value : goods.get("name")
+						}, {
+							fieldLabel : "规格型号",
+							readOnly : true,
+							width : 470,
+							value : goods.get("spec")
+						}, {
                             fieldLabel : "商品单位",
                             readOnly : true,
                             width : 470,
@@ -151,16 +151,37 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
                             xtype : "textfield"
                         },{
                             id : "code",
+                            width : 470,
+                            labelAlign : "right",
+                            labelSeparator : "",
+                            xtype : "psi_selectTaxCode",
+                            fieldLabel : "税控编码",
+                            allowBlank : false,
+                            blankText : "没有输入税控编码",
+                            beforeLabelTextTpl : PSI.Const.REQUIRED,
+                            listeners : {
+                                specialkey : {
+                                    fn : me.onEditSpecialKey,
+                                    scope : me
+                                }
+                            },
+							name:"code",
+                            showAddButton : true,
+                            callbackFunc : me.__setSupplierExtData,
+                            callbackScope : me
+                        },/*{
+                            id : "code",
                             labelAlign : "right",
                             labelSeparator : "",
                             width : 470,
+							xtype:"psi_selectTaxCode",
                             allowBlank : false,
                             name:"code",
                             beforeLabelTextTpl : PSI.Const.REQUIRED,
                             fieldLabel : "税控编码",
                             margin : "5, 0, 0, 0",
                             xtype : "textfield"
-                        },{
+                        },*/{
                             id : "default",
                             xtype : "combo",
                             queryMode : "local",

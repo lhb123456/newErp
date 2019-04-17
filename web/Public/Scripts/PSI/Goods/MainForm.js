@@ -243,7 +243,7 @@ Ext.define("PSI.Goods.MainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "spec", "unitId",
 							"unitName", "categoryId", "salePrice",
-							"purchasePrice", "barCode", "taxRate","memo", "dataOrg",
+							"purchasePrice", "barCode", "taxRate","method","memo", "dataOrg",
 							"brandFullName"]
 				});
 
@@ -357,6 +357,23 @@ Ext.define("PSI.Goods.MainForm", {
 								dataIndex : "taxRate",
 								menuDisabled : true,
 								sortable : false
+							},{
+								header : "计算方法",
+								dataIndex : "method",
+								width:100,
+								menuDisabled : true,
+								sortable : false,
+								renderer : function(value,md,record) {
+									if (value == 1) {
+										return "个别计价法";
+									} else if (value == 2) {
+										return "移动平均法";
+									} else if (value == 3) {
+										return "先进先出法";
+									}  else {
+										return "";
+									}
+								}
 							}, {
 								header : "销售基准价",
 								dataIndex : "salePrice",
@@ -1216,7 +1233,8 @@ Ext.define("PSI.Goods.MainForm", {
 								header : "税控编码",
 								dataIndex : "taxCode",
 								menuDisabled : true,
-								sortable : false
+								sortable : false,
+                        		width : 200,
 							}, {
 								header : "创建时间",
 								dataIndex : "dateCreated",
