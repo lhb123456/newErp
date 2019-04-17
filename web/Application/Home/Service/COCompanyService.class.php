@@ -2,6 +2,7 @@
 
 namespace Home\Service;
 
+use Home\Common\FIdConst;
 use Home\DAO\COCompanyDAO;
 use Home\DAO\CustomerDAO;
 
@@ -407,6 +408,14 @@ class COCompanyService extends PSIBaseExService {
         $params["companyId"] = $companyId;
         $params["dataOrg"] = $dataOrg;
 
+        $us=new UserService();
+        $basePermission=$us->hasPermission(FIdConst::CREDIT_EDIT_BASE) ? 1: 0;
+        $analysisPermission=$us->hasPermission(FIdConst::CREDIT_EDIT_ANALYSIS) ? 1: 0;
+        $riskPermission=$us->hasPermission(FIdConst::CREDIT_EDIT_RISK) ? 1: 0;
+        $params["basePermission"]=$basePermission;
+        $params["analysisPermission"]=$analysisPermission;
+        $params["riskPermission"]=$riskPermission;
+
 
         $log = null;
 
@@ -467,5 +476,74 @@ class COCompanyService extends PSIBaseExService {
 
         $dao = new COCompanyDAO($this->db());
         return $dao->creditAssessList($params);
+    }
+
+    public function deleteAssess($params){
+
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $id=$params["id"];
+        $companyName=$params["companyName"];
+        $db = $this->db();
+        $db->startTrans();
+
+        $dao = new COCompanyDAO($db);
+
+        $rc = $dao->deleteAssess($id);
+        if ($rc) {
+            $db->rollback();
+            return $rc;
+        }
+
+
+        $log = "删除对往来单位[$companyName]的信用评估";
+        $bs = new BizlogService($db);
+        $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+        $db->commit();
+
+        return $this->ok();
+    }
+
+    public function commitAssess($params){
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $id=$params["id"];
+
+        $companyName=$params["companyName"];
+        $db = $this->db();
+        $db->startTrans();
+
+        $dao = new COCompanyDAO($db);
+
+        $rc = $dao->commitAssess($id);
+        if ($rc) {
+            $db->rollback();
+            return $rc;
+        }
+
+
+        $log = "提交往来单位[$companyName]的信用评估";
+        $bs = new BizlogService($db);
+        $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+        $db->commit();
+
+        return $this->ok();
+    }
+
+    public function selectAssessCompany($params){
+        if ($this->isNotOnline()) {
+            return $this->emptyResult();
+        }
+
+        $params["companyId"] = $this->getCompanyId();
+
+        $dao = new COCompanyDAO($this->db());
+        return $dao->selectAssessCompany($params);
     }
 }

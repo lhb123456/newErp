@@ -113,6 +113,10 @@ Ext.define("PSI.COCompany.EditRankAssess", {
 									items: [
 										{boxLabel: '供应商',id:"companyType1", name: 'supplier',width:120,inputValue:1},
 										{boxLabel: '客户',id:"companyType2", name: 'customer',width:120,inputValue:2}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 974fc5fcbb9103e9ccd6ca62f35a3af2c9ee3e0a
 									]
 								}, {
 									id:"assessTimes",
@@ -650,6 +654,18 @@ Ext.define("PSI.COCompany.EditRankAssess", {
 		me.callParent(arguments);
 	},
 
+<<<<<<< HEAD
+=======
+	getTypeItem:function () {
+		var str="";
+        for(var i=0;i<2;i++){
+           str+= "{boxLabel: '供应商',id:'companyType1', name: 'supplier',width:120,inputValue:"+i+"},";
+		}
+		console.log(str)
+		return str;
+    },
+
+>>>>>>> 974fc5fcbb9103e9ccd6ca62f35a3af2c9ee3e0a
 	getSaveData : function() {
 		var me = this;
 

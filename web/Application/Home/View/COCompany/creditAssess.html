@@ -1,31 +1,5 @@
 <layout name="layout" />
 
-<script src="{$uri}Public/Scripts/PSI/User/UserField.js?dt={$dtFlag}"
-	type="text/javascript"></script>
-<script
-	src="{$uri}Public/Scripts/PSI/User/OrgWithDataOrgField.js?dt={$dtFlag}"
-	type="text/javascript"></script>
-<script
-	src="{$uri}Public/Scripts/PSI/Supplier/SupplierField.js?dt={$dtFlag}"
-	type="text/javascript"></script>
-<script
-	src="{$uri}Public/Scripts/PSI/Goods/GoodsWithPurchasePriceField.js?dt={$dtFlag}"
-	type="text/javascript"></script>
-<script
-	src="{$uri}Public/Scripts/PSI/Goods/GoodsEditForm.js?dt={$dtFlag}"
-	type="text/javascript"></script>
-<script
-	src="{$uri}Public/Scripts/PSI/Goods/GoodsCategoryField.js?dt={$dtFlag}"
-	type="text/javascript"></script>
-<script
-	src="{$uri}Public/Scripts/PSI/Goods/GoodsBrandField.js?dt={$dtFlag}"
-	type="text/javascript"></script>
-
-
-<script
-	src="{$uri}Public/Scripts/PSI/Supplier/SupplierEditForm.js?dt={$dtFlag}"
-	type="text/javascript"></script>
-
 <script
 	src="{$uri}Public/Scripts/PSI/COCompany/CreditMainForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>
@@ -45,8 +19,8 @@
 	src="{$uri}Public/Scripts/PSI/Warehouse/WarehouseField.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 
-<script src="{$uri}Public/Lodop/LodopFuncs.js?dt={$dtFlag}"
-	type="text/javascript"></script>
+<!--<script src="{$uri}Public/Lodop/LodopFuncs.js?dt={$dtFlag}"
+	type="text/javascript"></script>-->
 
 <script>
 	Ext.onReady(function() {
@@ -56,16 +30,10 @@
 		});
 
 		var permission = {
-			add : "{$pAdd}",
-			edit : "{$pEdit}",
-			del : "{$pDelete}",
-			closeBill : "{$pCloseBill}",
-			genPDF : "{$pGenPDF}",
-			confirm : "{$pConfirm}",
-			genPWBill : "{$pGenPWBill}",
-			showAddGoodsButton : "{$showAddGoodsButton}",
-			print : "{$pPrint}",
-
+			add : "{$add}",
+			edit : "{$edit}",
+			del : "{$del}",
+			commit : "{$commit}",
             creditEdit:"{$creditEdit}",
             creditEditBase:"{$creditEditBase}",
             creditEditAnalysis:"{$creditEditAnalysis}",

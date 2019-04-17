@@ -73,18 +73,18 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 					hidden : me.getPermission().add == "0",
 					xtype : "tbseparator"
 				}, {
-					text : "编辑采购订单",
+					text : "编辑信用评估",
 					scope : me,
-					handler : me.onEditBill,
+					handler : me.onEditAssess,
 					hidden : me.getPermission().edit == "0",
 					id : "buttonEdit"
 				}, {
 					hidden : me.getPermission().edit == "0",
 					xtype : "tbseparator"
 				}, {
-					text : "删除采购订单",
+					text : "删除信用评估",
 					scope : me,
-					handler : me.onDeleteBill,
+					handler : me.onDeleteAssess,
 					hidden : me.getPermission().del == "0",
 					id : "buttonDelete"
 				}, {
@@ -92,83 +92,23 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 					hidden : me.getPermission().del == "0",
 					id : "tbseparator1"
 				}, {
-					text : "审核",
+					text : "提交",
 					scope : me,
 					handler : me.onCommit,
-					hidden : me.getPermission().confirm == "0",
+					hidden : me.getPermission().commit == "0",
 					id : "buttonCommit"
-				}, {
-					text : "取消审核",
+				}, /*{
+					text : "取消提交",
+					hidden:true,
 					scope : me,
 					handler : me.onCancelConfirm,
 					hidden : me.getPermission().confirm == "0",
 					id : "buttonCancelConfirm"
-				}, {
+				}, */{
 					xtype : "tbseparator",
-					hidden : me.getPermission().confirm == "0",
+            		hidden:true,
+					hidden : me.getPermission().commit == "0",
 					id : "tbseparator2"
-				}, {
-					text : "生成采购入库单",
-					scope : me,
-					handler : me.onGenPWBill,
-					hidden : me.getPermission().genPWBill == "0",
-					id : "buttonGenPWBill"
-				}, {
-					hidden : me.getPermission().genPWBill == "0",
-					xtype : "tbseparator"
-				}, {
-					text : "关闭订单",
-					hidden : me.getPermission().closeBill == "0",
-					id : "buttonCloseBill",
-					menu : [{
-								text : "关闭采购订单",
-								iconCls : "PSI-button-commit",
-								scope : me,
-								handler : me.onClosePO
-							}, "-", {
-								text : "取消采购订单关闭状态",
-								iconCls : "PSI-button-cancelconfirm",
-								scope : me,
-								handler : me.onCancelClosedPO
-							}]
-				}, {
-					hidden : me.getPermission().closeBill == "0",
-					xtype : "tbseparator"
-				}, {
-					text : "导出",
-					hidden : me.getPermission().genPDF == "0",
-					menu : [{
-								text : "单据生成pdf",
-								id : "buttonPDF",
-								iconCls : "PSI-button-pdf",
-								scope : me,
-								handler : me.onPDF
-							}]
-				}, {
-					hidden : me.getPermission().genPDF == "0",
-					xtype : "tbseparator"
-				}, {
-					text : "打印",
-					hidden : me.getPermission().print == "0",
-					menu : [{
-								text : "打印预览",
-								iconCls : "PSI-button-print-preview",
-								scope : me,
-								handler : me.onPrintPreview
-							}, "-", {
-								text : "直接打印",
-								iconCls : "PSI-button-print",
-								scope : me,
-								handler : me.onPrint
-							}]
-				}, {
-					xtype : "tbseparator",
-					hidden : me.getPermission().print == "0"
-				}, {
-					text : "帮助",
-					handler : function() {
-						window.open(me.URL("/Home/Help/index?t=pobill"));
-					}
 				}, "-", {
 					text : "关闭",
 					handler : function() {
@@ -183,6 +123,22 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	getQueryCmp : function() {
 		var me = this;
 		return [ {
+            id : "tableStatus",
+            xtype : "combo",
+            queryMode : "local",
+            editable : false,
+            valueField : "id",
+            labelWidth : 60,
+            labelAlign : "right",
+            labelSeparator : "",
+            fieldLabel : "状态",
+            margin : "5, 20, 0, 10",
+            store : Ext.create("Ext.data.ArrayStore", {
+                fields : ["id", "text"],
+                data : [[0, "已删除"], [1,"未提交"],[2, "已提交"]]
+            }),
+            value :1
+        }, {
 			id : "editCompanyName",
 			labelWidth : 80,
 			width:300,
@@ -191,7 +147,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 			fieldLabel : "往来单位名称",
 			margin : "5, 20, 0, 10",
 			xtype : "textfield"
-		}, {
+		},{
 			xtype : "container",
 			items : [{
 						xtype : "button",
@@ -228,7 +184,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 采购订单主表
+	 * 信用评估列表
 	 */
 	getMainGrid : function() {
 		var me = this;
@@ -286,15 +242,50 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 							xtype : "rownumberer",
 							width : 50
 						},  {
+							header : "状态",
+							dataIndex : "tableStatus",
+							width : 100,
+							renderer:function (value) {
+								var str="";
+								if(value==0){
+									str="已删除";
+								}else if(value>0&&value<4000){
+									str="未提交";
+								}else if(value==4000){
+									str="已提交";
+								}
+								return str;
+							}
+						},{
 							header : "往来单位名称",
-							dataIndex : "compangyName",
+							dataIndex : "companyName",
 							width : 110
 						}, {
 							header : "交易类型",
-							dataIndex : "companyType"
+							dataIndex : "companyType",
+                            width : 120,
+                            renderer:function (value) {
+							    var str="";
+                                for(var i=0;i<value.length;i++){
+                                    if(value[i]==1){
+                                        str+="供应商";
+                                    }
+                                    if(value[i]==2){
+                                        if(str){
+                                            str+="/客户";
+                                        }else{
+                                            str+="客户";
+                                        }
+                                    }
+                                }
+
+                                return str;
+                            }
 						}, {
 							header : "原额度(吨/公斤)",
-							dataIndex : "limit"
+							dataIndex : "limit",
+                            width : 120,
+                            align:"right"
 						}, {
 							header : "法定代表人",
 							dataIndex : "legalPerson"
@@ -307,24 +298,74 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 							dataIndex : "contact"
 						}, {
 							header : "联系电话",
-							dataIndex : "contactTel"
+							dataIndex : "contactTel",
+                            width : 120,
 						}, {
 							header : "公司性质",
 							dataIndex : "companyAssetType",
+                            width : 120,
+                            renderer:function (value) {
+                                var str="";
+
+                                if(value==1){
+                                    str="国有独资";
+                                }else if(value==2){
+                                    str="上市公司";
+                                }else if(value==3){
+                                    str="中外合资";
+                                }else if(value==4){
+                                    str="外商独资";
+                                }else if(value==5){
+                                    str="民营独资";
+                                }else if(value==6){
+                                    str="民营股份";
+                                }else if(value==7){
+                                    str="其他";
+                                }
+
+                                return str;
+                            }
 						}, {
 							header : "公司类型",
 							dataIndex : "companyTradeType",
+                            width : 120,
+                            renderer:function (value) {
+                                var str="";
+                                for(var i=0;i<value.length;i++){
+                                    if(value[i]==1){
+                                        str+="制造商";
+                                    }
+                                    if(value[i]==2){
+                                        if(str){
+                                            str+="/贸易商";
+                                        }else{
+                                            str+="贸易商";
+                                        }
+                                    }
+                                }
+
+                                return str;
+                            }
 						}, {
 							header : "行业地位",
-							dataIndex : "moneyWithTax",
-							align : "right"
+							dataIndex : "companyStrength",
+                            width : 120,
+                            renderer:function (value) {
+                                var str="";
+
+                                if(value==1){
+                                    str="全球500强";
+                                }else if(value==2){
+                                    str="全国500强";
+                                }else if(value==3){
+                                    str="行业500强";
+                                }
+                                return str;
+                            }
 						}, {
 							header : "主营业务",
-							dataIndex : "paymentType",
+							dataIndex : "mainWork",
 							width : 350
-						}, {
-							header : "业务员",
-							dataIndex : "bizUserName"
 						}]
 			},
 			store : store,
@@ -369,8 +410,8 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 					scope : me
 				},
 				itemdblclick : {
-					fn : me.getPermission().edit == "1"
-							? me.onEditBill
+					fn : !me.getPermission().edit
+							? me.onEditAssess
 							: Ext.emptyFn,
 					scope : me
 				}
@@ -381,7 +422,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 采购订单明细记录
+	 * 信用评估明细记录
 	 */
 	getDetailGrid : function() {
 		var me = this;
@@ -405,7 +446,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
 					cls : "PSI",
-					title : "采购订单明细",
+					title : "信用评估明细",
 					viewConfig : {
 						enableTextSelection : true
 					},
@@ -497,27 +538,18 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 刷新采购订单主表记录
+	 * 刷新信用评估列表
 	 */
 	refreshMainGrid : function(id) {
 		var me = this;
 
-		Ext.getCmp("buttonEdit").setDisabled(true);
-		Ext.getCmp("buttonDelete").setDisabled(true);
-		Ext.getCmp("buttonCommit").setDisabled(true);
-		Ext.getCmp("buttonCancelConfirm").setDisabled(true);
-		Ext.getCmp("buttonGenPWBill").setDisabled(true);
-
-		var gridDetail = me.getDetailGrid();
-		gridDetail.setTitle("采购订单明细");
-		gridDetail.getStore().removeAll();
-
 		Ext.getCmp("pagingToobar").doRefresh();
+
 		me.__lastId = id;
 	},
 
 	/**
-	 * 新增采购订单
+	 * 新增信用评估
 	 */
 	onAddAssess : function() {
 		var me = this;
@@ -530,61 +562,54 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 编辑采购订单
+	 * 编辑信用评估
 	 */
-	onEditBill : function() {
+    onEditAssess : function() {
 		var me = this;
+		
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要编辑的采购订单");
+			me.showInfo("没有选择要编辑的信用评估");
 			return;
 		}
-		var bill = item[0];
+		var creditAssess = item[0];
 
-		var form = Ext.create("PSI.PurchaseOrder.POEditForm", {
+		var form = Ext.create("PSI.COCompany.EditForm", {
 					parentForm : me,
-					entity : bill,
+					entity : creditAssess,
 					showAddGoodsButton : me.getPermission().showAddGoodsButton
 				});
 		form.show();
 	},
 
 	/**
-	 * 删除采购订单
+	 * 删除信用评估
 	 */
-	onDeleteBill : function() {
+	onDeleteAssess : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("请选择要删除的采购订单");
+			me.showInfo("请选择要删除的信用评估");
 			return;
 		}
 
-		var bill = item[0];
+		var assess = item[0];
 
-		if (bill.get("billStatus") > 0) {
-			me.showInfo("当前采购订单已经审核，不能删除");
+		/*if (assess.get("billStatus") > 0) {
+			me.showInfo("当前信用评估已经审核，不能删除");
 			return;
-		}
+		}*/
 
-		var store = me.getMainGrid().getStore();
-		var index = store.findExact("id", bill.get("id"));
-		index--;
-		var preIndex = null;
-		var preItem = store.getAt(index);
-		if (preItem) {
-			preIndex = preItem.get("id");
-		}
 
-		var info = "请确认是否删除采购订单: <span style='color:red'>" + bill.get("ref")
-				+ "</span>";
+		var info = "请确认是否删除对[<span style='color:red'>"+assess.get("companyName")+"</span>]的信用评估 ";
 		var funcConfirm = function() {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");
 			var r = {
-				url : me.URL("Home/Purchase/deletePOBill"),
+				url : me.URL("Home/COCompany/deleteAssess"),
 				params : {
-					id : bill.get("id")
+					id : assess.get("id"),
+					companyName:assess.get("companyName")
 				},
 				callback : function(options, success, response) {
 					el.unmask();
@@ -593,7 +618,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
 							me.showInfo("成功完成删除操作", function() {
-										me.refreshMainGrid(preIndex);
+										me.refreshMainGrid(assess.get("id"));
 									});
 						} else {
 							me.showInfo(data.msg);
@@ -611,43 +636,44 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 
 	onMainGridSelect : function() {
 		var me = this;
-		me.getDetailGrid().setTitle("采购订单明细");
+
+		me.getDetailGrid().setTitle("信用评估操作明细");
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			Ext.getCmp("buttonEdit").setDisabled(true);
 			Ext.getCmp("buttonDelete").setDisabled(true);
 			Ext.getCmp("buttonCommit").setDisabled(true);
-			Ext.getCmp("buttonCancelConfirm").setDisabled(true);
-			Ext.getCmp("buttonGenPWBill").setDisabled(true);
+
 
 			return;
 		}
-		var bill = item[0];
-		var commited = bill.get("billStatus") >= 1000;
+		var assess = item[0];
+		var tableStatus = assess.get("tableStatus");
 
 		var buttonEdit = Ext.getCmp("buttonEdit");
 		buttonEdit.setDisabled(false);
-		if (commited) {
-			buttonEdit.setText("查看采购订单");
+		if (tableStatus==0||tableStatus==4000||me.getPermission().creditEdit==0) {
+			buttonEdit.setText("查看信用评估");
 		} else {
-			buttonEdit.setText("编辑采购订单");
+			buttonEdit.setText("编辑信用评估");
 		}
 
-		Ext.getCmp("buttonDelete").setDisabled(commited);
-		Ext.getCmp("buttonCommit").setDisabled(commited);
-		Ext.getCmp("buttonCancelConfirm").setDisabled(!commited);
-		Ext.getCmp("buttonGenPWBill").setDisabled(!commited);
+		if(tableStatus!=3000){
+            Ext.getCmp("buttonCommit").setDisabled(true);
+		}else{
+            Ext.getCmp("buttonCommit").setDisabled(false);
+		}
 
 		me.refreshDetailGrid();
 		me.refreshPWGrid();
 	},
 
 	/**
-	 * 刷新采购订单明细记录
+	 * 刷新信用评估明细记录
 	 */
 	refreshDetailGrid : function(id) {
 		var me = this;
-		me.getDetailGrid().setTitle("采购订单明细");
+		me.getDetailGrid().setTitle("信用评估明细");
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
 			return;
@@ -691,39 +717,35 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	},
 
 	/**
-	 * 审核采购订单
+	 * 审核信用评估
 	 */
 	onCommit : function() {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要审核的采购订单");
+			me.showInfo("没有选择要提交的信用评估");
 			return;
 		}
-		var bill = item[0];
+		var assess = item[0];
 
-		if (bill.get("billStatus") > 0) {
-			me.showInfo("当前采购订单已经审核，不能再次审核");
-			return;
-		}
-
-		var detailCount = me.getDetailGrid().getStore().getCount();
-		if (detailCount == 0) {
-			me.showInfo("当前采购订单没有录入商品明细，不能审核");
+		if (assess.get("tableStatus") !=3000) {
+			me.showInfo("当前信用评估不符合审核条件，不能提交");
 			return;
 		}
 
-		var info = "请确认是否审核单号: <span style='color:red'>" + bill.get("ref")
-				+ "</span> 的采购订单?";
-		var id = bill.get("id");
+
+		var info = "请确认是否提交往来单位: <span style='color:red'>" + assess.get("companyName")
+				+ "</span> 的信用评估?";
+		var id = assess.get("id");
 
 		var funcConfirm = function() {
 			var el = Ext.getBody();
 			el.mask("正在提交中...");
 			var r = {
-				url : me.URL("Home/Purchase/commitPOBill"),
+				url : me.URL("Home/COCompany/commitAssess"),
 				params : {
-					id : id
+					id : id,
+					companyName:assess.get("companyName")
 				},
 				callback : function(options, success, response) {
 					el.unmask();
@@ -731,7 +753,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 					if (success) {
 						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
-							me.showInfo("成功完成审核操作", function() {
+							me.showInfo("成功完成提交操作", function() {
 										me.refreshMainGrid(id);
 									});
 						} else {
@@ -754,18 +776,18 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要取消审核的采购订单");
+			me.showInfo("没有选择要取消审核的信用评估");
 			return;
 		}
 		var bill = item[0];
 
 		if (bill.get("billStatus") == 0) {
-			me.showInfo("当前采购订单还没有审核，无法取消审核");
+			me.showInfo("当前信用评估还没有审核，无法取消审核");
 			return;
 		}
 
 		var info = "请确认是否取消审核单号为 <span style='color:red'>" + bill.get("ref")
-				+ "</span> 的采购订单?";
+				+ "</span> 的信用评估?";
 		var id = bill.get("id");
 		var funcConfirm = function() {
 			var el = Ext.getBody();
@@ -838,57 +860,20 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 	getQueryParam : function() {
 		var me = this;
 
-		var result = {};
+		var result = {
+			tableStatus:Ext.getCmp("tableStatus").getValue()
+		};
 
 		var companyName = Ext.getCmp("editCompanyName").getValue();
 		if (companyName) {
 			result.companyName = companyName;
 		}
 
+
 		return result;
 	},
 
-	/**
-	 * 生成采购入库单
-	 */
-	onGenPWBill : function() {
-		var me = this;
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要生成入库单的采购订单");
-			return;
-		}
-		var bill = item[0];
 
-		if (bill.get("billStatus") < 1000) {
-			me.showInfo("当前采购订单还没有审核，无法生成采购入库单");
-			return;
-		}
-
-		if (bill.get("billStatus") >= 4000) {
-			me.showInfo("当前采购订单已经关闭，不能再生成采购入库单");
-			return;
-		}
-
-		var form = Ext.create("PSI.Purchase.PWEditForm", {
-					genBill : true,
-					pobillRef : bill.get("ref")
-				});
-		form.show();
-	},
-
-	onPDF : function() {
-		var me = this;
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要生成pdf文件的采购订单");
-			return;
-		}
-		var bill = item[0];
-
-		var url = me.URL("Home/Purchase/poBillPdf?ref=" + bill.get("ref"));
-		window.open(url);
-	},
 
 	getPWGrid : function() {
 		var me = this;
@@ -911,7 +896,7 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 
 		me.__pwGrid = Ext.create("Ext.grid.Panel", {
 			cls : "PSI",
-			title : "采购订单入库详情",
+			title : "信用评估入库详情",
 			viewConfig : {
 				enableTextSelection : true
 			},
@@ -1036,210 +1021,5 @@ Ext.define("PSI.COCompany.CreditMainForm", {
 		me.ajax(r);
 	},
 
-	onClosePO : function() {
-		var me = this;
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要关闭的采购订单");
-			return;
-		}
-		var bill = item[0];
 
-		// if (bill.get("billStatus") > 0) {
-		// me.showInfo("当前采购订单已经审核，不能再次审核");
-		// return;
-		// }
-
-		var info = "请确认是否关闭单号: <span style='color:red'>" + bill.get("ref")
-				+ "</span> 的采购订单?";
-		var id = bill.get("id");
-
-		var funcConfirm = function() {
-			var el = Ext.getBody();
-			el.mask("正在提交中...");
-			var r = {
-				url : me.URL("Home/Purchase/closePOBill"),
-				params : {
-					id : id
-				},
-				callback : function(options, success, response) {
-					el.unmask();
-
-					if (success) {
-						var data = me.decodeJSON(response.responseText);
-						if (data.success) {
-							me.showInfo("成功关闭采购订单", function() {
-										me.refreshMainGrid(id);
-									});
-						} else {
-							me.showInfo(data.msg);
-						}
-					} else {
-						me.showInfo("网络错误");
-					}
-				}
-			};
-			me.ajax(r);
-		};
-		me.confirm(info, funcConfirm);
-	},
-
-	onCancelClosedPO : function() {
-		var me = this;
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要取消关闭状态的采购订单");
-			return;
-		}
-		var bill = item[0];
-
-		// if (bill.get("billStatus") > 0) {
-		// me.showInfo("当前采购订单已经审核，不能再次审核");
-		// return;
-		// }
-
-		var info = "请确认是否取消单号: <span style='color:red'>" + bill.get("ref")
-				+ "</span> 采购订单的关闭状态?";
-		var id = bill.get("id");
-
-		var funcConfirm = function() {
-			var el = Ext.getBody();
-			el.mask("正在提交中...");
-			var r = {
-				url : me.URL("Home/Purchase/cancelClosedPOBill"),
-				params : {
-					id : id
-				},
-				callback : function(options, success, response) {
-					el.unmask();
-
-					if (success) {
-						var data = me.decodeJSON(response.responseText);
-						if (data.success) {
-							me.showInfo("成功取消采购订单关闭状态", function() {
-										me.refreshMainGrid(id);
-									});
-						} else {
-							me.showInfo(data.msg);
-						}
-					} else {
-						me.showInfo("网络错误");
-					}
-				}
-			};
-			me.ajax(r);
-		};
-		me.confirm(info, funcConfirm);
-	},
-
-	/**
-	 * 打印预览
-	 */
-	onPrintPreview : function() {
-		var lodop = getLodop();
-		if (!lodop) {
-			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
-			return;
-		}
-
-		var me = this;
-
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要打印的采购订单");
-			return;
-		}
-		var bill = item[0];
-
-		var el = Ext.getBody();
-		el.mask("数据加载中...");
-		var r = {
-			url : PSI.Const.BASE_URL + "Home/Purchase/genPOBillPrintPage",
-			params : {
-				id : bill.get("id")
-			},
-			callback : function(options, success, response) {
-				el.unmask();
-
-				if (success) {
-					var data = response.responseText;
-					me.previewPOBill(bill.get("ref"), data);
-				}
-			}
-		};
-		me.ajax(r);
-	},
-
-	PRINT_PAGE_WIDTH : "200mm",
-	PRINT_PAGE_HEIGHT : "95mm",
-
-	previewPOBill : function(ref, data) {
-		var me = this;
-
-		var lodop = getLodop();
-		if (!lodop) {
-			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
-			return;
-		}
-
-		lodop.PRINT_INIT("采购订单" + ref);
-		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
-				"");
-		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
-		var result = lodop.PREVIEW("_blank");
-	},
-
-	/**
-	 * 直接打印
-	 */
-	onPrint : function() {
-		var lodop = getLodop();
-		if (!lodop) {
-			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
-			return;
-		}
-
-		var me = this;
-
-		var item = me.getMainGrid().getSelectionModel().getSelection();
-		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要打印的采购订单");
-			return;
-		}
-		var bill = item[0];
-
-		var el = Ext.getBody();
-		el.mask("数据加载中...");
-		var r = {
-			url : PSI.Const.BASE_URL + "Home/Purchase/genPOBillPrintPage",
-			params : {
-				id : bill.get("id")
-			},
-			callback : function(options, success, response) {
-				el.unmask();
-
-				if (success) {
-					var data = response.responseText;
-					me.printPOBill(bill.get("ref"), data);
-				}
-			}
-		};
-		me.ajax(r);
-	},
-
-	printPOBill : function(ref, data) {
-		var me = this;
-
-		var lodop = getLodop();
-		if (!lodop) {
-			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
-			return;
-		}
-
-		lodop.PRINT_INIT("采购订单" + ref);
-		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
-				"");
-		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
-		var result = lodop.PRINT();
-	}
 });

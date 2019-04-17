@@ -283,6 +283,9 @@ class MainMenuController extends Controller {
             case FIdConst::TAX_CODE :
                 // 税控编码
                 redirect(__ROOT__ . "/Home/TaxCode/taxCode");
+            case FIdConst::RANK_ASSESS :
+                // 信用额度评估
+                redirect(__ROOT__ . "/Home/COCompany/rankAssess");
                 break;
 			default :
 				redirect(__ROOT__ . "/Home");
