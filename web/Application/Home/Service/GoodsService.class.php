@@ -360,6 +360,18 @@ class GoodsService extends PSIBaseExService {
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryData($params);
 	}
+    public function queryCodeData($queryKey) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+
+		$params = array(
+				"queryKey" => $queryKey,
+		);
+
+		$dao = new GoodsDAO($this->db());
+		return $dao->queryCodeData($params);
+	}
 
 	/**
 	 * 商品字段，查询数据
