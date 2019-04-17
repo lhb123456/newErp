@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9d4952ef-4506-4fc1-99bf-2755443122e0" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/doc/02 表结构/表结构说明.xlsx" afterPath="$PROJECT_DIR$/doc/02 表结构/表结构说明.xlsx" />
-      <change beforePath="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js" afterPath="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js" />
-      <change beforePath="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/RankMainForm.js" afterPath="$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/RankMainForm.js" />
-    </list>
+    <list default="true" id="9d4952ef-4506-4fc1-99bf-2755443122e0" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -131,12 +126,12 @@
             <state relative-caret-position="398">
               <caret line="566" column="59" lean-forward="false" selection-start-line="566" selection-start-column="59" selection-end-line="566" selection-end-column="59" />
               <folding>
-                <marker date="1555480866378" expanded="true" signature="12436:12445" ph="..." />
-                <marker date="1555480866378" expanded="true" signature="14997:15006" ph="..." />
-                <marker date="1555480866378" expanded="true" signature="18008:18017" ph="..." />
-                <marker date="1555480866378" expanded="true" signature="19143:19152" ph="..." />
-                <marker date="1555480866378" expanded="true" signature="21763:21772" ph="..." />
-                <marker date="1555480866378" expanded="true" signature="21875:21885" ph="..." />
+                <marker date="1555485987973" expanded="true" signature="12436:12445" ph="..." />
+                <marker date="1555485987973" expanded="true" signature="14997:15006" ph="..." />
+                <marker date="1555485987973" expanded="true" signature="18008:18017" ph="..." />
+                <marker date="1555485987973" expanded="true" signature="19143:19152" ph="..." />
+                <marker date="1555485987973" expanded="true" signature="21763:21772" ph="..." />
+                <marker date="1555485987973" expanded="true" signature="21875:21885" ph="..." />
               </folding>
             </state>
           </provider>
@@ -146,7 +141,7 @@
         <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="388">
-              <caret line="115" column="0" lean-forward="true" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+              <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -156,7 +151,7 @@
         <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/SelectCreditAssess.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="424">
-              <caret line="116" column="33" lean-forward="true" selection-start-line="116" selection-start-column="33" selection-end-line="116" selection-end-column="33" />
+              <caret line="116" column="33" lean-forward="false" selection-start-line="116" selection-start-column="33" selection-end-line="116" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -269,7 +264,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="250" />
     <option name="y" value="127" />
     <option name="width" value="1400" />
@@ -473,15 +468,15 @@
       <workItem from="1555030824466" duration="4841000" />
       <workItem from="1555289486540" duration="13858000" />
       <workItem from="1555376549658" duration="5889000" />
-      <workItem from="1555462292448" duration="2841000" />
+      <workItem from="1555462292448" duration="3407000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="264834000" />
+    <option name="totallyTimeSpent" value="265400000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17697228" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -905,7 +900,7 @@
     <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/SelectCreditAssess.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="424">
-          <caret line="116" column="33" lean-forward="true" selection-start-line="116" selection-start-column="33" selection-end-line="116" selection-end-column="33" />
+          <caret line="116" column="33" lean-forward="false" selection-start-line="116" selection-start-column="33" selection-end-line="116" selection-end-column="33" />
           <folding />
         </state>
       </provider>
@@ -915,12 +910,12 @@
         <state relative-caret-position="398">
           <caret line="566" column="59" lean-forward="false" selection-start-line="566" selection-start-column="59" selection-end-line="566" selection-end-column="59" />
           <folding>
-            <marker date="1555480866378" expanded="true" signature="12436:12445" ph="..." />
-            <marker date="1555480866378" expanded="true" signature="14997:15006" ph="..." />
-            <marker date="1555480866378" expanded="true" signature="18008:18017" ph="..." />
-            <marker date="1555480866378" expanded="true" signature="19143:19152" ph="..." />
-            <marker date="1555480866378" expanded="true" signature="21763:21772" ph="..." />
-            <marker date="1555480866378" expanded="true" signature="21875:21885" ph="..." />
+            <marker date="1555485987973" expanded="true" signature="12436:12445" ph="..." />
+            <marker date="1555485987973" expanded="true" signature="14997:15006" ph="..." />
+            <marker date="1555485987973" expanded="true" signature="18008:18017" ph="..." />
+            <marker date="1555485987973" expanded="true" signature="19143:19152" ph="..." />
+            <marker date="1555485987973" expanded="true" signature="21763:21772" ph="..." />
+            <marker date="1555485987973" expanded="true" signature="21875:21885" ph="..." />
           </folding>
         </state>
       </provider>
@@ -936,7 +931,7 @@
     <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="388">
-          <caret line="115" column="0" lean-forward="true" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+          <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
           <folding />
         </state>
       </provider>
