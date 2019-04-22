@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9d4952ef-4506-4fc1-99bf-2755443122e0" name="Default" comment="" />
+    <list default="true" id="9d4952ef-4506-4fc1-99bf-2755443122e0" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/doc/02 表结构/表结构说明.xlsx" afterPath="$PROJECT_DIR$/doc/02 表结构/表结构说明.xlsx" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -11,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="COCompanyController.class.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="COCompanyController.class.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="402">
-              <caret line="425" column="44" lean-forward="false" selection-start-line="425" selection-start-column="44" selection-end-line="425" selection-end-column="44" />
+            <state relative-caret-position="15336">
+              <caret line="430" column="41" lean-forward="false" selection-start-line="430" selection-start-column="41" selection-end-line="430" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -36,11 +39,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="COCompanyDAO.class.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="COCompanyDAO.class.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/Application/Home/DAO/COCompanyDAO.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="47412">
-              <caret line="1317" column="28" lean-forward="false" selection-start-line="1317" selection-start-column="28" selection-end-line="1317" selection-end-column="28" />
+            <state relative-caret-position="676">
+              <caret line="1295" column="0" lean-forward="true" selection-start-line="1295" selection-start-column="0" selection-end-line="1295" selection-end-column="0" />
               <folding>
                 <marker date="1555406452574" expanded="true" signature="677:749" ph="select c.id,... t_company_category" />
                 <marker date="1555406452574" expanded="true" signature="1217:1305" ph="select count... t_co_company" />
@@ -96,8 +99,8 @@
       <file leaf-file-name="CreditMainForm.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/CreditMainForm.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20736">
-              <caret line="576" column="53" lean-forward="false" selection-start-line="576" selection-start-column="34" selection-end-line="576" selection-end-column="53" />
+            <state relative-caret-position="20988">
+              <caret line="583" column="0" lean-forward="false" selection-start-line="583" selection-start-column="0" selection-end-line="583" selection-end-column="0" />
               <folding>
                 <marker date="1555406452584" expanded="true" signature="12440:12449" ph="..." />
                 <marker date="1555406452584" expanded="true" signature="14779:14788" ph="..." />
@@ -123,15 +126,17 @@
       <file leaf-file-name="RankMainForm.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/RankMainForm.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="398">
-              <caret line="566" column="59" lean-forward="false" selection-start-line="566" selection-start-column="59" selection-end-line="566" selection-end-column="59" />
+            <state relative-caret-position="20484">
+              <caret line="569" column="59" lean-forward="false" selection-start-line="569" selection-start-column="59" selection-end-line="569" selection-end-column="59" />
               <folding>
-                <marker date="1555485987973" expanded="true" signature="12436:12445" ph="..." />
-                <marker date="1555485987973" expanded="true" signature="14997:15006" ph="..." />
-                <marker date="1555485987973" expanded="true" signature="18008:18017" ph="..." />
-                <marker date="1555485987973" expanded="true" signature="19143:19152" ph="..." />
-                <marker date="1555485987973" expanded="true" signature="21763:21772" ph="..." />
-                <marker date="1555485987973" expanded="true" signature="21875:21885" ph="..." />
+                <marker date="1555487354637" expanded="true" signature="12436:12445" ph="..." />
+                <marker date="1555487354637" expanded="true" signature="13984:14290" ph="{...}" />
+                <marker date="1555487354637" expanded="true" signature="14201:14261" ph="{&quot;parentForm&quot;: me...}" />
+                <marker date="1555487354637" expanded="true" signature="15125:15134" ph="..." />
+                <marker date="1555487354637" expanded="true" signature="18136:18145" ph="..." />
+                <marker date="1555487354637" expanded="true" signature="19271:19280" ph="..." />
+                <marker date="1555487354637" expanded="true" signature="21891:21900" ph="..." />
+                <marker date="1555487354637" expanded="true" signature="22003:22013" ph="..." />
               </folding>
             </state>
           </provider>
@@ -140,9 +145,11 @@
       <file leaf-file-name="EditRankAssess.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
+            <state relative-caret-position="4140">
               <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
-              <folding />
+              <folding>
+                <marker date="1555487354635" expanded="true" signature="63:34376" ph="{&quot;extend&quot;: &quot;PSI.AFX.BaseDialogForm&quot;...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -150,7 +157,7 @@
       <file leaf-file-name="SelectCreditAssess.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/SelectCreditAssess.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="424">
+            <state relative-caret-position="4176">
               <caret line="116" column="33" lean-forward="false" selection-start-line="116" selection-start-column="33" selection-end-line="116" selection-end-column="33" />
               <folding />
             </state>
@@ -285,6 +292,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -403,7 +411,6 @@
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -469,27 +476,30 @@
       <workItem from="1555289486540" duration="13858000" />
       <workItem from="1555376549658" duration="5889000" />
       <workItem from="1555462292448" duration="3407000" />
+      <workItem from="1555548426625" duration="1903000" />
+      <workItem from="1555635211162" duration="4825000" />
+      <workItem from="1555893166869" duration="375000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="265400000" />
+    <option name="totallyTimeSpent" value="272503000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17697228" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15724947" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -812,10 +822,75 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="864">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Application/Home/View/COCompany/rankAssess.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="79" lean-forward="false" selection-start-line="12" selection-start-column="79" selection-end-line="12" selection-end-column="79" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/SelectCreditAssess.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4176">
+          <caret line="116" column="33" lean-forward="false" selection-start-line="116" selection-start-column="33" selection-end-line="116" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/ExtJS/ext-all.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="20" column="483784" lean-forward="false" selection-start-line="20" selection-start-column="483784" selection-end-line="20" selection-end-column="483784" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4140">
+          <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+          <folding>
+            <marker date="1555487354635" expanded="true" signature="63:34376" ph="{&quot;extend&quot;: &quot;PSI.AFX.BaseDialogForm&quot;...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15336">
+          <caret line="430" column="41" lean-forward="false" selection-start-line="430" selection-start-column="41" selection-end-line="430" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/RankMainForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20484">
+          <caret line="569" column="59" lean-forward="false" selection-start-line="569" selection-start-column="59" selection-end-line="569" selection-end-column="59" />
+          <folding>
+            <marker date="1555487354637" expanded="true" signature="12436:12445" ph="..." />
+            <marker date="1555487354637" expanded="true" signature="13984:14290" ph="{...}" />
+            <marker date="1555487354637" expanded="true" signature="14201:14261" ph="{&quot;parentForm&quot;: me...}" />
+            <marker date="1555487354637" expanded="true" signature="15125:15134" ph="..." />
+            <marker date="1555487354637" expanded="true" signature="18136:18145" ph="..." />
+            <marker date="1555487354637" expanded="true" signature="19271:19280" ph="..." />
+            <marker date="1555487354637" expanded="true" signature="21891:21900" ph="..." />
+            <marker date="1555487354637" expanded="true" signature="22003:22013" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/CreditMainForm.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20736">
-          <caret line="576" column="53" lean-forward="false" selection-start-line="576" selection-start-column="34" selection-end-line="576" selection-end-column="53" />
+        <state relative-caret-position="20988">
+          <caret line="583" column="0" lean-forward="false" selection-start-line="583" selection-start-column="0" selection-end-line="583" selection-end-column="0" />
           <folding>
             <marker date="1555406452584" expanded="true" signature="12440:12449" ph="..." />
             <marker date="1555406452584" expanded="true" signature="14779:14788" ph="..." />
@@ -829,8 +904,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web/Application/Home/DAO/COCompanyDAO.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="47412">
-          <caret line="1317" column="28" lean-forward="false" selection-start-line="1317" selection-start-column="28" selection-end-line="1317" selection-end-column="28" />
+        <state relative-caret-position="676">
+          <caret line="1295" column="0" lean-forward="true" selection-start-line="1295" selection-start-column="0" selection-end-line="1295" selection-end-column="0" />
           <folding>
             <marker date="1555406452574" expanded="true" signature="677:749" ph="select c.id,... t_company_category" />
             <marker date="1555406452574" expanded="true" signature="1217:1305" ph="select count... t_co_company" />
@@ -879,68 +954,6 @@
             <marker date="1555406452574" expanded="true" signature="39828:39911" ph="update t_credit_assess_record... " />
             <marker date="1555406452574" expanded="true" signature="40324:40549" ph="select id,co... t_credit_assess_record" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Application/Home/View/COCompany/rankAssess.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" column="79" lean-forward="false" selection-start-line="12" selection-start-column="79" selection-end-line="12" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/SelectCreditAssess.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="116" column="33" lean-forward="false" selection-start-line="116" selection-start-column="33" selection-end-line="116" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/RankMainForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="398">
-          <caret line="566" column="59" lean-forward="false" selection-start-line="566" selection-start-column="59" selection-end-line="566" selection-end-column="59" />
-          <folding>
-            <marker date="1555485987973" expanded="true" signature="12436:12445" ph="..." />
-            <marker date="1555485987973" expanded="true" signature="14997:15006" ph="..." />
-            <marker date="1555485987973" expanded="true" signature="18008:18017" ph="..." />
-            <marker date="1555485987973" expanded="true" signature="19143:19152" ph="..." />
-            <marker date="1555485987973" expanded="true" signature="21763:21772" ph="..." />
-            <marker date="1555485987973" expanded="true" signature="21875:21885" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Public/ExtJS/ext-all.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="20" column="483784" lean-forward="false" selection-start-line="20" selection-start-column="483784" selection-end-line="20" selection-end-column="483784" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Public/Scripts/PSI/COCompany/EditRankAssess.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/Application/Home/Controller/COCompanyController.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="425" column="44" lean-forward="false" selection-start-line="425" selection-start-column="44" selection-end-line="425" selection-end-column="44" />
-          <folding />
         </state>
       </provider>
     </entry>
